@@ -1,0 +1,91 @@
+@charset "UTF-8";
+/* CSS Document */
+/* CSS by Luciano Frizzera */
+
+
+body {
+	background: #474747;
+}
+
+.name {
+	margin: 20px;
+	color: #DDD;
+	font-size: 40px;
+	font-family: "Arial";
+	font-weight: Bold;
+}
+
+.phone {
+	margin: 20px;
+	color: #AAA;
+	font-size: 20px;
+	font-family: "Arial";
+	font-weight: Bold;
+}
+
+.email {
+	margin: 20px;
+	color: #AAA;
+	font-size: 20px;
+	font-family: "Arial";
+	font-weight: Bold;
+}
+
+.wrapper {
+	margin-left: -20px;
+	letter-spacing: 10px;
+	color: #BBB;
+	font-size: 15px;
+	font-family: "Arial";
+}
+
+/*----- form ----*/
+
+input, textarea {
+	margin: 20;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size:12px;
+	background-color:#fff;
+	border:0px solid #ccc;
+	
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+
+*:focus{
+	outline:none; /* Prevents blue border in Webkit  */
+}
+
+input:focus, textarea:focus {
+	-webkit-box-shadow:0 0 25px #ccc;
+	-moz-box-shadow:0 0 25px #ccc;
+	box-shadow:0 0 25px #ccc;
+	
+	-webkit-transform: scale(1.05);
+	-moz-transform: scale(1.05);
+	transform: scale(1.05);
+}
+
+
+input:not(:focus), textarea:not(:focus) {
+	opacity:0.5;
+}
+
+
+#form input {
+	display:block;
+	min-height:30px;
+	margin-bottom:16px;
+	margin-top:8px;
+		
+	font-size:20px;
+	
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
+}
+
+#form input:not([type="submit"]) {
+	width:400px;
+}

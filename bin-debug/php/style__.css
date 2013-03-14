@@ -1,0 +1,580 @@
+@charset "UTF-8";
+/* CSS Document */
+/* CSS by Luciano Frizzera */
+
+
+/*------GENERAL------*/
+body {
+	margin: 0px;
+	font-family: "Arial";
+}
+
+a:link {
+	text-decoration:none;
+	color:#fff;
+}
+
+a:visited {
+	text-decoration:none;
+	color:#fff;
+}
+
+/*------TOP------*/
+#top {
+	width:100%;
+	height:25px;
+	background-image: url(images/top_bg.png);
+	background-repeat: repeat-x;
+	position: fixed;
+	top: 0px;
+	right: 0px;
+}
+
+/*------BODY------*/
+#central {
+	width:1000px;
+	margin-top:40px;
+	margin-left:auto;
+	margin-right:auto;
+}
+
+/*------MENU------*/
+#left {
+	float: left;
+	width: 180px;
+	text-align: right;
+}
+
+#blogTitle {
+	font-size: 16px;
+	font-weight: bold;
+	color:#FFF;
+	letter-spacing: 1px;
+	background-color: #000;
+}
+
+#name a:link {
+	color: #FFF;
+}
+
+#name a:visited {
+	color: #FFF;
+}
+
+#name a:hover {
+	color: #F15A24;
+}
+
+.menu {
+	font-weight: bold;
+	font-size: 14px;
+	color:#FFF;
+	letter-spacing: 1px;
+	background-color: #000;
+	line-height: 1.8em;
+}
+
+.menu a:link {
+	color: #FFF;
+}
+
+
+.menu a:visited {
+	color: #FFF;
+}
+
+.submenu {
+	font-size: 12px;
+	list-style-type: none;
+	line-height: 1.4em;
+	color:#000;
+}
+
+.submenu a {
+	text-decoration:none;
+	color:#000;
+}
+
+.about {
+	font-size: 11px;
+	color:#333;
+}
+
+
+
+
+
+
+/*------MAIN------*/
+#main {
+	float: left;	
+	width: 600px;
+	margin-left: 40px;
+	margin-top: -10px;
+	margin-bottom: 50px;
+}
+
+.post {
+	margin-bottom: 60px;
+}
+
+.postTitle {
+	font-size: 24px;
+	font-weight: bold;
+	color:#333;
+	letter-spacing: 1px;
+}
+
+.postTitle a:link {
+	color: #333;
+}
+
+.postTitle a:visited {
+	color: #333;
+}
+
+.postTitle a:hover {
+	color: #F15A24;
+}
+
+.postMeta {
+	margin-top: -15px;
+	background-color: #000;
+	font-size: 14px;
+	font-weight: bold;
+	color:#FFF;
+	letter-spacing: 1px;
+	padding: -10px;
+	line-height: -14px;
+}
+
+.postCategory {
+	float: left;
+}
+.postDate {
+	float: right;
+}
+
+.postText {
+	margin-top: 15px;
+	font-size: 12px;
+	color:#333;
+	line-height: 1.5em;
+}
+
+/*----Like-----*/
+.likePost {
+	clear:both;
+	float: right;
+	font-size: 13px;
+	font-weight: bold;
+	color:#FFF;
+	padding: 15px 0px 0px 7px;
+	width: 40px;
+}
+
+.buttonLikePost {
+	border-radius: 7px 7px 0px 0px;
+	background-color: #000;
+	text-align: center; 
+}
+
+.numLikePost {
+	margin-top: 1px;
+	border-radius: 0px 0px 7px 7px;
+	background-color: #000;
+	text-align: center; 
+}
+
+.sideInteract {
+	clear:both;
+	float: right;
+	font-size: 13px;
+	font-weight: bold;
+	color:#FFF;
+	margin-bottom:4px;
+	text-align: center;
+}
+
+.sideInteractTitle {
+	float:left;
+	border-radius: 4px 0px 0px 4px;
+	background-color: #000;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.sideInteractValue {
+	float:right;
+	border-radius: 0px 4px 4px 0px;
+	background-color: #000;
+	padding-left: 4px;
+	padding-right: 4px;
+	margin-left:2px;
+}
+
+/*------Comments -----*/
+.commentBar {
+	clear:right;
+	font-size: 13px;
+	font-weight: bold;
+	color:#FFF;
+	letter-spacing: 1px;	
+}
+	
+.tabComment {
+	border-radius: 7px 7px 0px 0px;
+	background-color: #000;
+	float: left;
+	width: 85px;
+	padding: 0px 0px 0px 7px;
+}
+
+.comment {
+	width: 300px;
+	margin-bottom: 15px;
+	clear:right;
+	padding: 5px 0px 5px 50px;
+	font-size: 13px;
+	color:#333;
+}
+
+.commentDate {
+	width: 50px;
+	float: left;
+	font-weight: bold;
+}
+
+.commentBody {
+	float: right;
+	width: 240px;
+	padding: 0px 0px 0px 8px;
+	border-left-width: 2px;
+	border-left-style: solid;
+	border-left-color: #999;
+}
+
+.commentBody textarea {
+	float:left;
+	width:160px;
+	height:14px;
+}
+
+.commentBody input {
+	height:20px;
+}
+
+.commentName {
+	margin-top: 0px;
+	font-weight: bold;
+}
+
+.commentText {
+	font-size: 11px;
+}
+
+.commentText a:link {
+	color: #333;
+}
+
+.commentText a:visited {
+	color: #333;
+}
+
+.commentText a:hover {
+	color: #F15A24;
+}
+
+.lineStart {
+	margin-top: 15px;
+	width: 600px;
+	height: 4px;
+
+	background: #999; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#999999', endColorstr='#fff'); /* for IE */
+	
+	background: -webkit-gradient(linear, left top, left bottom, from(#999), to(#fff)); /* for webkit browsers */
+	
+	background: -moz-linear-gradient(top,  #999,  #fff); /* for firefox 3.6+ */ 
+}
+
+.lineEnd {
+float: right;
+	width: 600px;
+	height: 4px;
+	margin-bottom:20px;
+
+	background: #999; /* for non-css3 browsers */
+
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#999999'); /* for IE */
+	background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#999)); /* for webkit browsers */
+	background: -moz-linear-gradient(top,  #fff,  #999); /* for firefox 3.6+ */ 
+}
+
+
+/*----- Side Bar ----*/
+#sideBar {
+	float: left;
+	width:130px;
+	margin-left: 40px;
+	margin-bottom: 50px;
+	text-align: right;
+	
+}
+
+.sideBarTitle{
+	font-size: 16px;
+	font-weight: bold;
+	color:#FFF;
+	letter-spacing: 1px;
+	background-color: #000;
+}
+
+#adminOptions{
+	text-align: right;
+	clear:both;
+	loat:right;
+}
+
+#adminOptions input{
+	margin-left:42px;
+	
+}
+
+
+
+
+/*----- form ----*/
+/*
+.input-text{
+	border:1px solid #999;
+	color:#999;
+}
+.submit-button{
+	background: #000;
+	border:0;
+	color:#fff;
+}
+*/
+
+
+
+
+/*------FOOTER------*/
+#bottom {
+	clear:right;
+	width:100%;
+	height:50px;
+	background-image: url(images/bottom_bg.png);
+	background-repeat: repeat-x;
+	position: fixed;
+	bottom: 0px;
+	right: 0px;
+}
+
+
+
+
+
+
+
+/* forms General*/
+
+
+input, textarea {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size:12px;
+	background-color:#fff;
+	border:1px solid #ccc;
+	
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+}
+
+*:focus{
+	outline:none; /* Prevents blue border in Webkit */
+}
+
+input:focus, textarea:focus {
+	-webkit-box-shadow:0 0 25px #ccc;
+	-moz-box-shadow:0 0 25px #ccc;
+	box-shadow:0 0 25px #ccc;
+	
+	-webkit-transform: scale(1.05);
+	-moz-transform: scale(1.05);
+	transform: scale(1.05);
+}
+
+input:not(:focus), textarea:not(:focus) {
+	opacity:0.5;
+}
+
+
+/* forms #login*/
+
+#login p{
+	padding-top:10px;
+	clear:both;
+}
+
+#login input{
+	float:right;
+}
+
+
+
+/* forms #newPost*/
+
+#newPost input, #newPost textarea {
+	min-height:30px;
+	margin-bottom:16px;
+	margin-top:8px;
+	
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
+}
+
+#newPost input:not([type="checkbox"]), #newPost textarea {	
+	display:block;
+}
+
+#newPost input[name="title"], #newPost textarea {
+	width:600px;
+}
+
+#newPost input:not([type="checkbox"]) {
+	font-size:20px;
+}
+
+#newPost textarea {
+	min-height:200px;
+	font-size:12px;
+}
+
+#newPost input[type="checkbox"] {
+	font-size:18px;
+}
+
+#newPost input:required, #newPost textarea:required {
+	background:url("/images/asterisk.png") no-repeat 580px 7px;						
+}
+
+#newPost input:valid, #newPost textarea:valid {
+	background:none;			
+}		
+
+
+
+#newPost input[type=submit], #register input[type=submit] {
+	font-size:20px;
+	padding:10px;
+	background:none;
+	opacity:1.0;
+}
+
+
+/* forms #register*/
+
+#register input {
+	display:block;
+	min-height:30px;
+	margin-bottom:16px;
+	margin-top:8px;
+	
+	
+	font-size:20px;
+	
+	-webkit-transition: all 0.5s ease-in-out;
+	-moz-transition: all 0.5s ease-in-out;
+	transition: all 0.5s ease-in-out;
+}
+
+#register input:not([type="submit"]) {
+	width:400px;
+}
+
+#register input:required {
+	background:url("/images/asterisk.png") no-repeat 380px 7px;						
+}
+
+#register input:valid {
+	background:url("/images/tick.png") no-repeat 380px 5px;			
+}		
+
+#register input:focus:invalid {
+	background:url("/images/cancel.png") no-repeat 380px 7px;						
+}
+
+
+
+/////// edit
+
+#tablePostList {
+	width: 600px;
+}
+
+#tablePostList td {
+	padding: 5px;
+}
+
+.linePostList1 {
+	background-color: #ffffff;
+}
+
+.linePostList2 {
+	background-color: #eeeeee;
+}
+
+.headerList {
+	text-align: center;
+	font-size: 18px;
+	font-weight: bold;
+	color:#999;
+}
+
+.postDateList {
+	font-size: 14px;
+	width: 100px;
+}
+
+.postTitleList {
+	width: 400px;
+	font-size: 18px;
+	font-weight: bold;
+	color:#333;
+}
+
+.postCatList {
+	width: 100px;
+	font-size: 12px;
+	color:#333;
+}
+
+
+
+#tablePostList a {
+	color:#333;
+}
+
+#tablePostList a:hover {
+	color: #F15A24;
+}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+/* selectors */
+
+
+a:hover {
+	color: #F15A24;
+}
+
