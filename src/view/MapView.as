@@ -3,6 +3,7 @@ package view {
 	//imports
 	import com.greensock.TweenMax;
 	
+	import flash.events.Event;
 	import flash.events.TransformGestureEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -16,31 +17,164 @@ package view {
 	
 	import mvc.AbstractView;
 	import mvc.IController;
+	
 	import util.DeviceInfo;
 	
 	public class MapView extends AbstractView {
 		
 		//properties
-		private var activeArea:Rectangle;
-		private var shapeCollection:Array;
-		private var blockShape:BlockShape;
-		private var proportion:Object;
+		protected var activeArea		:Rectangle;
+		protected var shapeCollection	:Array;
+		protected var blockShape		:BlockShape;
+		protected var highlightedShapes	:Array;
+		protected var proportion		:Object;
 		
+		
+		
+		/**
+		 * Contructor. MapView extends AbstractView, which requires an IController as parameter. In this case, it will be the PipelineController.
+		 *  <p>It also initiate shapeCollection</>
+		 * @param c
+		 * 
+		 */
 		public function MapView(c:IController) {
 			super(c);
 			
 			shapeCollection = new Array();
 		}
 		
+		//****************** GETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * GetShapes. Return the shape collection 
+		 * 
+		 * @return:Array 
+		 * 
+		 */
+		public function getShapes():Array {
+			return shapeCollection.concat();;
+		}
+		
+		/**
+		 * Get Shape by ID. Returns the BlockShape that matches the parameter
+		 *  
+		 * @param value:int
+		 * @return:BlockShape
+		 * 
+		 */
+		public function getShapeById(value:int):BlockShape {
+			for each (var b:BlockShape in shapeCollection) {
+				if (b.id == value) {
+					return b;
+					break;
+				}
+			}
+			
+			return null;
+		}
+		
+		
+		//****************** SETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * SetProportion. Save the proportion between the map and the screen to a variable
+		 * 
+		 * @param value:Object
+		 * 
+		 */
+		public function setProportion(value:Object):void {
+			proportion = value;
+		}
+		
+		/**
+		 * SetActiveArea. Save the active area size to a variable.
+		 * 
+		 * @param value:Rectangle
+		 * 
+		 */
+		public function setActiveArea(value:Rectangle):void {
+			activeArea = value;
+		}
+		
+		//****************** INIT ****************** ****************** ****************** 
+		
+		/**
+		 * INIT. Initiate the MapView.
+		 * <p>Add a listernet to wait for the data when it become available</p> 
+		 * 
+		 */
 		public function init():void {
 			
 			var control:PipelineController = PipelineController(this.getController());
 			var dataModel:DataModel = DataModel(control.getModel("DataModel"));
 			dataModel.addEventListener(PipelineEvents.COMPLETE, onLoad);
+			dataModel.addEventListener(PipelineEvents.CHANGE, onChange);
 			control.loadShapeData();
 
 		}
 		
+		//****************** PRIVATE METHODS  ****************** ****************** ****************** 
+		
+		/**
+		 * Back to Origin. It animatte the shapes back to the original GPS location.
+		 * 
+		 */
+		private function backToOrigin():void {
+			
+			var random:Number = Math.random();
+			
+			for each (var object:BlockShape in shapeCollection) {
+				TweenMax.to(object,2,{x:object.location.x,y:object.location.y,delay:2 * random});
+			}
+			
+			TweenMax.to(this,2,{scaleX:1, scaleY:1,delay:2 * random});
+			
+		}
+		
+		private function addHighlightShapes(shapesToAdd:Array):void {
+			
+			if (!highlightedShapes) {
+				highlightedShapes = new Array();
+			}
+			
+			//check for duplicates
+			if (highlightedShapes.length > 0) {
+				for each (var s:CityShape in shapesToAdd) {
+					for each (var b:BlockShape in highlightedShapes) {
+						if (s.id == b.id) {
+							shapesToAdd.splice(shapesToAdd.indexOf(s),1)
+						}
+					}
+				}
+			}
+			
+			//add to the list
+			for each (var cs:CityShape in shapesToAdd) {
+				highlightedShapes.push(getShapeById(cs.id));
+			}
+			
+			highlightAnimation();
+			
+		}
+		
+		private function highlightAnimation():void {
+			
+			for each (var b:BlockShape in highlightedShapes) {
+				TweenMax.to(b,.5,{tint:0xF15A24});
+			}
+				
+		}
+		
+		//****************** EVENT HANDLES  ****************** ****************** ****************** 
+		
+		/**
+		 * onLoad. Treat the data.
+		 * <p>It call for calculate proportion method in the Controller<p/>
+		 * <p>Create and position the shapes</p>
+		 * <p>Add listener to ZOOM and PAN interaction</p>
+		 * @param e:PipelineEvents
+		 * 
+		 */
 		private function onLoad(e:PipelineEvents):void {
 			
 			if (e.parameters.type == "cityShapes") {
@@ -94,11 +228,29 @@ package view {
 			
 		}
 		
+		protected function onChange(event:PipelineEvents):void {
+			
+			if (event.parameters.type == "highlight") {
+				if (event.parameters.action == "add") {
+					addHighlightShapes(event.parameters.data);
+				}
+			}
+			
+			//trace (event.parameters.type);
+			//trace (event.parameters.action);
+			//trace (event.parameters.data);
+			
+		}
+		
+		/**
+		 * OnGesturePan. Move the map when the user make the two-fingers pan gesture.
+		 * <p>Set the inverse moviment for iPhone logic</p>
+		 * 
+		 * @param event:TransformGestureEvent
+		 * 
+		 */
 		protected function onGesturePan(event:TransformGestureEvent):void {
 			
-			trace (event.target)
-			trace (event.currentTarget)
-			trace ("-------")
 			if (DeviceInfo.os() != "Mac") {
 				this.x += event.offsetX;
 				this.y += event.offsetY;
@@ -109,20 +261,26 @@ package view {
 			
 		}
 		
+		/**
+		 *  onGestureZoom. Zoom the map when the user make the two-finger pinch gesture.
+		 * 
+		 * @param event:TransformGestureEvent
+		 * 
+		 */
 		protected function onGestureZoom(event:TransformGestureEvent):void {
 			this.scaleX *= event.scaleX
 			this.scaleY *= event.scaleY
 			
 		}
 		
-		public function setProportion(value:Object):void {
-			proportion = value;
-		}
+		//****************** PUBLIC METHODS  ****************** ****************** ****************** 
 		
-		public function setActiveArea(value:Rectangle):void {
-			activeArea = value;
-		}
-		
+		/**
+		 * Animation. Just a fun scale animation. Turno on and off.
+		 * 
+		 * @param swither:Boolean
+		 * 
+		 */
 		public function animation(swither:Boolean):void {
 			
 			var object:BlockShape;
@@ -138,6 +296,15 @@ package view {
 			
 		}
 		
+		
+		/**
+		 * Sort. This method sort the shapes. You can turn on and off and choose how the shapes will be sorted.
+		 * <p>Default: "size"</p>
+		 *  
+		 * @param swither:Boolean
+		 * @param by:String
+		 * 
+		 */
 		public function sort(swither:Boolean, by:String = "size"):void {
 			
 			TweenMax.killChildTweensOf(this);
@@ -178,27 +345,14 @@ package view {
 				
 			} else {
 			
-				_backToOrigin();
+				backToOrigin();
 			}
 		}
 		
 		
-		private function _backToOrigin():void {
-			
-			var random:Number = Math.random();
-			
-			for each (var object:BlockShape in shapeCollection) {
-				TweenMax.to(object,2,{x:object.location.x,y:object.location.y,delay:2 * random});
-			}
-			
-			TweenMax.to(this,2,{scaleX:1, scaleY:1,delay:2 * random});
-			
-		}
 		
 		
-		public function getShapes():Array {
-			return shapeCollection.concat();;
-		}
+		
 		
 	}
 }

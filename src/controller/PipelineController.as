@@ -38,6 +38,23 @@ package controller {
 			return shapeCollection;
 		}
 		
+		public function highlightShapes(object:Object):void {
+			
+			switch (object.action) {
+				case true:
+					dataModel.highlightShapes(object.param, object.type);
+					
+					break;
+				
+				case true:
+					//dataModel.removeShapesToHighlightByNeighbourhood();
+					break;
+			}
+			
+			
+			
+		}
+		
 		//*************** Neighbourhoods ***************
 		private function loadNeighbourhhods():void {
 			dataModel.loadNeigbourhoods();
@@ -94,6 +111,17 @@ package controller {
 			}
 			
 		}
+		
+		public function getNeighbourhoodIDByName(value:String):int {
+			return dataModel.getNeighbourhoodIDByName(value);
+		}
+		
+		public function getNeighbourhoodIDsByPeriod(pStart:int, pEnd:int):Array {
+			return dataModel.getNeighbourhoodIDsByPeriod(pStart,pEnd);
+		}
+		
+		
+		//****************************** MAP ***********************************************************
 		
 		public function getMapPropportions(activeArea:Rectangle):Object {
 			

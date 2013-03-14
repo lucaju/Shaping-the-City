@@ -22,7 +22,7 @@ package model {
 			//loop data
 			for each (var raw:Object in rawData) {
 				cityShape = new CityShape(raw.id, new Point(raw.longitude,-raw.latitude));   //!!!!!!IMPORTANT 1. Longitude = x; Latitude = y; 2. tranform latitute to negative (*don't knwo why yet)
-				cityShape.neighbourhood = raw.id_neighbourhhod;
+				cityShape.neighbourhood = raw.id_neighbourhood;
 				
 				//coordinates
 				var coordsPointsArray:Array = new Array();

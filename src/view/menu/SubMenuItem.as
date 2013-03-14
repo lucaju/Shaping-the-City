@@ -18,13 +18,17 @@ package view.menu {
 		protected var textColor:uint = 0xCCCCCC;
 		protected var selectedColor:uint = 0xF15A24;
 		
-		private var w:Number;
-		private var h:Number;
+		protected var w:Number;
+		protected var h:Number;
 		
-		private var marginH:Number = 20;
-		private var marginV:Number = 8;
+		protected var marginH:Number = 20;
+		protected var marginV:Number = 8;
 		
-		public function SubMenuItem(h_:Number = 20) {
+		protected var _type:String;
+		
+		public function SubMenuItem(type_:String, h_:Number = 20) {
+			
+			_type = type_;
 			
 			h = h_;
 			
@@ -92,6 +96,12 @@ package view.menu {
 			}
 			
 		}
+
+		public function get type():String
+		{
+			return _type;
+		}
+
 		
 	}
 }

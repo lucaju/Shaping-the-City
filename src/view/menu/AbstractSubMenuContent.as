@@ -34,19 +34,24 @@ package view.menu {
 		 */
 		protected function _itemClick(event:MouseEvent):void {
 			
-			var data:Object;
 			
 			item = event.currentTarget as SubMenuItem;
 			item.toggle = !item.toggle;
 			
-			if (item.toggle) {
-				data = {label:""};
-			} else {
-				data = {label:item.title};	
+			switch (item.type) {
+				case "neighbourhood":
+					
+					break;
+				
+				case "period":
+				
+					break;
 			}
 			
 			
-			//this.dispatchEvent(new PipelineEvents(PipelineEvents.SELECT, data));
+			var data:Object = {type:item.type, action:item.toggle, param:item.title};	
+			
+			this.dispatchEvent(new PipelineEvents(PipelineEvents.SELECT, data));
 			
 		}
 	}
