@@ -6,7 +6,6 @@ package controller {
 	
 	import model.CityShape;
 	import model.DataModel;
-	import model.Neighbourhood;
 	
 	import mvc.AbstractController;
 	import mvc.Observable;
@@ -42,12 +41,12 @@ package controller {
 			
 			switch (object.action) {
 				case true:
-					dataModel.highlightShapes(object.param, object.type);
+					dataModel.addHighlightShapes(object.param, object.type);
 					
 					break;
 				
-				case true:
-					//dataModel.removeShapesToHighlightByNeighbourhood();
+				case false:
+					dataModel.removeHighlightedShapes(object.param, object.type);
 					break;
 			}
 			

@@ -3,9 +3,7 @@ package view.menu {
 	//imports
 	import com.greensock.TweenMax;
 	
-	import flash.display.Shape;
 	import flash.display.Sprite;
-	import flash.events.Event;
 	
 	import controller.PipelineController;
 	
@@ -219,7 +217,7 @@ package view.menu {
 			switch(event.parameters.type) {
 				
 				case "neighbourhood":
-					data.param = pController.getNeighbourhoodIDByName(event.parameters.param);
+					data.param = [pController.getNeighbourhoodIDByName(event.parameters.param)]; //transformin into an array
 					break;
 				
 				case "period":

@@ -184,70 +184,180 @@ package model {
 			return periods;
 		}
 		
-		public function highlightShapes(data:*, type:String):void {
+		public function addHighlightShapes(data:Array, type:String):void {
 			
-			var nArray:Array = new Array();
-			var sArray:Array = new Array();
+			//Creating data to send
+			var eventData:Object = new Object();
+			eventData.type = "highlight";
+			eventData.action = "add";
+			eventData.reset = false;
 			
-			//if shape are not highlighted yet OR if the type doesn't match
+			var affectetedShapes:Array = new Array();
+			var affectetedNeighbourhoods:Array = data;
+			
+			//if shapes are not highlighted yet OR if the type doesn't match
 			//Remove previous higlighted shapes and initiate a new one.
 			if (!shapeHighlighted || shapeHighlighted.type != type) {
 				shapeHighlighted = null;
 				
 				shapeHighlighted = new Object();
 				shapeHighlighted.type = type;
-				shapeHighlighted.neighbourhoods = nArray;
-				shapeHighlighted.shapes = sArray;
+				shapeHighlighted.neighbourhoods = new Array();;
+				shapeHighlighted.shapes = new Array();
+				
+				eventData.reset = true;  /////<<<<<<<<<<<<<<<<<<<<< // Reset if the user change types
 			}
 			
+			//get data
+			var nArray:Array = shapeHighlighted.neighbourhoods;
+			var sArray:Array = sArray = shapeHighlighted.shapes;
 			
-			//test data: If it is just one nighbourhood or a collection o neighbouhoods
-			if (data is int) {
+			/*
+			trace ("Action: "+ eventData.action);
+			trace ("Type: " + eventData.type);
+			trace ("Reset: " + eventData.reset);
+			trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods);
+			trace ("Current Total Neighbourhoods Highlight: " + nArray.length);
+			trace ("Current Total Shapes Highlight: " + sArray.length);
+			*/
+			
+			//test if the neighbourhoods are already on the list
+			var ignoreNeighbourhoods:Array = new Array();
+		
+			for each (var nHighlighted:Neighbourhood in nArray) {
+				for each (var toHightlight:int in affectetedNeighbourhoods) {
+					if (nHighlighted.id == toHightlight) {
+						ignoreNeighbourhoods.push(affectetedNeighbourhoods.indexOf(toHightlight));
+					}
+				}
+			}
+			
+			//ignore neighbourhoods that are already on the list
+			for each (var ig:int in ignoreNeighbourhoods) {
+				affectetedNeighbourhoods.splice(ig,1)
+			}
+			
+			ignoreNeighbourhoods = null;
+			
+			
+			//Proceed if there are at leat one affected neighbourhood
+			if (affectetedNeighbourhoods.length > 0) {
 				
-				//test if the neighbourhoods is already on the list
-				var hasNeighbourhood:Boolean = false;
-				nArray = shapeHighlighted.neighbourhoods;
+				//For each new neighbourhood
+				for each (var nAffect:int in affectetedNeighbourhoods) {
+					
+					//save neighbourhood to the list
+					nArray.push(getNeighbourhoodByID(nAffect));
+					
+					//get new shapes to add
+					affectetedShapes = affectetedShapes.concat(getCityShapesByNeighbourhood(nAffect));
+				}
 				
-				for each (var hn:int in nArray) {	
-					if (hn == data) {
-						hasNeighbourhood = true;
-						break;
+				//add shapes to the list
+				sArray = sArray.concat(affectetedShapes);
+			
+				//saving
+				shapeHighlighted.neighbourhoods = nArray;
+				shapeHighlighted.shapes = sArray;
+				
+			}
+				
+			//send data event
+			eventData.shapes = affectetedShapes;
+			this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE, eventData));
+			
+			/*
+			trace ("Neighbourhoods Affected: " + affectetedNeighbourhoods.length)
+			trace ("Shapes Affected: " + affectetedShapes.length)
+			trace ("Update Total Neighbourhoods Highlight: " + nArray.length)
+			trace ("Update Total Shapes Highlight: " + sArray.length)
+			
+			trace ("-------")
+			*/
+		}
+		
+		public function removeHighlightedShapes(data:*, type:String):void {
+			
+			//if there are highlighted shapes AND the type does match
+			if (shapeHighlighted && shapeHighlighted.type == type) {
+				
+				//Creating data to send
+				var eventData:Object = new Object();
+				eventData.type = "highlight";
+				eventData.action = "remove";
+				eventData.reset = false;
+				
+				var affectetedShapes:Array = new Array();
+				var affectetedNeighbourhoods:Array = data;
+				
+				var nArray:Array = shapeHighlighted.neighbourhoods;
+				var sArray:Array = shapeHighlighted.shapes;
+				
+				/*
+				trace ("Action: "+ eventData.action);
+				trace ("Type: " + eventData.type);
+				trace ("Reset: " + eventData.reset);
+				trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods)
+				trace ("Current Total Neighbourhoods Highlight: " + nArray.length)
+				trace ("Current Total Shapes Highlight: " + sArray.length)
+				*/
+				
+				//test if the neighbourhoods are already on the list
+				var confirmAffected:Array = new Array();
+				
+				for each (var nHighlighted:Neighbourhood in nArray) {
+					for each (var toHightlight:int in affectetedNeighbourhoods) {
+						if (nHighlighted.id == toHightlight) {
+							confirmAffected.push(toHightlight);
+						}
 					}
 				}
 				
-				//If the neighbourhoods is not on the list yet, add shapes
-				if (!hasNeighbourhood) {
-					nArray.push(getNeighbourhoodByID(data));
+				//
+				affectetedNeighbourhoods = confirmAffected;
+				confirmAffected = null;
+				
+				//trace (">>>: " + affectetedNeighbourhoods.length)
+				//Proceed if there are at leat one affected neighbourhood
+				if (affectetedNeighbourhoods.length > 0) {
 					
-					sArray = shapeHighlighted.shapes;
+					//For each affected neighbourhood
+					for each (var nAffect:int in affectetedNeighbourhoods) {
+						
+						//remove neighbourhood from the list
+						var n:Neighbourhood = getNeighbourhoodByID(nAffect);
+						nArray.splice(nArray.indexOf(n),1)
+						
+						//add shapes to remove
+						affectetedShapes = affectetedShapes.concat(getCityShapesByNeighbourhood(nAffect));
+						
+						
+					}
 					
-					//get new shapes to add
-					var newShapesArray:Array = getCityShapesByNeighbourhood(data);
+					//remove shapes from the list
+					for each (var sc:CityShape in affectetedShapes) {
+						sArray.splice(sArray.indexOf(sc),1)
+					}
 					
-					//add shapes to the list
-					sArray = sArray.concat(newShapesArray);
-					
-					
+								//saving
+					shapeHighlighted.neighbourhoods = nArray;
+					shapeHighlighted.shapes = sArray;
 				}
+					
 				
+				//sending the event
+				eventData.shapes = affectetedShapes;
+				this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE, eventData));
 				
+				/*
+				trace ("Neighbourhoods Affected: " + affectetedNeighbourhoods.length)
+				trace ("Shapes Affected: " + affectetedShapes.length)
+				trace ("Update Total Neighbourhoods Highlight: " + nArray.length)
+				trace ("Update Total Shapes Highlight: " + sArray.length)
 				
-			} else if (data is Array) {
-				
+				trace ("-------")
+				*/
 			}
-			
-			
-			
-			shapeHighlighted.neighbourhoods = nArray;
-			shapeHighlighted.shapes = sArray;
-			
-			
-			var eventData:Object = new Object();
-			eventData.type = "highlight";
-			eventData.action = "add";
-			eventData.data = shapeHighlighted.shapes;
-			
-			this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE, eventData));
 			
 		}
 	}

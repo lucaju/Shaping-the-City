@@ -3,7 +3,6 @@ package view {
 	//imports
 	import com.greensock.TweenMax;
 	
-	import flash.events.Event;
 	import flash.events.TransformGestureEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -20,14 +19,23 @@ package view {
 	
 	import util.DeviceInfo;
 	
+	/**
+	 * MapViw
+	 * <p>This class is the active sprite where all the shapes are organized.</p>
+	 *  
+	 * @author lucaju
+	 * 
+	 */
 	public class MapView extends AbstractView {
 		
 		//properties
-		protected var activeArea		:Rectangle;
-		protected var shapeCollection	:Array;
-		protected var blockShape		:BlockShape;
-		protected var highlightedShapes	:Array;
-		protected var proportion		:Object;
+		protected var activeArea		:Rectangle;					//Keep the active map view windows dimensions. 
+		protected var proportion		:Object;					//Keep the propoportions between the map and the screen.
+		
+		protected var blockShape		:BlockShape;				//Generic blockShape.
+		
+		protected var shapeCollection	:Array;						//Collection of all shapes on the map.
+		protected var highlightedShapes	:Array;						//Collection of all highlighted shapes on the map.
 		
 		
 		
@@ -131,7 +139,25 @@ package view {
 			
 		}
 		
-		private function addHighlightShapes(shapesToAdd:Array):void {
+		/**
+		 * Add Highlight Shapes.
+		 * <p>Adds broadcast shapes from the model to the highlight list and initiate their state</p>
+		 * <p>It checks for duplicates before add to the list</p>
+		 * <p>The parameter reset calls for a method to remove all shapes from the highlight list.</p>
+		 * <p>The reset is false by default, but if the user change submenu types, it will reset the highlight list.</p>
+		 * <p>It also calls a dim method to make other non-highlight shapes to dim the lights down</p> 
+		 * 
+		 * @param shapesToAdd:Array
+		 * @param reset:Boolean = false
+		 * 
+		 */
+		private function addHighlightShapes(shapesToAdd:Array, reset:Boolean = false):void {
+			
+			
+			
+			if (reset) {
+				resetHighlight();
+			}
 			
 			if (!highlightedShapes) {
 				highlightedShapes = new Array();
@@ -150,20 +176,87 @@ package view {
 			
 			//add to the list
 			for each (var cs:CityShape in shapesToAdd) {
-				highlightedShapes.push(getShapeById(cs.id));
+				var block:BlockShape = getShapeById(cs.id);
+				block.isHighlighted = true;
+				block.dim(false);
+				highlightedShapes.push(block);
 			}
 			
-			highlightAnimation();
+			dimBlocks();
 			
 		}
 		
-		private function highlightAnimation():void {
+		/**
+		 * Remove Highlight Shapes.
+		 * <p>Removes broadcast shapes from the model to the highlight list and turn them to the normal state</p>
+		 * <p>It also calls a dim method to make this shapes lighter</p> 
+		 * <p>If their no highlight shapes after the removal, it calls the method Dim to turn on the lights again</p>
+		 *  
+		 * @param shapesToRemove:Array
+		 * 
+		 */
+		private function removeHighlightShapes(shapesToRemove:Array):void {
 			
-			for each (var b:BlockShape in highlightedShapes) {
-				TweenMax.to(b,.5,{tint:0xF15A24});
-			}
+			if (highlightedShapes) {
 				
+				var toDim:Array = new Array();
+				
+				//remove
+				if (highlightedShapes.length > 0) {
+					for each (var s:CityShape in shapesToRemove) {
+						for each (var b:BlockShape in highlightedShapes) {
+							if (s.id == b.id) {
+								b.isHighlighted = false;
+								toDim.push(b);
+								
+								highlightedShapes.splice(highlightedShapes.indexOf(b),1)
+							}
+						}
+					}
+				}
+			
+			
+			
+				if (highlightedShapes.length == 0) {
+					dimBlocks(false);
+				} else {
+					for each(b in toDim) {
+						b.dim(true);
+					}
+				}
+			}
+			
+			
 		}
+		
+		/**
+		 * Dim BLocks. Simply dim the light of the block that are not in highlight mode.
+		 * <p>Default value: True 
+		 * 
+		 * @param value: Boolean
+		 * 
+		 */
+		private function dimBlocks(value:Boolean = true):void {
+			
+			for each (var block:BlockShape in shapeCollection) {
+				if (!block.isHighlighted) {
+					block.dim(value);
+				}
+			}
+		}
+		
+		/**
+		 * Reset Highlight.
+		 * <p>It simply reset the highlight list and turn them back to the original state.</p> 
+		 * 
+		 */
+		private function resetHighlight():void {
+			for each (var bs:BlockShape in highlightedShapes) {
+				bs.isHighlighted = false;
+			}
+			highlightedShapes = null;
+		}
+		
 		
 		//****************** EVENT HANDLES  ****************** ****************** ****************** 
 		
@@ -172,10 +265,13 @@ package view {
 		 * <p>It call for calculate proportion method in the Controller<p/>
 		 * <p>Create and position the shapes</p>
 		 * <p>Add listener to ZOOM and PAN interaction</p>
+		 * 
 		 * @param e:PipelineEvents
 		 * 
 		 */
 		private function onLoad(e:PipelineEvents):void {
+			
+			e.target.removeEventListener(PipelineEvents.COMPLETE, onLoad);
 			
 			if (e.parameters.type == "cityShapes") {
 				
@@ -199,7 +295,6 @@ package view {
 						blockShape = new BlockShape(cityShape.id, scale);
 						this.addChild(blockShape);
 						
-						blockShape.trueLocation = cityShape.location;
 						blockShape.x = (cityShape.location.x - origin.x) * scale;
 						blockShape.y = (cityShape.location.y - origin.y) * scale;
 						
@@ -207,8 +302,9 @@ package view {
 						
 						shapeCollection.push(blockShape);
 						
-						blockShape.drawShape(cityShape.coordinates);
+						blockShape.init(cityShape.coordinates);
 						
+						/*
 						//blockShape.cacheAsBitmapMatrix = blockShape.transform.concatenatedMatrix; 
 						//blockShape.cacheAsBitmap = true;
 						
@@ -216,7 +312,7 @@ package view {
 						//TweenMax.from(blockShape,Math.random()*20,{alpha:0, delay:0.1*i*Math.random()});
 						//TweenMax.from(blockShape,1,{z:1000, rotation: 90, alpha:0,delay:0.01*i});
 						//TweenMax.from(blockShape,10 + (Math.random() * 10),{scaleX: 1 + Math.random(),scaleY: 1 + Math.random(), alpha: .1 + (Math.random() / 2), yoyo:true, repeat:-1});
-						
+						*/
 					}
 					
 					
@@ -228,12 +324,29 @@ package view {
 			
 		}
 		
+		/**
+		 * CHANGE. Manage the changes broadcast by the model.
+		 * <p>Type: Highlight</p>
+		 * <p>Adds or removes shapes from highlight state.</p>
+		 *  
+		 * @param event:PipelineEvents
+		 * 
+		 */
 		protected function onChange(event:PipelineEvents):void {
 			
-			if (event.parameters.type == "highlight") {
-				if (event.parameters.action == "add") {
-					addHighlightShapes(event.parameters.data);
-				}
+			switch (event.parameters.type) {
+				
+				case "highlight":
+						
+					var reset:Boolean = event.parameters.reset;
+					
+					if (event.parameters.action == "add") {
+						addHighlightShapes(event.parameters.shapes, reset);
+					} else if (event.parameters.action == "remove") {
+						removeHighlightShapes(event.parameters.shapes);
+					}
+					
+					break;
 			}
 			
 			//trace (event.parameters.type);
@@ -320,7 +433,7 @@ package view {
 				}
 				
 				var random:Number = Math.random();
-				TweenMax.to(this,2,{scaleX:.7, scaleY:.7,delay:2 * random});
+				//TweenMax.to(this,2,{scaleX:.7, scaleY:.7,delay:2 * random});
 				
 				for each (var object:BlockShape in shapeCollection) {
 					
@@ -335,7 +448,7 @@ package view {
 					}
 					
 					//if (posX > stage.width) {
-					if (posX >1440) {
+					if (posX >stage.stageWidth) {
 						posY += alt + 1;
 						posX = 0;
 						alt = 0;
@@ -348,10 +461,6 @@ package view {
 				backToOrigin();
 			}
 		}
-		
-		
-		
-		
 		
 		
 	}

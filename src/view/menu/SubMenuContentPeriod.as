@@ -31,7 +31,8 @@ package view.menu {
 				
 				label = date + " - " + (date + dateGap -1);
 				
-				item = new SubMenuItem("period", hMax);
+				item = SubMenuItemFactory.addSubMenuItem("period", hMax);
+				
 				this.addChild(item);
 				item.init(label);
 				item.x = posX;

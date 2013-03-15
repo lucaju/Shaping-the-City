@@ -21,8 +21,8 @@ package view.menu {
 		protected var w:Number;
 		protected var h:Number;
 		
-		protected var marginH:Number = 20;
-		protected var marginV:Number = 8;
+		protected var _marginH:Number = 20;
+		protected var _marginV:Number = 8;
 		
 		protected var _type:String;
 		
@@ -49,6 +49,26 @@ package view.menu {
 			
 		}
 		
+		public function get marginV():Number
+		{
+			return _marginV;
+		}
+
+		public function set marginV(value:Number):void
+		{
+			_marginV = value;
+		}
+
+		public function get marginH():Number
+		{
+			return _marginH;
+		}
+
+		public function set marginH(value:Number):void
+		{
+			_marginH = value;
+		}
+
 		public function init(title:String):void {
 			
 			//add BG

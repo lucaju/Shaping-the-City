@@ -1,8 +1,6 @@
 package view {
 	
 	//imports
-	import com.greensock.TweenMax;
-	
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
@@ -10,8 +8,6 @@ package view {
 	
 	import mvc.AbstractView;
 	import mvc.IController;
-	
-	import view.assets.Button;
 	
 	public class MainView extends AbstractView {
 		
@@ -87,18 +83,6 @@ package view {
 			
 		}
 		
-		
-		private function _animationSwitch(e:MouseEvent):void {
-			animationOn = !animationOn;
-			mapView.animation(animationOn);
-		}
-		
-		
-		private function _bySize(e:MouseEvent):void {
-			alignBySize = !alignBySize;
-			mapView.sort(alignBySize);
-		}
-		
 		private function _loadTrees(e:MouseEvent):void {
 			/*
 			var proportion:Object = PipelineController(this.getController()).getMapPropportions();
@@ -114,6 +98,7 @@ package view {
 		}
 		
 		private function _treeCollision(e:MouseEvent):void {
+			/*
 			var shapes:Array = mapView.getShapes();
 			var trees:Array = treesView.getShapes();
 			
@@ -170,11 +155,11 @@ package view {
 			colissionTintBT.addEventListener(MouseEvent.CLICK, tintShape);
 			colissionTintBT.border = true;
 			this.addChild(colissionTintBT);
-			
+			*/
 		}
 		
 		private function tintShape(e:MouseEvent):void {
-			
+			/*
 			var shapes:Array = mapView.getShapes();
 				
 			if (tint == false) {
@@ -198,6 +183,7 @@ package view {
 					TweenMax.to(block,2,{tint:0x000000,alpha:.2});
 				}
 			}
+			*/
 		}
 	}
 }

@@ -1,56 +1,197 @@
 package view {
 	
 	//imports
+	import com.greensock.TweenMax;
+	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	
-	public class BlockShape extends Sprite{
+	/**
+	 * Block Shape.
+	 * <p>This class repreents a city shape model on the screen</p>
+	 *  
+	 * @author lucaju
+	 * 
+	 */
+	public class BlockShape extends Sprite {
 		
 		//properties
-		public var trueLocation:Point;
+		protected var _id				:int;							//Block ID. Heps to keep track of the changes in the model.
+		protected var _neighbourhood	:int;							//Neighbouthood ID. Helps to find and group this shape.
 		
+		protected var _location			:Point;							//Save the relative geolocation on the screen 
 		
-		private var _id:int;
-		private var _location:Point;
-		private var _vector:Vector.<Number>;
-		private var _group:String;
-		private var _period:int;
+		protected var _vector			:Vector.<Number>;				//Keeps the vector that defines the geometric shape.
+		protected var _surface			:Number;								//Keeps the shape surface area
+		protected var scale				:Number 			= 1;		//Keeps the origianl shape scale. Default: 1.
 		
-		private var _numTrees:int = 0;
+		protected var _isHighlighted		:Boolean 			= false;	//higlighted Toggle. Deault = false/
 		
-		private var scale:Number;
+		//protected var _numTrees		:int 				= 0;		//Save the number of trees in this block
+
 		
-		public var surface:Number;
-		
+		/**
+		 * Contructor.
+		 * <p>Requeired:</p>
+		 * <p>Block ID - It has to match the CtyShape ID model</p>
+		 * <p>Optional:</p>
+		 * <p>Scale - Is set according to the proportion between the map and the screen. The default value is 1.</p> 
+		 * 
+		 * @param id_:int
+		 * @param _scale:Number = 1
+		 * 
+		 */
 		public function BlockShape(id_:int, _scale:Number = 1) {
 			_id = id_;
 			scale = _scale;
-			
-			//this.addEventListener(MouseEvent.MOUSE_OVER, _over);
-			//this.addEventListener(MouseEvent.MOUSE_OUT, _out);
-			//this.addEventListener(MouseEvent.MOUSE_DOWN, _mouseDown);
-			//this.addEventListener(MouseEvent.MOUSE_UP, _mouseUp);
 		}
 		
 		
-		protected function _over(event:Event):void {
-			this.alpha = 1;
-		}	
-		protected function _out(event:MouseEvent):void {
-			this.alpha = .4;
+		//****************** GETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * ID. Returns Block ID.
+		 *  
+		 * @return:int
+		 * 
+		 */
+		public function get id():int {
+			return _id;
 		}
 		
-		protected function _mouseDown(event:MouseEvent):void {
-			this.startDrag();
+		/**
+		 * Neighbourhood. Returns Block's neighbourhood. 
+		 * 
+		 * @return:int
+		 * 
+		 */
+		public function get neighbourhood():int {
+			return _neighbourhood;
+		}
+
+		/**
+		 * Location. Returns block's relative geolocation on the screen 
+		 *  
+		 * @return 
+		 * 
+		 */
+		public function get location():Point {
+			return _location;
 		}
 		
-		protected function _mouseUp(event:MouseEvent):void {
-			this.stopDrag();
+		/**
+		 * Vector. Returns the vector that defines the geometric shape.
+		 *  
+		 * @param value
+		 * 
+		 */
+		public function get vector():Vector.<Number> {
+			return _vector;
 		}
 		
-		public function drawShape(coords:Array):void {
+		/**
+		 * Surface. Returns shape's surface area.
+		 * 
+		 * @return:Number
+		 * 
+		 */
+		public function get surface():Number {
+			return _surface;
+		}
+		
+		/**
+		 * Highlight. Returns block's current highlight condition.
+		 * 
+		 * @return:boolean
+		 * 
+		 */
+		public function get isHighlighted():Boolean {
+			return _isHighlighted;
+		}
+		
+		/*
+		public function get numTrees():int {
+			return _numTrees;
+		}
+		*/
+		
+		
+		//****************** SETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * Neighbourhood. Set block's neighbourhood.
+		 *  
+		 * @param value
+		 * 
+		 */
+		public function set neighbourhood(value:int):void {
+			_neighbourhood = value;
+		}
+		
+		/**
+		 * Location. Set block's relative position in the screen.
+		 *  
+		 * @param value
+		 * 
+		 */
+		public function set location(value:Point):void {
+			_location = value;
+		}
+		
+		/**
+		 * Vector. Save the vector that defines the geometric shape.
+		 *  
+		 * @param value
+		 * 
+		 */
+		public function set vector(value:Vector.<Number>):void {
+			_vector = value;
+		}
+		
+		/**
+		 * Surface. Save shape's surface area.
+		 *  
+		 * @param value
+		 * 
+		 */
+		public function set surface(value:Number):void {
+			_surface = value;
+		}
+		
+		/**
+		 * Highlight. Set block's current highlight condition.
+		 * <p>Automatically calls for highlight method to cahnge its appearance</p> 
+		 * 
+		 * @param value:Boolean
+		 * 
+		 */
+		public function set isHighlighted(value:Boolean):void {
+			_isHighlighted = value;
+			highlight();
+		}
+		
+		/*
+		public function set numTrees(value:int):void {
+			_numTrees = value;
+		}
+		*/
+		
+		
+		//****************** INIT ****************** ****************** ****************** 
+		
+		/**
+		 * INIT. Initiate the Block Shape.
+		 * <p>Required:<>
+		 * <p>Cordenates: An Array of points (x,y) of each shape's vertice.
+		 * <p>A nre vector will be build to draw the geometric shape.</p>
+		 * <p>Surface methd will be automatically called to calculate the its area.</p>
+		 *  
+		 * @param coords:Array
+		 * 
+		 */
+		public function init(coords:Array):void {
 			var origin:Point = new Point(coords[0].x, coords[0].y);
 			
 			var shape:Array = new Array();
@@ -91,47 +232,26 @@ package view {
 			this.graphics.endFill();
 			this.alpha = .4;	
 			
-			surface = getSurface();
+			//surface
+			surface = calculateSurface();
+			
+			//this.addEventListener(MouseEvent.MOUSE_OVER, _over);
+			//this.addEventListener(MouseEvent.MOUSE_OUT, _out);
+			//this.addEventListener(MouseEvent.MOUSE_DOWN, _mouseDown);
+			//this.addEventListener(MouseEvent.MOUSE_UP, _mouseUp);
 			
 		}
 		
-		public function get id():int {
-			return _id;
-		}
 		
-		public function get location():Point {
-			return _location;
-		}
+		//****************** PROTECTED METHODS ****************** ****************** ******************
 		
-		public function set location(value:Point):void {
-			_location = value;
-		}
-		
-		public function get vector():Vector.<Number> {
-			return _vector;
-		}
-		
-		public function set vector(value:Vector.<Number>):void {
-			_vector = value;
-		}
-		
-		public function get period():int {
-			return _period;
-		}
-		
-		public function set period(value:int):void {
-			_period = value;
-		}
-		
-		public function get group():String {
-			return _group;
-		}
-		
-		public function set group(value:String):void {
-			_group = value;
-		}
-		
-		public function getSurface():Number {
+		/**
+		 * Calculate Surface. Performs area calculation in the geometric form of the shape.
+		 *  
+		 * @return: Number
+		 * 
+		 */
+		protected function calculateSurface():Number {
 			
 			//calculate are of a non convex irregular poligon
 			//A = (1/2)[Det(x1,x2,y1,y2)+Det(x2,x3,y2,y3)+ ... +Det(xn,x1,yn,y1)],
@@ -161,13 +281,68 @@ package view {
 			
 			return surf;
 		}
-
-		public function get numTrees():int {
-			return _numTrees;
+		
+		protected function highlight():void {
+			
+			if (isHighlighted) {
+				TweenMax.to(this,.5,{tint:0xF15A24, delay: .2 + Math.random()});
+			} else {
+				TweenMax.to(this,.2,{removeTint:true, delay:Math.random() * .2});
+			}
+			
+			
+			
 		}
-
-		public function set numTrees(value:int):void {
-			_numTrees = value;
+		
+		public function dim(value:Boolean):void {
+			
+			if (value) {
+				TweenMax.to(this,.5,{alpha:.1, delay:Math.random()});
+			} else {
+				TweenMax.to(this,.5,{alpha:.4, delay:Math.random()});
+			}
+		}
+		
+		
+		//****************** EVENTS ****************** ****************** ******************
+		
+		/**
+		 * Mouse Over. Set the action for mouse over.
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function _over(event:Event):void {
+			this.alpha = 1;
+		}	
+		/**
+		 * Mouse Out. Set the action for mouse out.
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function _out(event:MouseEvent):void {
+			this.alpha = .4;
+		}
+		
+		/**
+		 * Mouse Down. Set the action for mouse down.
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function _mouseDown(event:MouseEvent):void {
+			this.startDrag();
+		}
+		
+		/**
+		 * Mouse Up. Set the action for mouse up.
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function _mouseUp(event:MouseEvent):void {
+			this.stopDrag();
 		}
 
 		

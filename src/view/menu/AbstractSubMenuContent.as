@@ -38,16 +38,6 @@ package view.menu {
 			item = event.currentTarget as SubMenuItem;
 			item.toggle = !item.toggle;
 			
-			switch (item.type) {
-				case "neighbourhood":
-					
-					break;
-				
-				case "period":
-				
-					break;
-			}
-			
 			
 			var data:Object = {type:item.type, action:item.toggle, param:item.title};	
 			

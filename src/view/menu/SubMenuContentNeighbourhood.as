@@ -68,7 +68,8 @@ package view.menu {
 			
 			for (var i:int = 0; i < data.length; i++) {
 				
-				item = new SubMenuItem("neighbourhood");
+				item = SubMenuItemFactory.addSubMenuItem("neighbourhood");
+				
 				item.init(data[i]);
 				
 				if (i % split == 0 && i != 0) {
