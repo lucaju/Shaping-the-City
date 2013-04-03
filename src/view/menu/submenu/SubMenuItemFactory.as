@@ -1,4 +1,4 @@
-package view.menu {
+package view.menu.submenu {
 	
 	import flash.display.Sprite;
 	
@@ -10,9 +10,16 @@ package view.menu {
 		
 		}
 			
-		static public function addSubMenuItem(type:String, hMax:Number = 20):SubMenuItem {	
+		/**
+		 * addSubMenuItem. Static function to add submenus items. It creates the appropriate submenu item according to the OS.  
+		 * @param type:String
+		 * @param hMax:Maximum Height
+		 * @return: SubMenuItem
+		 * 
+		 */
+		static public function addSubMenuItem(type:String, wMax:Number = 100):SubMenuItem {	
 			
-			var item:SubMenuItem = new SubMenuItem(type,hMax);
+			var item:SubMenuItem = new SubMenuItem(type,wMax);
 			
 			if (DeviceInfo.os() == "iPhone") {
 				item.titleSize = 32;

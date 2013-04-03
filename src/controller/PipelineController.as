@@ -19,6 +19,13 @@ package controller {
 		
 		private var mapProportion:Object;
 		
+		
+		
+		/**
+		 * 
+		 * @param list
+		 * 
+		 */
 		public function PipelineController(list:Array) {
 			
 			super(list);
@@ -28,37 +35,86 @@ package controller {
 			
 		}
 		
+		/**
+		 * 
+		 * 
+		 */
 		public function loadShapeData():void {
 			dataModel.loadShapesData();
 		}
 		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function getShapeCollection():Array {
 			var shapeCollection:Array = dataModel.getShapeCollection();
 			return shapeCollection;
 		}
 		
-		public function highlightShapes(object:Object):void {
+		/**
+		 * 
+		 * @param receivedData
+		 * 
+		 */
+		public function highlightShapes(receivedData:Object):void {
 			
-			switch (object.action) {
-				case true:
-					dataModel.addHighlightShapes(object.param, object.type);
-					
+			var affectedNeighbourhoods:Array;
+			var source:String = receivedData.param;
+			
+			//get neighbourhood IDs
+			switch(receivedData.type) {
+				
+				case "community":
+					affectedNeighbourhoods = [this.getNeighbourhoodIDByName(receivedData.param)]; //transforming into an array
 					break;
 				
-				case false:
-					dataModel.removeHighlightedShapes(object.param, object.type);
+				case "period":
+					var st:String = receivedData.param;
+					var ar:Array = st.split(" - ");
+					
+					var pStart:int = ar[0];
+					var pEnd:int = ar[1];
+					
+					affectedNeighbourhoods = this.getNeighbourhoodIDsByPeriod(pStart,pEnd);
+					
+					st = null;
+					ar = null;
+					
 					break;
 			}
 			
 			
-			
+			//add or remove highlight
+			switch (receivedData.action) {
+				case true:
+					dataModel.addHighlightShapes(affectedNeighbourhoods, receivedData.type, source);
+					break;
+				
+				case false:
+					dataModel.removeHighlightedShapes(affectedNeighbourhoods, receivedData.type, source);
+					break;
+			}
+	
 		}
 		
 		//*************** Neighbourhoods ***************
+		
+		/**
+		 * 
+		 * 
+		 */
 		private function loadNeighbourhhods():void {
 			dataModel.loadNeigbourhoods();
 		}
 		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
 		public function getNeighbourhoodInfo(value:String = null):Array {
 			if (dataModel.hasNeighbourhoodData) {
 				
@@ -79,10 +135,7 @@ package controller {
 						break;
 				}
 				
-				
-				
 				return data;
-				
 				
 			} else {
 				
@@ -92,6 +145,11 @@ package controller {
 			}
 		}
 		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function getNeighbourhoodNames():Array {
 			if (dataModel.hasNeighbourhoodData) {
 				return dataModel.getNeighbourhoodNames();
@@ -101,6 +159,65 @@ package controller {
 			}
 		}
 		
+		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
+		public function getNeighbourhoodIDByName(value:String):int {
+			return dataModel.getNeighbourhoodIDByName(value);
+		}
+		
+		/**
+		 * 
+		 * @param pStart
+		 * @param pEnd
+		 * @return 
+		 * 
+		 */
+		public function getNeighbourhoodIDsByPeriod(pStart:int, pEnd:int):Array {
+			return dataModel.getNeighbourhoodIDsByPeriod(pStart,pEnd);
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getSelectedContent(type:String):Array {
+			
+			switch(type.toLowerCase()) {
+				
+				case "community":
+					return dataModel.getHighlightedNeighbourhoodsNames();
+					break;
+				
+				case "period":
+					return dataModel.getHighlightedPeriods();
+					break;
+			}
+			
+			return null;
+			
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getHighlightedNeighbourhoods():Array {
+			return dataModel.getHighlightedNeighbourhoods();
+			
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function getPeriods():Array {
 			if (dataModel.hasNeighbourhoodData) {
 				return dataModel.getPeriod();
@@ -111,17 +228,15 @@ package controller {
 			
 		}
 		
-		public function getNeighbourhoodIDByName(value:String):int {
-			return dataModel.getNeighbourhoodIDByName(value);
-		}
-		
-		public function getNeighbourhoodIDsByPeriod(pStart:int, pEnd:int):Array {
-			return dataModel.getNeighbourhoodIDsByPeriod(pStart,pEnd);
-		}
-		
 		
 		//****************************** MAP ***********************************************************
 		
+		/**
+		 * 
+		 * @param activeArea
+		 * @return 
+		 * 
+		 */
 		public function getMapPropportions(activeArea:Rectangle):Object {
 			
 			if (mapProportion) {

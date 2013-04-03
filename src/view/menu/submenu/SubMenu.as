@@ -1,9 +1,10 @@
-package view.menu {
+package view.menu.submenu {
 	
 	//imports
 	import com.greensock.TweenMax;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	
 	import controller.PipelineController;
 	
@@ -14,45 +15,61 @@ package view.menu {
 	import mvc.AbstractView;
 	import mvc.IController;
 	
-	import util.DeviceInfo;
-	
 	import view.assets.ShadowLine;
 	
 	public class SubMenu extends AbstractView {
 		
-		//****************** properties ****************** ******************  ****************** 
-		protected var h					:Number;
-		protected var _contentType		:String;
-		protected var data				:Array;
-		protected var bg				:Sprite;
-		protected var shadowLine		:ShadowLine;
-		protected var contentContainer	:AbstractSubMenuContent;
+		//****************** Properties ****************** ******************  ****************** 
+		protected const HORIZONAL:String = "horizontal";
+		protected const VERTICAL:String = "vertical";
+		
+		protected var _orientation		:String = this.VERTICAL;		//Menu Orientation
+		protected var _rangeSize		:Number = 0;						//Maximum rangeSize. Height for Horizontal and Width for vertical
+		protected var _contentType		:String;						//Content Type
+		protected var data				:Array;							//Content Data
+		
+		protected var bg				:Sprite;						//Background
+		protected var shadowLine		:ShadowLine;					//Shadow Line
+		protected var contentContainer	:SubMenuContent;				//Content Container
 		
 		
 		/**
 		 * Constructor. 
 		 * <p>Submenu extends AbstractView. It requeires a controller and contentType</p>
-		 * <p>The controller is the default controller for the app, in this case PipelineController.</p>
+		 * <p>The controller is the default app controller, in this case PipelineController.</p>
 		 * <p>The Content Type define which content the subMenu will laod. It can be change on runtime.</p>
 		 * 
 		 * @param c:Icontroller
 		 * @param type_:String
 		 * 
 		 */
-		public function SubMenu(c:IController, type_:String) {
+		public function SubMenu(c:IController, type_:String, orient:String = this.VERTICAL) {
 			
 			super(c);
-			
-			if (DeviceInfo.os() == "iPhone") {
-				h = 80;
-			} else {
-				h = 40;
-			}
-			
+			_orientation = orient;
 			contentType = type_;
 		}
 		
 		//****************** GETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * orienteation. Return SubMenu Orientation.
+		 * Valid values: "vertical" or "horizontal"
+		 * @return value:String
+		 * 
+		 */
+		public function get orientation():String{
+			return _orientation;
+		}
+		
+		/**
+		 * rangeSize. Return Height for Horizontal and Width for vertical
+		 * @return 
+		 * 
+		 */
+		public function get rangeSize():Number {
+			return _rangeSize;
+		}
 		
 		/**
 		 * ContentType: Returns the current content type hold by the submenu.
@@ -65,6 +82,26 @@ package view.menu {
 		}
 		
 		//****************** SETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * orienteation. Set SubMenu Orientation.
+		 * Valid values: "vertical" or "horizontal"
+		 * @param value:String
+		 * 
+		 */
+		public function set orientation(value:String):void {
+			_orientation = value;
+		}
+		
+		/**
+		 * rangeSize. Set Height for Horizontal and Width for vertical
+		 * @param value
+		 * 
+		 */
+		public function set rangeSize(value:Number):void {
+			_rangeSize = value;
+		}
+		
 		/**
 		 * ContentType: Set the content type hold by the submenu.
 		 * 
@@ -82,22 +119,43 @@ package view.menu {
 		 * 
 		 */
 		public function init():void {
-			//1.background
+			
 			bg = new Sprite();
 			bg.graphics.beginFill(0x333333);
-			bg.graphics.drawRect(0,0,stage.stageWidth,h);
-			bg.graphics.endFill();
+			
+			
+			//orientation
+			switch (orientation) {
+				
+				case this.HORIZONAL:
+					
+					bg.graphics.drawRect(0,0,stage.stageWidth,rangeSize);
+					bg.graphics.endFill();
+					
+					shadowLine = new ShadowLine(stage.stageWidth, orientation, 90);
+					shadowLine.y = bg.height - shadowLine.height;
+					
+					break;
+				
+				case this.VERTICAL:
+
+					bg.graphics.drawRect(0,0,rangeSize,stage.stageHeight - 80);
+					bg.graphics.endFill();
+					
+					shadowLine = new ShadowLine(bg.height, orientation, 0);
+					shadowLine.x = bg.width - shadowLine.width;
+					
+					break;
+				
+			}
 			
 			this.addChild(bg);
-			
-			//1.2 Shadow
-			shadowLine = new ShadowLine(stage.stageWidth,90);
-			shadowLine.y = bg.height - shadowLine.height;
 			this.addChild(shadowLine);
 			
 			getData();
-		}
-		
+			
+			this.getModel().addEventListener(PipelineEvents.CHANGE, onModelChange);
+		}	
 		
 		//****************** PRIVATE METHODS ****************** ****************** ****************** 
 		
@@ -108,9 +166,20 @@ package view.menu {
 		 */
 		private function resize():void {
 			
-			h = contentContainer.height;
-			TweenMax.to(bg,.5,{height:contentContainer.height});
-			TweenMax.to(shadowLine,.5,{y:contentContainer.height - shadowLine.height});
+			switch (orientation) {
+				
+				case this.HORIZONAL:
+					TweenMax.to(bg,.5,{height:contentContainer.height});
+					TweenMax.to(shadowLine,.5,{y:contentContainer.height - shadowLine.height});
+					break;
+				
+				case this.VERTICAL:
+					TweenMax.to(bg,.5,{width:contentContainer.width});
+					TweenMax.to(shadowLine,.5,{x:contentContainer.width - shadowLine.width});
+					break;
+				
+			}
+			
 		}
 		
 		/**
@@ -136,33 +205,42 @@ package view.menu {
 			data = pController.getNeighbourhoodInfo(contentType.toLowerCase());
 			
 			if (data != null) {
-			
-				switch(contentType.toLowerCase()) {
-					
-					case "community":
-						contentContainer = new SubMenuContentNeighbourhood(data,h);
-						this.addChildAt(contentContainer,1);
-						contentContainer.init();
-						break;
-					
-					case "period":
-						contentContainer = new SubMenuContentPeriod(data,h);
-						this.addChildAt(contentContainer,1);
-						contentContainer.init();
-						contentContainer.x = (stage.stageWidth/2) - (contentContainer.width/2);
-						break;
-					
+				
+				contentContainer = new SubMenuContent(data,contentType.toLowerCase(), rangeSize);
+				this.addChildAt(contentContainer,1);
+				
+				contentContainer.orientation = this.orientation;
+				
+				if (orientation == "horizontal") {
+					contentContainer.scrollLimit = bg.width;
+				} else if (orientation == "vertical") {
+					contentContainer.scrollLimit = bg.height;
 				}
 				
+				contentContainer.init();
 				
+				////check for selected options
+				var selectedItems:Array = PipelineController(this.getController()).getSelectedContent(contentType);
+			
+				var selectedData:Object = new Object();
+				selectedData.source = selectedItems;
+				selectedData.action = "add";
+				contentContainer.update(selectedData);
+					
+				///event
 				contentContainer.addEventListener(PipelineEvents.SELECT, onSelect);
-				resize();
+				
+				if (rangeSize <= 1) resize();
 			
 			} else {
 				var dataModel:DataModel = pController.getModel("DataModel") as DataModel;
 				dataModel.addEventListener(PipelineEvents.COMPLETE, onDataLoad);
 			}
 		}
+		
+		protected function onModelChange(event:PipelineEvents):void {
+			contentContainer.update(event.parameters);
+		}	
 		
 		
 		//****************** PUBLIC METHODS  ****************** ****************** ****************** 
@@ -207,36 +285,16 @@ package view.menu {
 		 * 
 		 */
 		protected function onSelect(event:PipelineEvents):void {
+			
 			var data:Object = new Object();
 			data.action = event.parameters.action;
 			data.type = event.parameters.type;
+			data.param = event.parameters.param;
 			
 			var pController:PipelineController = this.getController() as PipelineController;
 			
-			
-			switch(event.parameters.type) {
-				
-				case "neighbourhood":
-					data.param = [pController.getNeighbourhoodIDByName(event.parameters.param)]; //transformin into an array
-					break;
-				
-				case "period":
-					var st:String = event.parameters.param;
-					var ar:Array = st.split(" - ");
-					
-					var pStart:int = ar[0];
-					var pEnd:int = ar[1];
-					
-					data.param = pController.getNeighbourhoodIDsByPeriod(pStart,pEnd);
-					
-					st = null;
-					ar = null;
-					
-					break;
-			}
-			
-			//action
 			pController.highlightShapes(data);
+			
 		}
 
 	}

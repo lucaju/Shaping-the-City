@@ -8,6 +8,8 @@ package view {
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
+	import controller.PipelineController;
+	
 	import events.PipelineEvents;
 	
 	import mvc.AbstractView;
@@ -16,8 +18,9 @@ package view {
 	import util.DeviceInfo;
 	
 	import view.assets.ShadowLine;
-	import view.menu.SubMenu;
-	import view.menu.TopMenuView;
+	import view.menu.TopMenu;
+	import view.menu.submenu.SubMenu;
+	import view.menu.submenu.SubMenuFactory;
 	
 	public class TopBar extends AbstractView {
 		
@@ -25,7 +28,7 @@ package view {
 		protected var cityName:String;
 		
 		protected var cityNameTF:TextField;
-		protected var menu:TopMenuView;
+		protected var menu:TopMenu;
 		protected var style:TextFormat;
 		protected var subMenu:SubMenu;
 		
@@ -38,7 +41,6 @@ package view {
 			
 			style = new TextFormat();
 			style.font = "Myriad Pro";
-			style.bold = true;
 			style.color = 0xCCCCCC;
 			
 			if (DeviceInfo.os() == "iPhone") {
@@ -65,29 +67,18 @@ package view {
 			shadowLine.y = bg.height;
 			this.addChild(shadowLine);
 			
-			//2.title
-			var title:TextField = new TextField();
-			title.selectable = false;
-			title.autoSize = "left";
-			title.text = "Shaping the City" + " - " + DeviceInfo.os();
-			title.setTextFormat(style);
-			title.x = 10;
-			title.y = 8;
-			
-			this.addChild(title);
-			
-			//3.City Name
+			//2.City Name
 			cityNameTF = new TextField();
 			cityNameTF.selectable = false;
 			cityNameTF.autoSize = "left";
-			cityNameTF.text = "Edmonton";
+			cityNameTF.text = "Shaping the City" + " - " + DeviceInfo.os() + " | Edmonton";
 			cityNameTF.setTextFormat(style);
 			cityNameTF.x = this.width - cityNameTF.width - 10;
 			cityNameTF.y = 8;
 			
 			this.addChild(cityNameTF);
 			
-			//4.menu
+			//3.menu
 			var options:Array = [
 				{title:"Community"},
 				{title:"Period"} //,
@@ -96,28 +87,61 @@ package view {
 				//{title:"Extra"}
 			];
 				
-			menu = new TopMenuView(this.getController(),options);
+			menu = new TopMenu(this.getController(),options);
 			menu.init();
-			menu.x = (this.width/2) - (menu.width/2); 
 			this.addChild(menu);
 			
 			menu.addEventListener(PipelineEvents.SELECT, _topBarSelect);
+			
 		}
 		
 		protected function _topBarSelect(event:PipelineEvents):void {
 			
+			var eventData:Object = new Object();
 			var type:String = event.parameters.label;
 			
 			if (type == "") {
-				TweenMax.to(subMenu, .3, {y:bg.height -subMenu.height, onComplete:killChild, onCompleteParams:[subMenu]});
+				
+				switch (Settings.subMenuOrientation) {
+					case "vertical":
+						TweenMax.to(subMenu, .3, {x:-subMenu.width, onComplete:killChild, onCompleteParams:[subMenu]});
+						break;
+					
+					case "horizontal":
+						TweenMax.to(subMenu, .3, {y:bg.height -subMenu.height, onComplete:killChild, onCompleteParams:[subMenu]});
+						break;
+				}
+				
 				subMenu = null;
 				
+				//Send event
+				
+				eventData.action = "submenuClose";
+				this.dispatchEvent(new PipelineEvents(PipelineEvents.RESIZE, eventData));
+				
+				
 			} else if (!subMenu) {
-				subMenu = new SubMenu(this.getController(), type);
+				
+				subMenu = SubMenuFactory.subMenu(this.getController(), type, Settings.subMenuOrientation);
+				subMenu.setModel(this.getModel());
+				
 				subMenu.y = bg.height;
 				this.addChildAt(subMenu,0);
 				subMenu.init();
-				TweenMax.from(subMenu, .3, {y: 0});
+				
+				switch (Settings.subMenuOrientation) {
+					case "vertical":
+						TweenMax.from(subMenu, .3, {x: -subMenu.width});
+						break;
+					
+					case "horizontal":
+						TweenMax.from(subMenu, .3, {y: 0});
+						break;
+				}
+				
+				//Send event
+				eventData.action = "submenuOpen";
+				this.dispatchEvent(new PipelineEvents(PipelineEvents.RESIZE, eventData));
 				
 			} else {
 				

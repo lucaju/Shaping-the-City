@@ -1,6 +1,9 @@
 package view {
 	
 	//imports
+	import com.greensock.TweenMax;
+	
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
 	
@@ -9,22 +12,22 @@ package view {
 	import mvc.AbstractView;
 	import mvc.IController;
 	
+	import view.breadcrumb.Breadcrumb;
+	
 	public class MainView extends AbstractView {
 		
 		//properties
 		
-		private var topBar:TopBar;
-		private var footer:Footer;
-		private var mapView:MapView;
+		protected var topBar:TopBar;
+		protected var footer:Footer;
+		protected var mapView:MapView;
+		protected var breadcrumbView:Breadcrumb;
 		
-		private var treesView:TreesView;
-		
-		private var alignBySize:Boolean = false;
-		private var animationOn:Boolean = false;
+		protected var treesView:TreesView;
 		
 		
-		private var sMax:int = 0;
-		private var tint:Boolean = false;
+		protected var sMax:int = 0;
+		protected var tint:Boolean = false;
 		
 		
 		public function MainView(c:IController) {
@@ -39,10 +42,11 @@ package view {
 			//creting the interface
 			//1. top bar
 			topBar = new TopBar(this.getController());
+			topBar.setModel(this.getModel());
 			this.addChild(topBar);
-			topBar.init();
+			topBar.init();	
 			
-			
+			topBar.addEventListener(PipelineEvents.RESIZE, topBarResizeHandle);
 			
 			//2. Footer
 			footer = new Footer(this.getController());
@@ -66,13 +70,38 @@ package view {
 			//mapView.y = this.stage.stageHeight/2;
 			
 			
+			//Listen moodel
+			this.getModel().addEventListener(PipelineEvents.CHANGE, onModelChange);
+			
 			
 		}
+		
+		protected function topBarResizeHandle(event:PipelineEvents):void {
+			switch (event.parameters.action) {
+				
+				case "submenuOpen":
+					if (Settings.subMenuOrientation == "vertical") {
+						if (breadcrumbView) TweenMax.to(breadcrumbView,.3,{x:164});	
+					}
+					
+					break;
+				
+				
+				case "submenuClose":
+					if (Settings.subMenuOrientation == "vertical") {
+						if (breadcrumbView) TweenMax.to(breadcrumbView,.3,{x:0});
+					}
+					break;
+				
+			}
+			
+		}		
+		
 		
 		protected function footerHandle(event:PipelineEvents):void {
 			
 			switch (event.parameters.source) {
-				case "Sort by Size":
+				case "Explode":
 					mapView.sort(event.parameters.state)
 					break;
 				
@@ -82,6 +111,34 @@ package view {
 			}
 			
 		}
+		
+		
+		
+		
+		protected function onModelChange(event:PipelineEvents):void {
+			
+			
+			if (!breadcrumbView) {
+				breadcrumbView = new Breadcrumb(this.getController());
+				this.addChildAt(breadcrumbView,1);
+				breadcrumbView.init(event.parameters.type);
+				breadcrumbView.y = footer.y - breadcrumbView.height;
+				this.addEventListener(PipelineEvents.COMPLETE, killBreadCrumb);
+			}
+			
+			breadcrumbView.update(event.parameters.source, event.parameters.action, event.parameters.type);
+			
+		}
+		
+		protected function killBreadCrumb(event:Event):void {
+			this.removeChild(breadcrumbView);
+			breadcrumbView = null;
+		}		
+		
+		
+		
+		
+		
 		
 		private function _loadTrees(e:MouseEvent):void {
 			/*

@@ -9,6 +9,7 @@ package events{
 		public static const CHANGE:String = "change";
 		public static const COMPLETE:String = "complete";
 		public static const SELECT:String = "select";
+		public static const RESIZE:String = "resize";
 		
 		public var parameters:Object; 
 			

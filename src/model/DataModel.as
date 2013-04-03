@@ -17,7 +17,7 @@ package model {
 		
 		private var shapeCollection				:Array;			//Collection
 		private var neighbourhoodCollection		:Array;			//Collection
-		private var shapeHighlighted			:Object;		//{type:String, neighbourhoods:Array, shapes:Array}
+		private var highlightedShapes			:HighlightedShapes;		//{type:String, neighbourhoods:Array, shapes:Array}
 		
 		public function DataModel() {
 			super();
@@ -184,37 +184,89 @@ package model {
 			return periods;
 		}
 		
-		public function addHighlightShapes(data:Array, type:String):void {
+		public function getHighlightedPeriods():Array {
+			
+			if (highlightedShapes) {
+				return highlightedShapes.periods;
+			} else {
+				return null;
+			}
+		}
+		
+		public function getHighlightedNeighbourhoods():Array {
+			
+			if (highlightedShapes) {
+				if (highlightedShapes.periods.length == 0) {
+					return highlightedShapes.neighbourhoods;
+				}
+			}
+			
+			return null;
+			
+		}
+		
+		public function getHighlightedNeighbourhoodsNames():Array {
+			
+			if (highlightedShapes) {
+				if (highlightedShapes.periods.length == 0) {
+					
+					var neighbourhoodsName:Array = new Array();
+					
+					for each (var n:Neighbourhood in highlightedShapes.neighbourhoods) {
+						neighbourhoodsName.push(n.name);
+					}
+					
+					return neighbourhoodsName;
+				}
+			}
+			
+			return null;
+			
+		}
+		
+		public function addHighlightShapes(data:Array, type:String, source:String):void {
 			
 			//Creating data to send
 			var eventData:Object = new Object();
-			eventData.type = "highlight";
+			eventData.source = source;
+			eventData.type = type;
+			eventData.method = "highlight";
 			eventData.action = "add";
 			eventData.reset = false;
 			
 			var affectetedShapes:Array = new Array();
 			var affectetedNeighbourhoods:Array = data;
 			
-			//if shapes are not highlighted yet OR if the type doesn't match
+			//if shapes are not highlighted yet
+			if (!highlightedShapes) {
+				highlightedShapes = new HighlightedShapes();
+			}
+			
+			
+			//if the type doesn't match
 			//Remove previous higlighted shapes and initiate a new one.
-			if (!shapeHighlighted || shapeHighlighted.type != type) {
-				shapeHighlighted = null;
-				
-				shapeHighlighted = new Object();
-				shapeHighlighted.type = type;
-				shapeHighlighted.neighbourhoods = new Array();;
-				shapeHighlighted.shapes = new Array();
+			if (highlightedShapes.type != type) {
+				highlightedShapes.clean();
+				highlightedShapes.type = type;
+				highlightedShapes.neighbourhoods = new Array();;
+				highlightedShapes.shapes = new Array();
 				
 				eventData.reset = true;  /////<<<<<<<<<<<<<<<<<<<<< // Reset if the user change types
 			}
 			
+			//if type is period, save the source button
+			if (type == "period") {
+				highlightedShapes.addPeriod(source)
+			}
+			
 			//get data
-			var nArray:Array = shapeHighlighted.neighbourhoods;
-			var sArray:Array = sArray = shapeHighlighted.shapes;
+			var nArray:Array = highlightedShapes.neighbourhoods;
+			var sArray:Array = sArray = highlightedShapes.shapes;
 			
 			/*
 			trace ("Action: "+ eventData.action);
 			trace ("Type: " + eventData.type);
+			trace ("Method: " + eventData.method);
 			trace ("Reset: " + eventData.reset);
 			trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods);
 			trace ("Current Total Neighbourhoods Highlight: " + nArray.length);
@@ -257,8 +309,8 @@ package model {
 				sArray = sArray.concat(affectetedShapes);
 			
 				//saving
-				shapeHighlighted.neighbourhoods = nArray;
-				shapeHighlighted.shapes = sArray;
+				highlightedShapes.neighbourhoods = nArray;
+				highlightedShapes.shapes = sArray;
 				
 			}
 				
@@ -276,26 +328,29 @@ package model {
 			*/
 		}
 		
-		public function removeHighlightedShapes(data:*, type:String):void {
+		public function removeHighlightedShapes(data:*, type:String, source:String):void {
 			
 			//if there are highlighted shapes AND the type does match
-			if (shapeHighlighted && shapeHighlighted.type == type) {
+			if (highlightedShapes && highlightedShapes.type == type) {
 				
 				//Creating data to send
 				var eventData:Object = new Object();
-				eventData.type = "highlight";
+				eventData.source = source;
+				eventData.type = type;
+				eventData.method = "highlight";
 				eventData.action = "remove";
 				eventData.reset = false;
 				
 				var affectetedShapes:Array = new Array();
 				var affectetedNeighbourhoods:Array = data;
 				
-				var nArray:Array = shapeHighlighted.neighbourhoods;
-				var sArray:Array = shapeHighlighted.shapes;
+				var nArray:Array = highlightedShapes.neighbourhoods;
+				var sArray:Array = highlightedShapes.shapes;
 				
 				/*
 				trace ("Action: "+ eventData.action);
 				trace ("Type: " + eventData.type);
+				trace ("Method: " + eventData.method);
 				trace ("Reset: " + eventData.reset);
 				trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods)
 				trace ("Current Total Neighbourhoods Highlight: " + nArray.length)
@@ -340,8 +395,8 @@ package model {
 					}
 					
 								//saving
-					shapeHighlighted.neighbourhoods = nArray;
-					shapeHighlighted.shapes = sArray;
+					highlightedShapes.neighbourhoods = nArray;
+					highlightedShapes.shapes = sArray;
 				}
 					
 				
@@ -360,5 +415,6 @@ package model {
 			}
 			
 		}
+		
 	}
 }

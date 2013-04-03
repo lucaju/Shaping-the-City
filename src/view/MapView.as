@@ -334,7 +334,7 @@ package view {
 		 */
 		protected function onChange(event:PipelineEvents):void {
 			
-			switch (event.parameters.type) {
+			switch (event.parameters.method) {
 				
 				case "highlight":
 						
@@ -349,7 +349,7 @@ package view {
 					break;
 			}
 			
-			//trace (event.parameters.type);
+			//trace (event.parameters.method);
 			//trace (event.parameters.action);
 			//trace (event.parameters.data);
 			

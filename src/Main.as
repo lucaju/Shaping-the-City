@@ -11,11 +11,11 @@ package {
 	import controller.PipelineController;
 	
 	import model.DataModel;
-	import util.DeviceInfo;
-	//import model.DataTreesModel;
 	
-	import view.MapView;
+	import util.DeviceInfo;
+	
 	import view.MainView;
+	import view.MapView;
 	
 	[SWF(width="1280", height="752", backgroundColor="#ffffff", frameRate="30")]
 	public class Main extends Sprite {	
@@ -33,12 +33,15 @@ package {
 		
 		private var mainView:MapView;
 		
+		private var settings:Settings;
+		
 		public function Main() {
 			
+			//settings
+			settings = new Settings();
 			trace (DeviceInfo.metrics());
 			
 			stage.align = StageAlign.TOP_LEFT;
-			//stage.align = StageAlign.BOTTOM_RIGHT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			
 			//background
@@ -60,6 +63,7 @@ package {
 			
 			//Starting View
 			pipelineView = new MainView(pipelineController);
+			pipelineView.setModel(dataModel);
 			addChild(pipelineView);
 			pipelineView.init();
 			

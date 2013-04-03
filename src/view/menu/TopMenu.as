@@ -2,16 +2,15 @@ package view.menu {
 	
 	//imports
 	import flash.events.MouseEvent;
-	import flash.geom.Point;
 	
 	import events.PipelineEvents;
 	
 	import mvc.IController;
 	
-	public class TopMenuView extends AbstractMenuView {
+	public class TopMenu extends AbstractMenu {
 		
 		//properties
-		private var item:TopBarItem;
+		private var item:ButtonBar;
 		
 		/**
 		 * CONTRUCTOR 
@@ -19,11 +18,11 @@ package view.menu {
 		 * @param options
 		 * 
 		 */		
-		public function TopMenuView(c:IController, options:Array = null) {
+		public function TopMenu (c:IController, options:Array = null) {
 			super(c, options);
 			
 			//initials
-			gap = 5;
+			gap = 0;
 		}
 		
 		/**
@@ -38,7 +37,7 @@ package view.menu {
 			if (optionCollection) {
 				for each (var option:Object in optionCollection) {
 					
-					item = TopBarItemFactory.addTopBarItem(option.title);
+					item = ButtonBarFactory.addButtonBar(option.title,"topBar");
 					item.x = posX;
 					this.addChild(item);
 					
@@ -64,7 +63,7 @@ package view.menu {
 			
 			var data:Object;
 			
-			item = event.currentTarget as TopBarItem;
+			item = event.currentTarget as ButtonBar;
 			
 			if (item.toggle) {
 				deselectAll();
@@ -81,7 +80,7 @@ package view.menu {
 		}
 		
 		protected function deselectAll():void {
-			for each(var item:TopBarItem in itemCollection) {
+			for each(var item:ButtonBar in itemCollection) {
 				item.toggle = false;
 			}
 		}

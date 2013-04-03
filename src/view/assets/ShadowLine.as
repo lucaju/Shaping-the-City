@@ -6,7 +6,7 @@ package view.assets  {
 	
 	public class ShadowLine extends Sprite {
 
-		public function ShadowLine(w:Number, rotation:int = 270) {
+		public function ShadowLine(range:Number, orientation:String = "horizontal", rotation:int = 270) {
 			
 			var matrix:Matrix = new Matrix();
 			matrix.createGradientBox(5, 5, (Math.PI/180)*rotation, 0, 0);
@@ -14,7 +14,14 @@ package view.assets  {
 			
 			var shadow:Shape = new Shape();
 			shadow.graphics.beginGradientFill("linear",[0x000000,0x000000],[0,.9],[0,255],matrix);
-			shadow.graphics.drawRect(0,0,w,5);
+			
+			//orientation
+			if (orientation == "horizontal") {
+				shadow.graphics.drawRect(0,0,range,5);
+			} else {
+				shadow.graphics.drawRect(0,0,5,range);
+			}
+			
 			shadow.graphics.endFill();
 			shadow.blendMode = "multiply";
 			shadow.alpha = .5;

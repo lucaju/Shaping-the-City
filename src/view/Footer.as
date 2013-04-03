@@ -15,7 +15,7 @@ package view {
 	
 	import view.assets.ShadowLine;
 	import view.assets.Switcher;
-	import view.menu.FooterMenuView;
+	import view.menu.FooterMenu;
 	
 	public class Footer extends AbstractView {
 		
@@ -24,7 +24,7 @@ package view {
 		protected var sortBT:Switcher;
 		protected var animationBT:Switcher;
 		protected var style:TextFormat;
-		protected var menu:FooterMenuView;
+		protected var menu:FooterMenu;
 		
 		private var h:Number;
 		
@@ -56,7 +56,7 @@ package view {
 			this.addChild(bg);
 			
 			//1.2 Shadow
-			var shadowLine:ShadowLine = new ShadowLine(stage.stageWidth, 90);
+			var shadowLine:ShadowLine = new ShadowLine(stage.stageWidth, "horizontal", 90);
 			shadowLine.y = -shadowLine.height;
 			this.addChild(shadowLine)
 			
@@ -72,18 +72,23 @@ package view {
 			
 			//3.menu
 			var options:Array = [
-				{title:"Sort by Size"},
+				{title:"Explode"},
 				{title:"Animation"}
 			];
 			
-			menu = new FooterMenuView(this.getController(),options);
+			menu = new FooterMenu(this.getController(),options);
 			menu.init();
-			//menu.x = (this.width/2) - (menu.width/2); 
-			menu.x = this.width - menu.width - 10;; 
-			menu.y = (this.height/2) - (menu.height/2); 
+			
+			if (Settings.footerMenuButton == "switcher") {
+				menu.x = this.width - menu.width - 10;
+				menu.y = (this.height/2) - (menu.height/2); 
+			} else {
+				menu.x = this.width - menu.width;
+			}
+			
 			this.addChild(menu);
 			
-			this.y = stage.stageHeight - this.height + shadowLine.height;
+			this.y = stage.stageHeight - this.height + shadowLine.height + 1;
 			
 		}
 		

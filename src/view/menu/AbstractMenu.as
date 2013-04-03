@@ -4,17 +4,17 @@ package view.menu {
 	import mvc.AbstractView;
 	import mvc.IController;
 	
-	public class AbstractMenuView extends AbstractView {
+	public class AbstractMenu extends AbstractView {
 		
 		//properties
 		protected var _orientation:String = "horizontal";
-		protected var _gap:Number;
+		protected var _gap:Number; 
 		
 		protected var optionCollection:Array;
 		protected var itemCollection:Array;
 		
 		
-		public function AbstractMenuView(c:IController, options:Array = null) {
+		public function AbstractMenu(c:IController, options:Array = null) {
 			super(c);
 			
 			optionCollection = new Array();
