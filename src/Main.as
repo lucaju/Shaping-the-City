@@ -15,63 +15,73 @@ package {
 	import util.DeviceInfo;
 	
 	import view.MainView;
-	import view.MapView;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	[SWF(width="1280", height="752", backgroundColor="#ffffff", frameRate="30")]
 	public class Main extends Sprite {	
 		
-		//properties
-		private var dataModel:DataModel;
+		//****************** Properties ****************** ****************** ****************** 
+		private var dataModel						:DataModel;
+		private var pipelineController				:PipelineController
+		private var mainView						:MainView;
+		
+		private var settings						:Settings;
+		
 		//private var dataTreesModel:DataTreesModel;
 		
-		private var pipelineController:PipelineController
-		private var pipelineView:MainView;
 		
-		private var background:Sprite 
-		private var url:URLRequest;
-		private var loaderimageLoader:Loader;
-		
-		private var mainView:MapView;
-		
-		private var settings:Settings;
+		//****************** Constructor ****************** ****************** ****************** 
 		
 		public function Main() {
 			
 			//settings
 			settings = new Settings();
-			trace (DeviceInfo.metrics());
 			
+			//align
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			
-			//background
-			background = new Sprite();
-			url = new URLRequest("images/new_background4.jpg");
-			loaderimageLoader = new Loader();
-			loaderimageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadImage)
-			loaderimageLoader.load(url);
-			background.addChild(loaderimageLoader)
-			background.alpha = .3;
-			addChild(background);
-			
-			//Starting models
-			//dataTreesModel = new DataTreesModel();
+			//Models
 			dataModel = new DataModel();
 			
-			//starting controler
+			//Controler
 			pipelineController = new PipelineController([dataModel]);
 			
-			//Starting View
-			pipelineView = new MainView(pipelineController);
-			pipelineView.setModel(dataModel);
-			addChild(pipelineView);
-			pipelineView.init();
+			//View
+			mainView = new MainView(pipelineController);
+			mainView.setModel(dataModel);
+			addChild(mainView);
+			mainView.init();
 			
+			//background
+			var background:Sprite = new Sprite();
+			this.addChildAt(background,0);
+			
+			var loaderimageLoader:Loader = new Loader();
+			
+			loaderimageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, loadImage)
+			loaderimageLoader.load(new URLRequest("images/background2.png"));
+			background.addChild(loaderimageLoader);
+			
+			//trace
+			trace (DeviceInfo.metrics());
 		}
 		
-		private function loadImage(e:Event):void {
-			background.width = stage.stageWidth;
-			background.height = stage.stageHeight;	
+		
+		//****************** PRIVATE METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param e
+		 * 
+		 */		
+		private function loadImage(event:Event):void {
+			event.target.content.width = stage.stageWidth;
+			event.target.content.height = stage.stageHeight;	
 		}
 	}
 }

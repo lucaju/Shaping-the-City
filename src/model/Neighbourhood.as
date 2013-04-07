@@ -6,6 +6,7 @@ package model {
 		protected var _id:int;
 		protected var _name:String;
 		protected var _period:int = 0;
+		protected var _shapes:Array;
 		
 		public function Neighbourhood(id_:int) {
 			_id = id_;
@@ -29,6 +30,14 @@ package model {
 
 		public function set period(value:int):void {
 			_period = value;
+		}
+		
+		public function get shapes():Array {
+			return _shapes;
+		}
+		
+		public function set shapes(value:Array):void {
+			_shapes = value;
 		}
 
 	}

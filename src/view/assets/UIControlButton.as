@@ -37,6 +37,7 @@ package view.assets {
 		
 		
 		//****************** CONSTRUCTOR ****************** ******************  ******************
+		
 		public function UIControlButton() {
 			this.buttonMode = true;
 		}

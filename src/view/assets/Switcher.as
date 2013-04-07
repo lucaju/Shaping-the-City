@@ -15,35 +15,54 @@ package view.assets {
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class Switcher extends Sprite {
 		
-		//properties
-		public const RECT:String = "rect";
-		public const ROUND_RECT:String = "round_rect";
-		public const ROUND:String = "round";
+		//****************** Properties ****************** ****************** ****************** 
+		public const RECT					:String = "rect";
+		public const ROUND_RECT				:String = "round_rect";
+		public const ROUND					:String = "round";
 		
-		protected var type:String;
-		protected var _state:Boolean;
+		protected var type					:String;
+		protected var _state				:Boolean;
 		
-		protected var w:Number = 48;
-		protected var h:Number = 18;
+		protected var w						:Number = 48;
+		protected var h						:Number = 18;
 		
-		private var buttonArea:Sprite
-		private var button:Sprite;
+		private var buttonArea				:Sprite
+		private var button					:Sprite;
 		
-		protected var _label:String;
+		protected var _label				:String;
 		
-		protected var _onColor:uint = 0xF15A24;
-		protected var _offColor:uint = 0x666666;
-		protected var _buttonColor:uint = 0xFFFFFF;
+		protected var _onColor				:uint = 0xF15A24;
+		protected var _offColor:			uint = 0x666666;
+		protected var _buttonColor			:uint = 0xFFFFFF;
 		
 		
+		//****************** Constructor ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param _type
+		 * @param state_
+		 * 
+		 */
 		public function Switcher(_type = this.ROUND, state_:Boolean = false) {
 			state = state_;
-			
 			type = _type;
 		}
 		
+		
+		//****************** Initialize ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * 
+		 */
 		public function init():void {
 			
 			var SwitcherComponent:Sprite = new Sprite();
@@ -182,45 +201,120 @@ package view.assets {
 			
 		}
 		
-		protected function _onMouseDown(event:MouseEvent):void {
-			var rect:Rectangle = new Rectangle (button.width/2, button.y, this.w - button.width, 0);	
-			//var rect:Rectangle = new Rectangle ((-buttonArea.width/2) + (event.currentTarget.width/2), 0, (buttonArea.width/2)-(event.currentTarget.width/2), 0);
-			button.startDrag(false,rect);
-			
-			stage.addEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
-			button.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			
+		//****************** GETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get state():Boolean {
+			return _state;
 		}
 		
-		protected function onMouseMove(event:MouseEvent):void {
-			
-			//buttonArea.x = button.x + (button.width/4) - (buttonArea.width/2);
-			buttonArea.x = button.x - (buttonArea.width/2) 	;
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get label():String {
+			return _label;
 		}
 		
-		protected function _onMouseUp(event:MouseEvent):void {
-			buttonArea.stopDrag();
-			button.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			stage.removeEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
-			checkState();
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get onColor():uint {
+			return _onColor;
 		}
 		
-		protected function checkState():void {
-			
-			if (buttonArea.x <= - (this.w/2)) {
-				state = false;
-				TweenMax.to(buttonArea,.3,{x:-(buttonArea.width/2) + (button.width/2)});
-				TweenMax.to(button,.3,{x:button.width/2});
-			} else {
-				state = true;
-				TweenMax.to(buttonArea,.3,{x: - button.width/2});
-				TweenMax.to(button,.3,{x:this.w - (button.width/2)});
-			}
-			
-			this.dispatchEvent(new Event(Event.CHANGE));
-			
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get offColor():uint {
+			return _offColor;
 		}
 		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get buttonColor():uint {
+			return _buttonColor;
+		}
+		
+		
+		//****************** SETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set state(value:Boolean):void {
+			_state = value;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set label(value:String):void {
+			_label = value;
+		}		
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set onColor(value:uint):void {
+			_onColor = value;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set offColor(value:uint):void {
+			_offColor = value;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set buttonColor(value:uint):void {
+			_buttonColor = value;
+		}
+		
+		/**
+		 * 
+		 * @param _w
+		 * @param _h
+		 * 
+		 */
+		public function setSize(_w:Number, _h:Number):void {
+			h = _h;
+			w = _w;
+		}
+		
+		
+		//****************** PRIVATE METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		private function drawButtonHit():Sprite {
 			
 			var bt:Sprite = new Sprite();
@@ -263,6 +357,14 @@ package view.assets {
 		}
 		
 		// fx
+		/**
+		 * 
+		 * @param colorValue
+		 * @param a
+		 * @param innerGlow
+		 * @return 
+		 * 
+		 */
 		private function getBitmapFilter(colorValue:uint, a:Number, innerGlow:Boolean = false):BitmapFilter {
 			//propriedades
 			var color:Number = colorValue;
@@ -275,49 +377,68 @@ package view.assets {
 			return new GlowFilter(color,alpha,blurX,blurY,strength,quality,true);
 		}
 		
-		public function get state():Boolean {
-			return _state;
+		//****************** PROTECTED METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * 
+		 */
+		protected function checkState():void {
+			
+			if (buttonArea.x <= - (this.w/2)) {
+				state = false;
+				TweenMax.to(buttonArea,.3,{x:-(buttonArea.width/2) + (button.width/2)});
+				TweenMax.to(button,.3,{x:button.width/2});
+			} else {
+				state = true;
+				TweenMax.to(buttonArea,.3,{x: - button.width/2});
+				TweenMax.to(button,.3,{x:this.w - (button.width/2)});
+			}
+			
+			this.dispatchEvent(new Event(Event.CHANGE));
+			
 		}
-
-		public function set state(value:Boolean):void {
-			_state = value;
+		
+		
+		//****************** EVENTS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function _onMouseDown(event:MouseEvent):void {
+			var rect:Rectangle = new Rectangle (button.width/2, button.y, this.w - button.width, 0);	
+			//var rect:Rectangle = new Rectangle ((-buttonArea.width/2) + (event.currentTarget.width/2), 0, (buttonArea.width/2)-(event.currentTarget.width/2), 0);
+			button.startDrag(false,rect);
+			
+			stage.addEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
+			button.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			
 		}
-
-		public function get label():String {
-			return _label;
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function onMouseMove(event:MouseEvent):void {
+			
+			//buttonArea.x = button.x + (button.width/4) - (buttonArea.width/2);
+			buttonArea.x = button.x - (buttonArea.width/2) 	;
 		}
-
-		public function set label(value:String):void {
-			_label = value;
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function _onMouseUp(event:MouseEvent):void {
+			buttonArea.stopDrag();
+			button.removeEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
+			stage.removeEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
+			checkState();
 		}
-
-		public function get onColor():uint {
-			return _onColor;
-		}
-
-		public function set onColor(value:uint):void {
-			_onColor = value;
-		}
-
-		public function get offColor():uint {
-			return _offColor;
-		}
-
-		public function set offColor(value:uint):void {
-			_offColor = value;
-		}
-
-		public function get buttonColor():uint {
-			return _buttonColor;
-		}
-
-		public function set buttonColor(value:uint):void {
-			_buttonColor = value;
-		}
-
-		public function setSize(_w:Number, _h:Number):void {
-			h = _h;
-			w = _w;
-		}
+		
 	}
 }

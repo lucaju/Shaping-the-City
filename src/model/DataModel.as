@@ -2,23 +2,32 @@ package model {
 	
 	//imports
 	import flash.events.Event;
-	import flash.net.URLLoader;
-	import flash.net.URLRequest;
 	
 	import events.PipelineEvents;
 	
 	import mvc.Observable;
 	
+	/**
+	 * This Class manage all data related to the map.
+	 *  
+	 * @author lucaju
+	 * 
+	 */
 	public class DataModel extends Observable {
 		
-		//properties
-		private var urlLoader					:URLLoader;
-		private var urlRequest					:URLRequest;
+		//****************** Properties ****************** ****************** ****************** 
 		
-		private var shapeCollection				:Array;			//Collection
-		private var neighbourhoodCollection		:Array;			//Collection
-		private var highlightedShapes			:HighlightedShapes;		//{type:String, neighbourhoods:Array, shapes:Array}
+		private var shapeCollection				:Array;						//Holds Shape Collection
+		private var neighbourhoodCollection		:Array;						//Holds Neighbourhood Collection
+		private var highlightedShapes			:HighlightedShapes;			//Holds Highlight Information: Type, and Periods, Neighbourhoods and Shapes affected.
 		
+		
+		//****************** Constructor ****************** ****************** ****************** 
+		
+		/**
+		 * Construct Data Model. Set model name. 
+		 * 
+		 */
 		public function DataModel() {
 			super();
 			
@@ -27,8 +36,12 @@ package model {
 			
 		}
 		
-		//*************** LOADS ***************
+		//****************** LOADS ****************** ****************** ****************** 
 				
+		/**
+		 * 
+		 * 
+		 */
 		public function loadShapesData():void {
 			
 			if (!hasShapesData) {
@@ -39,8 +52,15 @@ package model {
 				processShapes = null;
 			}
 			
+			//load Neighbourhoods
+			loadNeigbourhoods();
+			
 		}
 		
+		/**
+		 * 
+		 * 
+		 */
 		public function loadNeigbourhoods():void {
 			if (!hasNeighbourhoodData) {
 				var processNeighbourhoods:ProcessNeighbourhoods = new ProcessNeighbourhoods();
@@ -50,6 +70,13 @@ package model {
 			}
 		}
 		
+		//****************** LOADS PROCESSING ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param e
+		 * 
+		 */
 		private function processComplete(e:Event):void {
 			
 			var obj:Object;
@@ -72,15 +99,33 @@ package model {
 			obj = null;
 		}
 		
-		public function getShapeCollection():Array {
-			return shapeCollection.concat();
-		}
 		
-		//*************** SHAPES METHODS
+		//****************** SHAPE METHODS****************** ****************** ******************
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function get hasShapesData():Boolean {
 			return shapeCollection ? true : false;
 		}
 		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getShapeCollection():Array {
+			return shapeCollection.concat();
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
 		public function getCityShapeByID(value:int):CityShape {
 			for each (var s:CityShape in shapeCollection) {
 				if (s.id == value) {
@@ -91,42 +136,79 @@ package model {
 			return null;
 		}
 		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
 		public function getCityShapesByNeighbourhood(value:int):Array {
 			
 			var sArray:Array = new Array();
 			
-			for (var i:int = 0; i < shapeCollection.length; i++) {
-				if (shapeCollection[i].neighbourhood == value) {
-					sArray.push(shapeCollection[i]);
+			for each (var s:CityShape in shapeCollection) {
+				if (s.neighbourhood == value) {
+					sArray.push(s);
 				}
 			}
 			
 			return sArray;
 		}
 		
-		//*************** NEIGHBOURHOODS METHODS
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
+		public function getShapeInfo(value:int):Object {
+			for each (var s:CityShape in shapeCollection) {
+				if (s.id == value) {
+					
+					var n:Neighbourhood = getNeighbourhoodByID(s.neighbourhood);
+						
+					var info:Object = new Object();
+					
+					info.neighbourhood = n.name;
+					info.period = n.period;
+					
+					n = null;
+					
+					return info;
+					
+					break;
+				}
+			}
+			return null;
+		}
 		
+		
+		//****************** NEIGHBOURHOOD METHODS****************** ****************** ******************
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function get hasNeighbourhoodData():Boolean {
 			return neighbourhoodCollection ? true : false;
 		}
 		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function getNeighbourhoods():Array {
 			return neighbourhoodCollection.concat();
 		}
 		
-		public function getNeighbourhoodNames():Array {
-			var areas:Array = neighbourhoodCollection.concat();;
-			areas.sortOn("name");
-			var names:Array = new Array;
-			
-			for each (var n:Neighbourhood in areas) {
-				names.push(n.name);
-			}
-			
-			areas = null;
-			return names;
-		}
-		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
 		public function getNeighbourhoodByID(value:int):Neighbourhood {
 			
 			for each (var n:Neighbourhood in neighbourhoodCollection) {
@@ -138,6 +220,35 @@ package model {
 			return null;
 		}
 		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
+		public function getNeighbourhoodByName(value:String):Neighbourhood {
+			
+			for each (var n:Neighbourhood in neighbourhoodCollection) {
+				if (n.name == value) {
+					
+					//check it saves shapes
+					if (!n.shapes) {
+						n.shapes = getCityShapesByNeighbourhood(n.id);
+					}
+
+					return n;
+					
+				}
+			}
+			return null;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
 		public function getNeighbourhoodIDByName(value:String):int {
 			for each (var n:Neighbourhood in neighbourhoodCollection) {
 				if (n.name.toLowerCase() == value.toLowerCase()) {
@@ -148,26 +259,87 @@ package model {
 			return null;
 		}
 		
+		/**
+		 * 
+		 * @param pStart
+		 * @param pEnd
+		 * @return 
+		 * 
+		 */
 		public function getNeighbourhoodIDsByPeriod(pStart:int, pEnd:int):Array {
 			
-			var selects:Array = new Array();
+			var nArray:Array = new Array();
 			
 			for each (var n:Neighbourhood in neighbourhoodCollection) {
 				if (n.period >= pStart && n.period <= pEnd) {
-					selects.push(n.id);
+					nArray.push(n.id);
 				}
 			}
 			
-			return selects;
+			return nArray;
 		}
 		
+		/**
+		 * 
+		 * @param pStart
+		 * @param pEnd
+		 * @return 
+		 * 
+		 */
+		public function getNeighbourhoodsByPeriod(pStart:int, pEnd:int):Array {
+			
+			var nArray:Array = new Array();
+			
+			for each (var n:Neighbourhood in neighbourhoodCollection) {
+				if (n.period >= pStart && n.period <= pEnd) {
+					
+					//check it saves shapes
+					if (!n.shapes) {
+						n.shapes = getCityShapesByNeighbourhood(n.id);
+					}
+					
+					nArray.push(n);
+				}
+			}
+			
+			return nArray;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getNeighbourhoodNames():Array {
+			var nArray:Array = neighbourhoodCollection.concat();;
+			nArray.sortOn("name");
+			
+			var names:Array = new Array;
+			
+			for each (var n:Neighbourhood in nArray) {
+				names.push(n.name);
+			}
+			
+			nArray = null;
+			return names;
+		}
+		
+		
+		
+		//****************** PERIODS METHODS****************** ****************** ******************
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function getPeriod():Array {
-			var areas:Array = neighbourhoodCollection.concat();;
-			areas.sortOn("period",Array.UNIQUESORT);
+			var nArray:Array = neighbourhoodCollection.concat();;
+			nArray.sortOn("period",Array.UNIQUESORT);
 			
 			var periods:Array = new Array;
 			
-			for each (var n:Neighbourhood in areas) {
+			for each (var n:Neighbourhood in nArray) {
 				if (periods[periods.length-1] != n.period) {
 					periods.push(n.period);
 				}
@@ -180,50 +352,114 @@ package model {
 				}
 			}
 			
-			areas = null;
+			nArray = null;
 			return periods;
 		}
 		
+		
+		//****************** HIGHLIGHTED METHODS****************** ****************** ******************
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getSelectedContentType():String {
+			if (highlightedShapes) {
+				return highlightedShapes.type; //Problem... Have to reset highlightedShapes after clean the selection
+			}
+			
+			return null;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getHighlightedNeighbourhoods():Array {
+			
+			if (highlightedShapes) {
+				return highlightedShapes.neighbourhoods;
+			}
+			
+			return null;
+			
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function getHighlightedPeriods():Array {
 			
 			if (highlightedShapes) {
 				return highlightedShapes.periods;
-			} else {
-				return null;
-			}
-		}
-		
-		public function getHighlightedNeighbourhoods():Array {
-			
-			if (highlightedShapes) {
-				if (highlightedShapes.periods.length == 0) {
-					return highlightedShapes.neighbourhoods;
-				}
 			}
 			
 			return null;
 			
 		}
 		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function getHighlightedNeighbourhoodsNames():Array {
 			
+			if (highlightedShapes) {	
+				var nNames:Array = new Array();
+					
+				for each (var n:Neighbourhood in highlightedShapes.neighbourhoods) {
+					nNames.push(n.name);
+				}
+					
+				return nNames;
+				
+			}
+			
+			return null;
+	
+		}
+		
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getHighlightedShapes(value:String):Array {
+			
+			var shapes:Array = new Array();
+			
+			var nId:int = this.getNeighbourhoodIDByName(value);
+			
 			if (highlightedShapes) {
-				if (highlightedShapes.periods.length == 0) {
-					
-					var neighbourhoodsName:Array = new Array();
-					
-					for each (var n:Neighbourhood in highlightedShapes.neighbourhoods) {
-						neighbourhoodsName.push(n.name);
+				
+				for each (var cs:CityShape in highlightedShapes.shapes) {
+					if (cs.neighbourhood == nId) {
+						shapes.push(cs);	
 					}
 					
-					return neighbourhoodsName;
 				}
+				
+				return shapes;
+				
 			}
 			
 			return null;
 			
 		}
 		
+		/**
+		 * 
+		 * @param data
+		 * @param type
+		 * @param source
+		 * 
+		 */
 		public function addHighlightShapes(data:Array, type:String, source:String):void {
 			
 			//Creating data to send
@@ -328,6 +564,13 @@ package model {
 			*/
 		}
 		
+		/**
+		 * 
+		 * @param data
+		 * @param type
+		 * @param source
+		 * 
+		 */
 		public function removeHighlightedShapes(data:*, type:String, source:String):void {
 			
 			//if there are highlighted shapes AND the type does match
@@ -346,6 +589,10 @@ package model {
 				
 				var nArray:Array = highlightedShapes.neighbourhoods;
 				var sArray:Array = highlightedShapes.shapes;
+				
+				if (type == "period") {
+					highlightedShapes.removePeriod(source)
+				}
 				
 				/*
 				trace ("Action: "+ eventData.action);
@@ -398,7 +645,12 @@ package model {
 					highlightedShapes.neighbourhoods = nArray;
 					highlightedShapes.shapes = sArray;
 				}
-					
+				
+				
+				//reset highlightShapes if not shape is highlighted
+				if (highlightedShapes.shapes.length == 0) {
+					highlightedShapes.clean();
+				}
 				
 				//sending the event
 				eventData.shapes = affectetedShapes;

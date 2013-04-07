@@ -1,6 +1,7 @@
 package util {
 	
 	import flash.system.Capabilities;
+	import flash.ui.Multitouch;
 	
 	public class DeviceInfo {
 		
@@ -47,6 +48,10 @@ package util {
 			return Capabilities.language;
 		}
 		
+		public static function touchscreenType():String {
+			return Capabilities.touchscreenType;
+		}
+		
 		public static function metrics():String {
 			var result:String = "{";
 			result += '"_device":"' + DeviceInfo.device() + '",';
@@ -59,7 +64,16 @@ package util {
 			
 			result += '"_resolution":"' + DeviceInfo.resolution() + '",';
 			result += '"_locate":"' + DeviceInfo.locale() + '",';
+			result += '"_touchscreen_type":"' + DeviceInfo.touchscreenType() + '",';
 			result += "}";
+			result += " / Multitouch feature: "
+			result += "inputMode: " + Multitouch.inputMode + ",";
+			result += "mapTouchToMouse: " + Multitouch.mapTouchToMouse + ",";
+			result += "maxTouchPoints: " + Multitouch.maxTouchPoints + ",";
+			result += "supportedGestures: " + Multitouch.supportedGestures + ",";
+			result += "supportsGestureEvents: " + Multitouch.supportsGestureEvents + ",";
+			result += "supportsTouchEvents: " + Multitouch.supportsTouchEvents + ",";
+			
 			
 			return result;
 		}

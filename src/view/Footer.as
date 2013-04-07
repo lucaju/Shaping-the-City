@@ -72,8 +72,8 @@ package view {
 			
 			//3.menu
 			var options:Array = [
-				{title:"Explode"},
-				{title:"Animation"}
+				{title:"Explode"}//,
+				//{title:"Animation"}
 			];
 			
 			menu = new FooterMenu(this.getController(),options);

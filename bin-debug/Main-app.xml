@@ -30,7 +30,7 @@
 	<versionNumber>0.1.0</versionNumber>
 		         
 	<!-- A string value (such as "v1", "2.5", or "Alpha 1") that represents the version of the application, as it should be shown to users. Optional. -->
-	<versionLabel>Beta 1</versionLabel>
+	<versionLabel>Beta 3</versionLabel>
 
 	<!-- Description, displayed in the AIR application installer.
 	May have multiple values for each language. See samples or xsd schema file. Optional. -->
@@ -101,7 +101,7 @@
 
         <!-- The render mode for the app (either auto, cpu, gpu, or direct). Optional. Default auto -->
 
-        <renderMode>gpu</renderMode>
+        <!--  <renderMode>gpu</renderMode> -->
 
         <!-- Whether the default direct mode rendering context allocates storage for depth and stencil buffers.  Optional.  Default false. -->
         <!-- <depthAndStencil></depthAndStencil> -->
@@ -189,6 +189,7 @@
     <!-- iOS specific capabilities -->
 	<iPhone>
 		<!-- A list of plist key/value pairs to be added to the application Info.plist -->
+		<!-- 
 		<InfoAdditions>
             <![CDATA[
                 <key>UIDeviceFamily</key>
@@ -203,7 +204,7 @@
                 <string>YES</string>
                 <key>UIPrerenderedIcon</key> 
             ]]>
-        </InfoAdditions>
+        </InfoAdditions> -->
         <!-- A list of plist key/value pairs to be added to the application Entitlements.plist -->
 		<!-- <Entitlements>
             <![CDATA[

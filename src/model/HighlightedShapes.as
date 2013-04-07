@@ -1,5 +1,10 @@
 package model {
 	
+	/**
+	 * THis class holds the highlighted shapes and its metadata. 
+	 * @author lucaju
+	 * 
+	 */
 	public class HighlightedShapes {
 		
 		//****************** Properties ****************** ******************  ****************** 
@@ -62,6 +67,10 @@ package model {
 		
 		public function addPeriod(value:String):void {
 			_periods.push(value);
+		}
+		
+		public function removePeriod(value:String):void {
+			_periods.splice(_periods.indexOf(value),1);
 		}
 		
 		public function addShape(value:CityShape):void {

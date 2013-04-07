@@ -2,7 +2,12 @@ package view {
 	
 	//imports
 	import com.greensock.TweenMax;
+	import com.greensock.TweenProxy;
 	
+	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.EventDispatcher;
+	import flash.events.MouseEvent;
 	import flash.events.TransformGestureEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
@@ -12,12 +17,14 @@ package view {
 	import events.PipelineEvents;
 	
 	import model.CityShape;
-	import model.DataModel;
 	
 	import mvc.AbstractView;
 	import mvc.IController;
 	
 	import util.DeviceInfo;
+	
+	import view.explode.ExplodeInfoView;
+	import view.util.scroll.Scroll;
 	
 	/**
 	 * MapViw
@@ -28,17 +35,26 @@ package view {
 	 */
 	public class MapView extends AbstractView {
 		
-		//properties
-		protected var activeArea		:Rectangle;					//Keep the active map view windows dimensions. 
-		protected var proportion		:Object;					//Keep the propoportions between the map and the screen.
+		//****************** Properties ****************** ****************** ****************** 
+		protected var activeArea			:Rectangle;					//Keep the active map view windows dimensions. 
+		protected var proportion			:Object;					//Keep the propoportions between the map and the screen.
 		
-		protected var blockShape		:BlockShape;				//Generic blockShape.
+		protected var blockShape			:BlockShape;				//Generic blockShape.
 		
-		protected var shapeCollection	:Array;						//Collection of all shapes on the map.
-		protected var highlightedShapes	:Array;						//Collection of all highlighted shapes on the map.
+		protected var shapeCollection		:Array;						//Collection of all shapes on the map.
+		protected var highlightedShapes		:Array;						//Collection of all highlighted shapes on the map.
+		protected var ignoredShapes			:Array;						//Collection of all ignored shapes on the map.
+		protected var selectedShape			:BlockShape					//hold the selected shape
 		
+		protected var exploded				:Boolean = false;
 		
+		protected var scroll				:Scroll;
 		
+		protected var scrolledArea			:Sprite;
+		protected var shapeContainer		:Sprite;
+		protected var containerMask			:Sprite;
+		
+		//****************** Constructor ****************** ****************** ****************** 
 		/**
 		 * Contructor. MapView extends AbstractView, which requires an IController as parameter. In this case, it will be the PipelineController.
 		 *  <p>It also initiate shapeCollection</>
@@ -49,50 +65,25 @@ package view {
 			super(c);
 			
 			shapeCollection = new Array();
+			
+			shapeContainer = new Sprite();
+			this.addChild(shapeContainer);
 		}
+		
 		
 		//****************** GETTERS ****************** ****************** ****************** 
-		
+
 		/**
-		 * GetShapes. Return the shape collection 
-		 * 
-		 * @return:Array 
+		 * isExploded. Returns the current exploded condition
+		 * @param value:Rectangle
 		 * 
 		 */
-		public function getShapes():Array {
-			return shapeCollection.concat();;
-		}
-		
-		/**
-		 * Get Shape by ID. Returns the BlockShape that matches the parameter
-		 *  
-		 * @param value:int
-		 * @return:BlockShape
-		 * 
-		 */
-		public function getShapeById(value:int):BlockShape {
-			for each (var b:BlockShape in shapeCollection) {
-				if (b.id == value) {
-					return b;
-					break;
-				}
-			}
-			
-			return null;
+		public function isExploded():Boolean {
+			return exploded;
 		}
 		
 		
 		//****************** SETTERS ****************** ****************** ****************** 
-		
-		/**
-		 * SetProportion. Save the proportion between the map and the screen to a variable
-		 * 
-		 * @param value:Object
-		 * 
-		 */
-		public function setProportion(value:Object):void {
-			proportion = value;
-		}
 		
 		/**
 		 * SetActiveArea. Save the active area size to a variable.
@@ -104,39 +95,46 @@ package view {
 			activeArea = value;
 		}
 		
-		//****************** INIT ****************** ****************** ****************** 
+		//****************** INITIALIZE ****************** ****************** ****************** 
 		
 		/**
 		 * INIT. Initiate the MapView.
 		 * <p>Add a listernet to wait for the data when it become available</p> 
 		 * 
 		 */
-		public function init():void {
+		public function init():void {	
 			
-			var control:PipelineController = PipelineController(this.getController());
-			var dataModel:DataModel = DataModel(control.getModel("DataModel"));
-			dataModel.addEventListener(PipelineEvents.COMPLETE, onLoad);
-			dataModel.addEventListener(PipelineEvents.CHANGE, onChange);
-			control.loadShapeData();
+			//listeners
+			this.getController().getModel("DataModel").addEventListener(PipelineEvents.COMPLETE, onLoad);
+			this.getController().getModel("DataModel").addEventListener(PipelineEvents.CHANGE, onChange);
+			
+			//load Shapes
+			PipelineController(this.getController()).loadShapeData();
 
+			//background
+			this.graphics.beginFill(0xFFFFFF,0);
+			this.graphics.drawRect(0,0,this.activeArea.width,this.activeArea.height);
+			this.graphics.endFill();
 		}
 		
-		//****************** PRIVATE METHODS  ****************** ****************** ****************** 
+		//****************** PROTECTED METHODS  ****************** ****************** ****************** 
 		
 		/**
-		 * Back to Origin. It animatte the shapes back to the original GPS location.
+		 * Get Shape by ID. Returns the BlockShape that matches the parameter
+		 *  
+		 * @param value:int
+		 * @return:BlockShape
 		 * 
 		 */
-		private function backToOrigin():void {
-			
-			var random:Number = Math.random();
-			
-			for each (var object:BlockShape in shapeCollection) {
-				TweenMax.to(object,2,{x:object.location.x,y:object.location.y,delay:2 * random});
+		protected function getShapeById(value:int):BlockShape {
+			for each (var b:BlockShape in shapeCollection) {
+				if (b.id == value) {
+					return b;
+					break;
+				}
 			}
 			
-			TweenMax.to(this,2,{scaleX:1, scaleY:1,delay:2 * random});
-			
+			return null;
 		}
 		
 		/**
@@ -151,39 +149,49 @@ package view {
 		 * @param reset:Boolean = false
 		 * 
 		 */
-		private function addHighlightShapes(shapesToAdd:Array, reset:Boolean = false):void {
+		protected function addHighlightShapes(shapesToAdd:Array, reset:Boolean = false):void {
+			
+			//reset highlight when contentType changes
+			if (reset) resetHighlight();
+			
+			//create hughlight array if it does not exists yet
+			if (!highlightedShapes) highlightedShapes = new Array();
 			
 			
+			//add to the list
+			var block:BlockShape;
 			
-			if (reset) {
-				resetHighlight();
-			}
-			
-			if (!highlightedShapes) {
-				highlightedShapes = new Array();
-			}
-			
-			//check for duplicates
-			if (highlightedShapes.length > 0) {
-				for each (var s:CityShape in shapesToAdd) {
-					for each (var b:BlockShape in highlightedShapes) {
-						if (s.id == b.id) {
-							shapesToAdd.splice(shapesToAdd.indexOf(s),1)
-						}
-					}
+			for each (var cs:CityShape in shapesToAdd) {
+				block = getShapeById(cs.id);
+				block.highlighted = true;
+				block.dim(false);
+				highlightedShapes.push(block);
+				
+				if (ignoredShapes) {
+					ignoredShapes.splice(ignoredShapes.indexOf(block),1)
 				}
 			}
 			
-			//add to the list
-			for each (var cs:CityShape in shapesToAdd) {
-				var block:BlockShape = getShapeById(cs.id);
-				block.isHighlighted = true;
-				block.dim(false);
-				highlightedShapes.push(block);
+			//create ignore list it does not exists yet
+			if (!ignoredShapes) {
+				
+				ignoredShapes = new Array();
+				
+				for each (block in shapeCollection) {
+					if (!block.highlighted) {
+						ignoredShapes.push(block);
+						
+						if (!exploded) {
+							block.dim(true,"start");
+						} else {
+							//block.x = block.location.x;
+							//block.y = block.location.y;
+						}
+					}
+				}
+				
 			}
-			
-			dimBlocks();
-			
+
 		}
 		
 		/**
@@ -195,54 +203,34 @@ package view {
 		 * @param shapesToRemove:Array
 		 * 
 		 */
-		private function removeHighlightShapes(shapesToRemove:Array):void {
+		protected function removeHighlightShapes(shapesToRemove:Array):void {
 			
+			//dim ignored shapes
 			if (highlightedShapes) {
 				
-				var toDim:Array = new Array();
+				var block:BlockShape;
+
+				for each (var cs:CityShape in shapesToRemove) {
+					block = getShapeById(cs.id);
+					block.highlighted = false;
+					highlightedShapes.splice(highlightedShapes.indexOf(block),1)
+					ignoredShapes.push(block);
+					if(!exploded) block.dim(true);
+				}
 				
-				//remove
-				if (highlightedShapes.length > 0) {
-					for each (var s:CityShape in shapesToRemove) {
-						for each (var b:BlockShape in highlightedShapes) {
-							if (s.id == b.id) {
-								b.isHighlighted = false;
-								toDim.push(b);
-								
-								highlightedShapes.splice(highlightedShapes.indexOf(b),1)
-							}
-						}
-					}
-				}
-			
-			
-			
-				if (highlightedShapes.length == 0) {
-					dimBlocks(false);
-				} else {
-					for each(b in toDim) {
-						b.dim(true);
-					}
-				}
 			}
 			
 			
-		}
-		
-		/**
-		 * Dim BLocks. Simply dim the light of the block that are not in highlight mode.
-		 * <p>Default value: True 
-		 * 
-		 * @param value: Boolean
-		 * 
-		 */
-		private function dimBlocks(value:Boolean = true):void {
-			
-			for each (var block:BlockShape in shapeCollection) {
-				if (!block.isHighlighted) {
-					block.dim(value);
+			//get back to normal
+			if (highlightedShapes.length == 0) {
+				ignoredShapes = null;
+				highlightedShapes = null;
+				
+				for each (block in shapeCollection) {
+					block.dim(false,"end");
 				}
 			}
+			
 		}
 		
 		/**
@@ -250,19 +238,271 @@ package view {
 		 * <p>It simply reset the highlight list and turn them back to the original state.</p> 
 		 * 
 		 */
-		private function resetHighlight():void {
+		protected function resetHighlight():void {
+			
 			for each (var bs:BlockShape in highlightedShapes) {
-				bs.isHighlighted = false;
+				bs.highlighted = false;
 			}
+			
 			highlightedShapes = null;
+			ignoredShapes = null;
+			
+		}
+		
+		/**
+		 * Non filtered explosion 
+		 * 
+		 */
+		protected function explosion():void {
+			
+			TweenMax.to(shapeContainer,2,{scaleX:1, scaleY:1, x:0, y:0,delay:2 * random});
+			
+			//initial position
+			var posX:Number = 2;
+			var posY:Number = 0;
+			var alt:Number = 0;
+			
+			var random:Number = Math.random();
+			
+			//loops
+			for each (var object:BlockShape in shapeCollection) {
+				
+				//remove light fx
+				object.dim(false,"end");
+				object.highlighted = false;
+				
+				//update vertical position
+				if (posX + object.width + 2 > stage.stageWidth) {
+					posY += alt + 1;
+					posX = 2;
+					alt = 0;
+					
+					//new new position
+					alt = object.height + 1;
+				}
+
+				//keep record of the taller object
+				if (alt < object.height) {
+					alt = object.height + 1;
+				}
+	
+				//animation
+				TweenMax.to(object,2,{x:posX - object.registrationTL.x, y:posY - object.registrationTL.y, delay:random});
+				
+				//update horizontal position
+				posX += object.width + 2;
+				
+			}
+			
+			updateContentBackground();
+		}
+		
+		/**
+		 * Filtered explosion. It receive the params to add or remove shapes to the explosion
+		 *  
+		 * @param params:Object
+		 * 
+		 */
+		protected function filteredExplosion(params:Object = null):void {
+			
+			//dim ignored shapes
+			for each (var bIg:BlockShape in ignoredShapes) {
+				bIg.dim(true,"out");
+				TweenMax.to(bIg,2,{x:bIg.location.x,y:bIg.location.y});
+			}
+			
+			//initial attributes
+			var minY:Number = 70;
+			
+			switch (DeviceInfo.os()) {
+				case "iPhone":
+					minY = 140;
+					break;
+			}
+			
+			var posX:Number = 2;
+			var posY:Number = minY;
+			var alt:Number = 0;
+			var groupPosX:Number = 0;
+			
+			var maxWidth:Number = ExplodeInfoView.groupWidth;
+			var gap:Number = ExplodeInfoView.gap;
+			var random:Number = Math.random();
+			var i:int = 0; //group iterarion
+			
+			//content
+			var control:PipelineController = this.getController() as PipelineController;
+			var contentType:String = control.getHighlightedContentType();
+			var highlightedContent:Array = control.getHighlightedContent(contentType);
+			
+			//Content type switch
+			var communityIDs:Array = new Array();
+			
+			switch (contentType) {
+				
+				case "community":
+					
+					//Get neighbourhoods id
+					for each (var n:String in highlightedContent) {
+						communityIDs.push(control.getNeighbourhoodIDByName(n));
+					}
+					
+					highlightedContent = communityIDs;
+					communityIDs = null;
+					
+					explode();
+					
+					break;
+				
+				case "period":
+					
+					//convert period string into two: start and end date
+					var start:int;
+					var end:int;
+					
+					//Get neighbourhoods id
+					for each (var p:String in highlightedContent) {
+						var pArr:Array = p.split(" - ");
+						start = pArr[0];
+						end = pArr[1];
+						
+						communityIDs.push(control.getNeighbourhoodIDsByPeriod(start, end));;
+					}
+					
+					var highlightedPeriod:Array = communityIDs;
+					communityIDs = null;
+					
+					explodePeriod();
+					
+					break;
+			}
+			
+			//explode by period
+			function explodePeriod():void {
+				
+				//period loop
+				for each (var period:Array in highlightedPeriod) {
+					
+					//save period's neighbourhoods
+					highlightedContent = period;
+					
+					//update positioning
+					groupPosX = (maxWidth * i ) + (gap * i);
+					posX = groupPosX;
+					posY = minY;
+					
+					explode();
+					
+					i++;
+				}
+			}
+			
+			//explode by community (period will use this to concatenate communities by period)
+			function explode():void {
+				for each (var content:int in highlightedContent) {
+					
+					//update positioning if community
+					if (contentType == "community") {
+						groupPosX = (maxWidth * i ) + (gap * i);
+						posX = groupPosX;
+						posY = minY;
+					}
+					
+					//shape loop
+					for each (var object:BlockShape in highlightedShapes) {
+						
+						//if shape bellongs to the exploding group
+						if (content == object.neighbourhood) {
+							
+							//change status
+							object.highlighted = true;
+							
+							//update vertical position
+							if (posX + object.width + 2 > groupPosX + maxWidth) {
+								posY += alt + 1;
+								posX = groupPosX + 2;
+								
+								//new new position
+								alt = object.height + 1;
+							}
+							
+							//keep record of the taller object
+							if (alt < object.height) {
+								alt = object.height + 1;
+							}
+							
+							//animation
+							TweenMax.to(object,2,{x:posX - object.registrationTL.x, y:posY - object.registrationTL.y, delay:.5 * random});
+							
+							//update horizontal position
+							posX += object.width + 2;
+							
+						}
+					
+					}
+					
+					//update iteration if community
+					if (contentType == "community") {
+						i++;
+					}
+					
+				}
+			}
+
+			
+			
+			//if parameter is pass and the action is remove			
+			if (params && params.action == "remove") {
+				for each (var b:BlockShape in shapeCollection) {
+					if (params.source == b.neighbourhood) {
+						TweenMax.to(b,1,{alpha:0, x:b.location.x,y:b.location.y,delay:random});
+					}
+				}
+			}
+			
+			updateContentBackground();
+			
+		}
+		
+		/**
+		 * Back to Origin. It animatte the shapes back to the original GPS location.
+		 * 
+		 */
+		protected function backToOrigin(collection:Array = null):void {
+			
+			var random:Number = Math.random();
+			
+			TweenMax.to(shapeContainer,2,{scaleX:1, scaleY:1, x:0, y:0,delay:random});
+			
+			var affectedArray:Array = shapeCollection;
+			
+			//define what is going ack to origin. If a argument is passed, so use it. Otherwise it is the end of explosion.
+			if (collection) {
+				affectedArray = collection;
+			} else {
+				exploded = false;
+			}
+			
+			//move it back
+			for each (var object:BlockShape in affectedArray) {
+				TweenMax.to(object,2,{x:object.location.x,y:object.location.y,delay:random,onComplete:updateContentBackground});
+			}
+			
+			//dim ignore
+			for each (var bIg:BlockShape in ignoredShapes) {
+				bIg.dim(true);
+			}
+			
+			affectedArray = null;
+			
 		}
 		
 		
 		//****************** EVENT HANDLES  ****************** ****************** ****************** 
 		
 		/**
-		 * onLoad. Treat the data.
-		 * <p>It call for calculate proportion method in the Controller<p/>
+		 * onLoad. Build the map.
+		 * <p>It calls for calculate proportion method in the Controller<p/>
 		 * <p>Create and position the shapes</p>
 		 * <p>Add listener to ZOOM and PAN interaction</p>
 		 * 
@@ -271,21 +511,22 @@ package view {
 		 */
 		private function onLoad(e:PipelineEvents):void {
 			
-			e.target.removeEventListener(PipelineEvents.COMPLETE, onLoad);
-			
 			if (e.parameters.type == "cityShapes") {
 				
+				//remove listener
+				e.target.removeEventListener(PipelineEvents.COMPLETE, onLoad);
+				
+				//data
 				var data:Array = e.parameters.data;
 				
 				//get proportions
 				proportion = PipelineController(this.getController()).getMapPropportions(activeArea);
 				
-				
 				//loop
 				var i:int = 0;
 				
 				for each (var cityShape:CityShape in data) {
-				
+					
 					var origin:Point = proportion.origin;
 					var scale:Number = proportion.rate;
 					
@@ -293,11 +534,14 @@ package view {
 						i++;
 						
 						blockShape = new BlockShape(cityShape.id, scale);
-						this.addChild(blockShape);
+						shapeContainer.addChild(blockShape);
 						
 						blockShape.x = (cityShape.location.x - origin.x) * scale;
 						blockShape.y = (cityShape.location.y - origin.y) * scale;
 						
+						blockShape.neighbourhood = cityShape.neighbourhood;
+						
+						//save geolocation
 						blockShape.location = new Point(blockShape.x, blockShape.y);
 						
 						shapeCollection.push(blockShape);
@@ -318,10 +562,41 @@ package view {
 					
 				}
 				
-				this.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onGestureZoom);
-				this.addEventListener(TransformGestureEvent.GESTURE_PAN, onGesturePan);
+				//container background
+				updateContentBackground();
+				
+				//mask for container
+				containerMask = new Sprite();
+				containerMask.graphics.beginFill(0xFFFFFF,0);
+				containerMask.graphics.drawRect(shapeContainer.x, shapeContainer.y, activeArea.width, activeArea.height);
+				this.addChild(containerMask);
+				shapeContainer.mask = containerMask
+				
+				//add scroll system
+				scroll = new Scroll();
+				scroll.direction = "both";
+				scroll.target = shapeContainer;
+				scroll.maskContainer = containerMask;
+				scroll.friction = .9;
+				this.addChild(scroll);
+				scroll.init();
+				
+				//listener
+				this.addEventListener(MouseEvent.CLICK, onBlockClick);
+				this.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onMapGestureZoom);
+				
+				this.dispatchEvent(new Event(Event.COMPLETE));
 			}
 			
+		}
+		
+		private function updateContentBackground():void {
+			shapeContainer.graphics.clear();
+			shapeContainer.graphics.beginFill(0xFFFFFF,0);
+			shapeContainer.graphics.drawRect(0,0,shapeContainer.width,shapeContainer.height);
+			shapeContainer.graphics.endFill();
+			
+			//if (scroll) scroll.update();
 		}
 		
 		/**
@@ -334,59 +609,127 @@ package view {
 		 */
 		protected function onChange(event:PipelineEvents):void {
 			
-			switch (event.parameters.method) {
+			if (event.parameters.method == "highlight") {
 				
-				case "highlight":
-						
-					var reset:Boolean = event.parameters.reset;
-					
-					if (event.parameters.action == "add") {
+				var reset:Boolean = event.parameters.reset;
+				
+				switch (event.parameters.action) {
+				
+					case "add":
 						addHighlightShapes(event.parameters.shapes, reset);
-					} else if (event.parameters.action == "remove") {
+						break;
+					
+					case "remove":
 						removeHighlightShapes(event.parameters.shapes);
-					}
+						break;
+				}
+				
+			}
+			
+		}
+		
+		/**
+		 * Add or remove content to filtered explosion
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function explosionContentChange(event:PipelineEvents):void {
+			
+			switch (event.parameters.action) {
+				
+				case "addBulk":
+					filteredExplosion()
+					break;
+				
+				case "add":
+					filteredExplosion()
+					break;
+				
+				case "remove":
+					
+					var control:PipelineController = this.getController() as PipelineController;
+					
+					var communityID:int = control.getNeighbourhoodIDByName(event.parameters.source);
+					
+					var data:Object = {};
+					data.action = event.parameters.action;
+					data.source = communityID;
+					
+					filteredExplosion(data)
+					
+					control = null;
+					data = null;
 					
 					break;
+				
+				case "removeAll":
+					explosion();
+					break;
+				
 			}
-			
-			//trace (event.parameters.method);
-			//trace (event.parameters.action);
-			//trace (event.parameters.data);
 			
 		}
 		
 		/**
-		 * OnGesturePan. Move the map when the user make the two-fingers pan gesture.
-		 * <p>Set the inverse moviment for iPhone logic</p>
 		 * 
-		 * @param event:TransformGestureEvent
+		 * @param event
 		 * 
 		 */
-		protected function onGesturePan(event:TransformGestureEvent):void {
+		protected function onMapGestureZoom(event:TransformGestureEvent):void {
 			
-			if (DeviceInfo.os() != "Mac") {
-				this.x += event.offsetX;
-				this.y += event.offsetY;
+			var myProxy:TweenProxy = TweenProxy.create(shapeContainer);	
+			
+			switch (event.phase) {
+				
+				case "begin":
+					myProxy.registration = new Point(event.stageX, event.stageY);
+					break;
+				
+				case "update":
+					myProxy.scaleX *= event.scaleX;
+					myProxy.scaleY *= event.scaleY;
+					break;
+				
+				case "end":
+					
+					//prevent the map to be smaller then scale 1
+					if (myProxy.scaleX < 1) {
+						TweenMax.to(myProxy, 1, {scaleX:1, scaleY:1});
+						TweenMax.to(shapeContainer, 1, {x:0, y:0});
+					}
+					break;
+			}
+		}
+		
+		protected function onBlockClick(event:Event):void {
+			
+			if (event.target is BlockShape) {
+				
+				//remove selection from a selected shape
+				if (selectedShape) selectedShape.selected = !selectedShape.selected;
+				
+				//new selected shape
+				selectedShape = event.target as BlockShape;
+				selectedShape.selected = !selectedShape.selected;
+				
 			} else {
-				this.x -= event.offsetX;
-				this.y -= event.offsetY;
+				if (selectedShape) selectedShape.selected = false;
+				selectedShape = null;
 			}
-			
 		}
-		
-		/**
-		 *  onGestureZoom. Zoom the map when the user make the two-finger pinch gesture.
-		 * 
-		 * @param event:TransformGestureEvent
-		 * 
-		 */
-		protected function onGestureZoom(event:TransformGestureEvent):void {
-			this.scaleX *= event.scaleX
-			this.scaleY *= event.scaleY
-			
-		}
+	
 		
 		//****************** PUBLIC METHODS  ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param object
+		 * 
+		 */
+		public function addListener(object:EventDispatcher):void {
+			object.addEventListener(PipelineEvents.SELECT, explosionContentChange);
+		}
 		
 		/**
 		 * Animation. Just a fun scale animation. Turno on and off.
@@ -404,7 +747,7 @@ package view {
 				}
 				
 			} else {
-				TweenMax.to(shapeCollection,1,{scaleX:1,scaleY:1, alpha: .4});
+				TweenMax.to(shapeCollection,1,{scaleX:1,scaleY:1, alpha: .6});
 			}
 			
 		}
@@ -418,50 +761,31 @@ package view {
 		 * @param by:String
 		 * 
 		 */
-		public function sort(swither:Boolean, by:String = "size"):void {
+		public function sort(explode:Boolean, filtered:Boolean = false, by:String = "size"):void {
 			
 			TweenMax.killChildTweensOf(this);
 			
-			if (swither) {
-			
-				var posX:Number = 0;
-				var posY:Number = 0;
-				var alt:Number = 0;
+			if (explode) {
 				
 				if (by == "size") {
 					shapeCollection.sortOn("surface", Array.NUMERIC);
 				}
 				
-				var random:Number = Math.random();
-				//TweenMax.to(this,2,{scaleX:.7, scaleY:.7,delay:2 * random});
-				
-				for each (var object:BlockShape in shapeCollection) {
-					
-					//i++;
-					
-					TweenMax.to(object,2,{scaleX:1,scaleY:1, x:posX,y:posY,delay:2 * random});
-					
-					posX += object.width;
-					
-					if (alt < object.height) {
-						alt = object.height + 1;
-					}
-					
-					//if (posX > stage.width) {
-					if (posX >stage.stageWidth) {
-						posY += alt + 1;
-						posX = 0;
-						alt = 0;
-					}
-					
+				if (filtered) {
+					filteredExplosion();
+				} else {
+					explosion();
 				}
 				
+				exploded = true;
+				
+				
 			} else {
-			
+				
 				backToOrigin();
+				
 			}
 		}
-		
 		
 	}
 }

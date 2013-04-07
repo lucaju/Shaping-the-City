@@ -6,21 +6,25 @@ package controller {
 	
 	import model.CityShape;
 	import model.DataModel;
+	import model.Neighbourhood;
 	
 	import mvc.AbstractController;
-	import mvc.Observable;
 	
+	/**
+	 * Controller. Serve as pproxy to connect views to models. It also perfoms some calculations. 
+	 * @author lucaju
+	 * 
+	 */
 	public class PipelineController extends AbstractController {
 		
-		//properties
-		private var dataModel:DataModel;
-		//private var dataTreesModel:DataTreesModel;
-		private var abstractModel:Observable;			//generic model
+		//****************** Properties ****************** ****************** ****************** 
+		private var dataModel					:DataModel;
+		//private var dataTreesModel			:DataTreesModel;
 		
-		private var mapProportion:Object;
-		
+		private var mapProportion				:Object;
 		
 		
+		//****************** Constructor ****************** ****************** ****************** 
 		/**
 		 * 
 		 * @param list
@@ -34,6 +38,8 @@ package controller {
 			//dataTreesModel = DataTreesModel(this.getModel("trees"));
 			
 		}
+		
+		//****************** SHAPE METHODS ****************** ****************** ****************** 
 		
 		/**
 		 * 
@@ -99,7 +105,17 @@ package controller {
 	
 		}
 		
-		//*************** Neighbourhoods ***************
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
+		public function getShapeInfo(value:int):Object {
+			return dataModel.getShapeInfo(value);
+		}
+		
+		//****************** NEIGHBOURHOODS METHODS ****************** ****************** ****************** 
 		
 		/**
 		 * 
@@ -115,34 +131,8 @@ package controller {
 		 * @return 
 		 * 
 		 */
-		public function getNeighbourhoodInfo(value:String = null):Array {
-			if (dataModel.hasNeighbourhoodData) {
-				
-				var data:Array;
-				
-				switch(value) {
-					
-					case "community":
-						data = dataModel.getNeighbourhoodNames();
-						break;
-					
-					case "period":
-						data = dataModel.getPeriod();
-						break;
-					
-					default:
-						data = dataModel.getNeighbourhoods();
-						break;
-				}
-				
-				return data;
-				
-			} else {
-				
-				loadNeighbourhhods();
-				return null;
-				
-			}
+		public function getNeighbourhoodByName(value:String):Neighbourhood {
+			return dataModel.getNeighbourhoodByName(value);
 		}
 		
 		/**
@@ -158,7 +148,6 @@ package controller {
 				return null;
 			}
 		}
-		
 		
 		/**
 		 * 
@@ -183,10 +172,51 @@ package controller {
 		
 		/**
 		 * 
+		 * @param pStart
+		 * @param pEnd
 		 * @return 
 		 * 
 		 */
-		public function getSelectedContent(type:String):Array {
+		public function getNeighbourhoodsByPeriod(pStart:int, pEnd:int):Array {
+			return dataModel.getNeighbourhoodsByPeriod(pStart,pEnd);
+		}
+		
+		
+		//****************** PERIODS METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getPeriods():Array {
+			if (dataModel.hasNeighbourhoodData) {
+				return dataModel.getPeriod();
+			} else {
+				loadNeighbourhhods();
+				return null;
+			}
+			
+		}
+		
+		
+		//****************** HIGHLIGHTED SHAPE METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getHighlightedContentType():String {
+			return dataModel.getSelectedContentType();
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function getHighlightedContent(type:String):Array {
 			
 			switch(type.toLowerCase()) {
 				
@@ -218,18 +248,13 @@ package controller {
 		 * @return 
 		 * 
 		 */
-		public function getPeriods():Array {
-			if (dataModel.hasNeighbourhoodData) {
-				return dataModel.getPeriod();
-			} else {
-				loadNeighbourhhods();
-				return null;
-			}
+		public function getHighlightedShapes(value:String):Array {
+			return dataModel.getHighlightedShapes(value);
 			
 		}
 		
 		
-		//****************************** MAP ***********************************************************
+		//****************** MAP METHODS ****************** ****************** ****************** 
 		
 		/**
 		 * 
@@ -299,6 +324,7 @@ package controller {
 			}
 			
 		}
+		
 		/*
 		public function getTreePropportions():Object {
 			var collection:Array = getTrees();

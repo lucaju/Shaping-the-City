@@ -8,8 +8,6 @@ package view {
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
-	import controller.PipelineController;
-	
 	import events.PipelineEvents;
 	
 	import mvc.AbstractView;
@@ -71,7 +69,7 @@ package view {
 			cityNameTF = new TextField();
 			cityNameTF.selectable = false;
 			cityNameTF.autoSize = "left";
-			cityNameTF.text = "Shaping the City" + " - " + DeviceInfo.os() + " | Edmonton";
+			cityNameTF.text = "Shaping the City" + " | Edmonton";
 			cityNameTF.setTextFormat(style);
 			cityNameTF.x = this.width - cityNameTF.width - 10;
 			cityNameTF.y = 8;

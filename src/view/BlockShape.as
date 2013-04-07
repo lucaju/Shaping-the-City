@@ -4,9 +4,9 @@ package view {
 	import com.greensock.TweenMax;
 	
 	import flash.display.Sprite;
-	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	
 	/**
 	 * Block Shape.
@@ -17,21 +17,27 @@ package view {
 	 */
 	public class BlockShape extends Sprite {
 		
-		//properties
+		//****************** Properties ****************** ******************  ****************** 
 		protected var _id				:int;							//Block ID. Heps to keep track of the changes in the model.
 		protected var _neighbourhood	:int;							//Neighbouthood ID. Helps to find and group this shape.
-		
 		protected var _location			:Point;							//Save the relative geolocation on the screen 
-		
 		protected var _vector			:Vector.<Number>;				//Keeps the vector that defines the geometric shape.
-		protected var _surface			:Number;								//Keeps the shape surface area
-		protected var scale				:Number 			= 1;		//Keeps the origianl shape scale. Default: 1.
+		protected var _surface			:Number;						//Keeps the shape surface area
+		protected var scale				:Number = 1;					//Keeps the origianl shape scale. Default: 1.
 		
-		protected var _isHighlighted		:Boolean 			= false;	//higlighted Toggle. Deault = false/
+		protected var _highlighted		:Boolean = false;				//higlighted Toggle. Deault = false/
+		protected var _selected			:Boolean = false;				//Selected Toggle. Deault = false/
+		protected var _dimed			:String;				//Dim Toggle. Deault = false/
+		
+		protected var _registrationTL	:Point							//Keep the Top Left Registration point	
+		
+		protected var highlightColor	:uint = 0xF15A24;				//Highlisht Color. Default = 0x4363AE (blue)
+		protected var selectColor		:uint = 0x4363AE;				//Highlisht Color. Default = 0xF15A24 (orange)
 		
 		//protected var _numTrees		:int 				= 0;		//Save the number of trees in this block
 
 		
+		//****************** Constructor ****************** ******************  ****************** 
 		/**
 		 * Contructor.
 		 * <p>Requeired:</p>
@@ -50,7 +56,16 @@ package view {
 		
 		
 		//****************** GETTERS ****************** ****************** ****************** 
-		
+
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get registrationTL():Point {
+			return _registrationTL;
+		}
+
 		/**
 		 * ID. Returns Block ID.
 		 *  
@@ -107,8 +122,26 @@ package view {
 		 * @return:boolean
 		 * 
 		 */
-		public function get isHighlighted():Boolean {
-			return _isHighlighted;
+		public function get highlighted():Boolean {
+			return _highlighted;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get selected():Boolean {
+			return _selected;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get dimed():String {
+			return _dimed;
 		}
 		
 		/*
@@ -167,9 +200,44 @@ package view {
 		 * @param value:Boolean
 		 * 
 		 */
-		public function set isHighlighted(value:Boolean):void {
-			_isHighlighted = value;
-			highlight();
+		public function set highlighted(value:Boolean):void {
+			_highlighted = value;
+			
+			if (!selected) {
+				
+				//kill tween if one overlap another
+				if (TweenMax.getTweensOf(this).length > 0) {
+					var tw:TweenMax = TweenMax.getTweensOf(this)[0] as TweenMax;
+					tw._kill();
+				}
+				
+				if (highlighted) {
+					TweenMax.to(this,.5,{tint:highlightColor, delay:Math.random()});
+				} else {
+					TweenMax.to(this,.2,{removeTint:true, delay:Math.random()});
+					
+				}
+				
+			}
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set selected(value:Boolean):void {
+			_selected = value;
+			
+			if (selected) {
+				TweenMax.to(this,.5,{tint:selectColor});
+			} else {
+				if (highlighted) {
+					TweenMax.to(this,.5,{tint:highlightColor});
+				} else {
+					TweenMax.to(this,.5,{removeTint:true});
+				}
+			}
 		}
 		
 		/*
@@ -230,13 +298,20 @@ package view {
 			this.graphics.beginFill(0x333333);
 			this.graphics.drawPath(command,vector);
 			this.graphics.endFill();
-			this.alpha = .4;	
+			
+			this.alpha = .6;
 			
 			//surface
 			surface = calculateSurface();
 			
-			//this.addEventListener(MouseEvent.MOUSE_OVER, _over);
-			//this.addEventListener(MouseEvent.MOUSE_OUT, _out);
+			//TOP LEFT REGISRATION
+			var bounds:Rectangle = this.getBounds(this);
+			
+			_registrationTL = new Point();
+			_registrationTL.x = bounds.x;
+			_registrationTL.y = bounds.y;
+			
+			
 			//this.addEventListener(MouseEvent.MOUSE_DOWN, _mouseDown);
 			//this.addEventListener(MouseEvent.MOUSE_UP, _mouseUp);
 			
@@ -282,48 +357,43 @@ package view {
 			return surf;
 		}
 		
-		protected function highlight():void {
+		/**
+		 * 
+		 * @param value
+		 * @param phase
+		 * 
+		 */
+		public function dim(value:Boolean, phase:String = "update"):void {
 			
-			if (isHighlighted) {
-				TweenMax.to(this,.5,{tint:0xF15A24, delay: .2 + Math.random()});
-			} else {
-				TweenMax.to(this,.2,{removeTint:true, delay:Math.random() * .2});
-			}
+			_dimed = phase;
 			
-			
-			
-		}
-		
-		public function dim(value:Boolean):void {
-			
-			if (value) {
-				TweenMax.to(this,.5,{alpha:.1, delay:Math.random()});
-			} else {
-				TweenMax.to(this,.5,{alpha:.4, delay:Math.random()});
+			switch (phase) {
+				case "start":
+					TweenMax.to(this,2 * Math.random(),{alpha:.1, delay:Math.random()});
+					break;
+				
+				case "update":
+					if (value) {
+						//this.alpha = .1;
+						TweenMax.to(this,.2,{alpha:.1, delay:Math.random()});
+					} else {
+						TweenMax.to(this,.5,{alpha:.6, delay:Math.random()});
+					}
+					break;
+				
+				case "end":
+					TweenMax.to(this,2 * Math.random(),{alpha:.6, delay:1.2+Math.random()});
+					break;
+				
+				case "out":
+					TweenMax.to(this,2 * Math.random(),{alpha:0});
+					break;
+				
 			}
 		}
 		
 		
 		//****************** EVENTS ****************** ****************** ******************
-		
-		/**
-		 * Mouse Over. Set the action for mouse over.
-		 * 
-		 * @param event
-		 * 
-		 */
-		protected function _over(event:Event):void {
-			this.alpha = 1;
-		}	
-		/**
-		 * Mouse Out. Set the action for mouse out.
-		 * 
-		 * @param event
-		 * 
-		 */
-		protected function _out(event:MouseEvent):void {
-			this.alpha = .4;
-		}
 		
 		/**
 		 * Mouse Down. Set the action for mouse down.
