@@ -8,8 +8,6 @@ package view.menu.submenu {
 	
 	import events.PipelineEvents;
 	
-	import model.Neighbourhood;
-	
 	import view.util.scroll.Scroll;
 	
 	public class SubMenuContent extends Sprite {
@@ -139,8 +137,11 @@ package view.menu.submenu {
 					break;
 			}
 			
-			
-			
+			//content
+			this.graphics.beginFill(0xFFFFFF,0);
+			this.graphics.drawRect(0,0,this.width,this.height);
+			this.graphics.endFill();
+
 		}
 		
 		//****************** PROTECTED METHODS ****************** ******************  ****************** 
@@ -203,7 +204,7 @@ package view.menu.submenu {
 				item.addEventListener(MouseEvent.CLICK, _itemClick);
 				itemCollection.push(item);
 				
-				TweenMax.from(item,.5,{alpha:0,delay:Math.random()});
+				//TweenMax.from(item,.5,{alpha:0,delay:Math.random()});
 				
 			}
 			
@@ -394,7 +395,7 @@ package view.menu.submenu {
 						scroll.direction = orientation;
 						scroll.target = containerToScroll;
 						scroll.maskContainer = containerMask;
-						scroll.color = 0xFFFFFF;
+						scroll.hasRoll = false;
 						this.addChild(scroll);
 						scroll.init();
 						
@@ -450,31 +451,34 @@ package view.menu.submenu {
 		
 		//****************** PUBLIC METHOD ****************** ******************  ****************** 
 		
-		public function update(data:Object):void {
+		public function update(info:Object):void {
 			
 			var item:SubMenuItem;
+			var toggleAction:Boolean;
 			
-			if (data.type == type) {
-				
-				switch (data.action) {
-					case "remove":
-						item = getItemByName(data.source);
-						item.toggle = false;
-						break;
+			//action
+			switch (info.action) {
+				case "remove":
+					toggleAction = false;
+					break;
 					
-					case "add":
-						if (data.source is Array) {
-							for each (var title:String in data.source) {
-								item = getItemByName(title);
-								item.toggle = true;
-							}
-						}
-						
-	 					break;
-				}
-				
-				
+				case "add":
+					toggleAction = true;
+					break;
 			}
+			
+			//type of information
+			
+			if (info.source is Array) {
+				for each (var title:String in info.source) {
+					item = getItemByName(title);
+					item.toggle = toggleAction;
+				}
+			} else {
+				item = getItemByName(info.source);
+				item.toggle = toggleAction;
+			}
+				
 		}
 		
 		

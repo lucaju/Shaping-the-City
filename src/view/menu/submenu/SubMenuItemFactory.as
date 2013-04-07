@@ -1,14 +1,13 @@
 package view.menu.submenu {
 	
-	import flash.display.Sprite;
-	
 	import util.DeviceInfo;
 	
-	public class SubMenuItemFactory extends Sprite {
-		
-		public function SubMenuItemFactory() {
-		
-		}
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
+	public class SubMenuItemFactory {
 			
 		/**
 		 * addSubMenuItem. Static function to add submenus items. It creates the appropriate submenu item according to the OS.  

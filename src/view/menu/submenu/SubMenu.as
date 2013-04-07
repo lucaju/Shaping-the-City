@@ -4,7 +4,6 @@ package view.menu.submenu {
 	import com.greensock.TweenMax;
 	
 	import flash.display.Sprite;
-	import flash.events.Event;
 	
 	import controller.PipelineController;
 	
@@ -202,9 +201,18 @@ package view.menu.submenu {
 		 */
 		protected function getData():void {
 			var pController:PipelineController = this.getController() as PipelineController;
-			data = pController.getNeighbourhoodInfo(contentType.toLowerCase());
 			
-			if (data != null) {
+			switch (contentType.toLowerCase()) {
+				case "community":
+					data = pController.getNeighbourhoodNames();
+					break;
+				
+				case "period":
+					data = pController.getPeriods();
+					break
+			}
+			
+			if (data) {
 				
 				contentContainer = new SubMenuContent(data,contentType.toLowerCase(), rangeSize);
 				this.addChildAt(contentContainer,1);
@@ -219,13 +227,15 @@ package view.menu.submenu {
 				
 				contentContainer.init();
 				
-				////check for selected options
-				var selectedItems:Array = PipelineController(this.getController()).getSelectedContent(contentType);
-			
-				var selectedData:Object = new Object();
-				selectedData.source = selectedItems;
-				selectedData.action = "add";
-				contentContainer.update(selectedData);
+				////check for highlighted data
+				var highlightedType:String = PipelineController(this.getController()).getHighlightedContentType();
+				if (highlightedType && highlightedType.toLowerCase() == contentType.toLowerCase()) {
+					var highlightedData:Object = new Object();
+					highlightedData.type = highlightedType;
+					highlightedData.action = "add";
+					highlightedData.source = PipelineController(this.getController()).getHighlightedContent(highlightedType);
+					contentContainer.update(highlightedData);
+				}
 					
 				///event
 				contentContainer.addEventListener(PipelineEvents.SELECT, onSelect);

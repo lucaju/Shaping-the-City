@@ -1,8 +1,6 @@
 package view.menu {
 	
 	//imports
-	import flash.display.Sprite;
-	
 	import util.DeviceInfo;
 	
 	/**
@@ -18,13 +16,7 @@ package view.menu {
 	 * @author lucaju
 	 * 
 	 */
-	public class ButtonBarFactory extends Sprite {
-		
-		/**
-		 *  Constructor
-		 * 
-		 */
-		public function ButtonBarFactory() { }
+	public class ButtonBarFactory {
 		
 		//****************** STATIC PUBLIC METHODS ****************** ****************** ****************** 
 		

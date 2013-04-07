@@ -165,7 +165,7 @@ package view.menu {
 				TweenMax.to([icon,titleTF],.3,{removeTint:true});
 				
 				if (_bgFile != null) {
-					bg.alpha = 0;
+					bg.alpha = .3;
 				}
 					
 			} else {
@@ -261,7 +261,7 @@ package view.menu {
 			titleTF.x = (bg.width/2) - (titleTF.width/2);
 			
 			bg.graphics.clear();
-			bg.alpha = 0;
+			bg.alpha = .3;
 			
 			loader.contentLoaderInfo.removeEventListener(Event.COMPLETE, onBgComplete);
 		}

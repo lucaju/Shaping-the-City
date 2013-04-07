@@ -1,18 +1,17 @@
 package view.menu.submenu {
 	
 	//imports
-	import flash.display.Sprite;
-	
 	import mvc.IController;
 	
 	import util.DeviceInfo;
 	
-	public class SubMenuFactory extends Sprite {
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
+	public class SubMenuFactory {
 		
-		public function SubMenuFactory() {
-		
-		}
-			
 		/**
 		 * Submenu. Static function to add submenus. It creates the appropriate submenu according to the OS and the orientation chose. 
 		 * 
