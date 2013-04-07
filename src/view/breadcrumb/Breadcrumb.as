@@ -18,22 +18,39 @@ package view.breadcrumb {
 	
 	import util.DeviceInfo;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class Breadcrumb extends Sprite {
 		
 		//****************** Properties ****************** ******************  ****************** 
-		protected var bg				:Sprite
-		protected var titleBG			:Sprite
-		protected var typeTF			:TextField
-		protected var _type				:String;
-		protected var style				:TextFormat;			//Text style
-		protected var crumbCollection	:Array
-		protected var crumbContainer	:Sprite
-		protected var gap				:Number = 5;
-		protected var pController		:PipelineController;
 		
+		protected var _contentType		:String;					//Hold the content type of the breadcrumb
+		protected var gap				:Number = 5;				//Gap between crumbs. Default = 5;
+		
+		protected var bg				:Sprite;
+		protected var titleBG			:Sprite;
+		protected var typeTF			:TextField
+		protected var style				:TextFormat;
+		
+		protected var crumbCollection	:Array;						//Crumbs list
+		protected var crumbContainer	:Sprite;					//Crumbs container
+		
+		protected var pController		:PipelineController;		//Controller
+		
+		
+		//****************** Constructor ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @param c
+		 * 
+		 */
 		public function Breadcrumb(c:IController) {
 			
-			pController = PipelineController(c);
+			pController = PipelineController(c);		//Controller
 			
 			style = new TextFormat();
 			style.font = "Myriad Pro";
@@ -44,6 +61,7 @@ package view.breadcrumb {
 			typeTF.mouseEnabled = false;
 			typeTF.autoSize = "left";
 			
+			//OS Settings
 			if (Settings.subMenuOrientation == "vertical") {
 				if (DeviceInfo.os() == "iPhone") {
 					this.x = 328;
@@ -55,43 +73,46 @@ package view.breadcrumb {
 			}
 		}
 		
-		public function get type():String {
-			return _type;
-		}
+		//****************** GETTERS ****************** ******************  ****************** 
 		
-		public function set type(value:String):void {
-			_type = value;
-		}
-		
-		protected function changeType(value:String):Boolean {
-			
-			if (type != value) {
-				type = value;
-				
-				value = capitalizeFirstChar(value);
-				
-				typeTF.text = value + " : : ";
-				typeTF.setTextFormat(style);
-				
-				titleBG.width = typeTF.width;
-				crumbContainer.x = titleBG.width + gap;
-				return true;
-			}
-			
-			return false;
-			
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get contentType():String {
+			return _contentType;
 		}
 		
 		
+		//****************** SETTERS ****************** ******************  ****************** 
 		
-		public function init(type_:String):void {
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set contentType(value:String):void {
+			_contentType = value;
+		}
+		
+		
+		//****************** INITIALIZE ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @param type
+		 * 
+		 */
+		public function init(type:String):void {
 			
-			type = type_;
+			contentType = type;
 			
 			//bg
 			bg = new Sprite();
 			bg.graphics.beginFill(0x000000,.5);
 			
+			//OS setings
 			if (DeviceInfo.os() == "iPhone") {
 				bg.graphics.drawRect(0,0,stage.stageWidth,40);
 			} else {
@@ -104,7 +125,7 @@ package view.breadcrumb {
 			
 			//type
 			
-			var value:String = capitalizeFirstChar(type);
+			var value:String = capitalizeFirstChar(contentType);
 			
 			typeTF.text = value + " : : ";
 			typeTF.setTextFormat(style);
@@ -119,90 +140,29 @@ package view.breadcrumb {
 			
 			this.addChildAt(titleBG,1);
 			
+			//Container
 			crumbContainer = new Sprite();
 			crumbContainer.x = titleBG.width + gap;
 			this.addChild(crumbContainer);
 			
+			//Array
 			crumbCollection = new Array();
-		}
-		
-		public function update(source:String, action:String, type_:String):void {
-			
-			
-			if (changeType(type_)) {
-				clean();
-			}
-			
-			var crumb:Crumb
-			var hasCrumb:Boolean;
-			
-			switch (action) {
-				
-				case "remove":
-					hasCrumb = false;
-					
-					for each (crumb in crumbCollection) {
-					
-						if (crumb.title == source) {
-							TweenMax.to(crumb,.5,{alpha:0, onComplete:removeObject, onCompleteParams:[crumb]});
-							crumbCollection.splice(crumbCollection.indexOf(crumb),1);
-							break;
-						}
-					}
-					
-					break;
-				
-				case "add":
-					hasCrumb = false;
-					
-					for each (crumb in crumbCollection) {
-					
-						if (crumb.title == source) {
-							hasCrumb = true;
-							break;
-						}
-					}
-					
-					if (!hasCrumb) {
-						addCrumb(source);
-					}
-					
-					break;
-				
-			}
-			
-			//remove if it is empty
-			if (crumbCollection.length == 0) {
-				
-				removeBreadCrumb();
-				
-			}
-				
-			
 			
 		}
 		
-		private function removeBreadCrumb():void {
-			TweenMax.to(this,.5,{y:stage.stageHeight, onComplete:killBreadCrumb});
-		}		
+		//****************** PROTECTED METHODS ****************** ******************  ****************** 
 		
-		private function killBreadCrumb():void {
-			this.dispatchEvent(new PipelineEvents(PipelineEvents.COMPLETE));
-		}
-		
-		
-		protected function clean():void {
-			for each (var crumb:Crumb in crumbCollection) {
-				TweenMax.to(crumb,.5,{alpha:0, onComplete:removeObject, onCompleteParams:[crumb,clean]});
-			}
-			
-			crumbCollection = new Array();
-		}
-		
+		/**
+		 * 
+		 * @param title
+		 * 
+		 */
 		protected function addCrumb(title:String):void {
-
+			
+			//create new crumb
 			var crumb:Crumb = CrumbFactory.addCrumb(title);
-		
+			
+			//positioning
 			var posX:Number = 0;
 			
 			for each(var c:Crumb in crumbCollection) {
@@ -211,39 +171,201 @@ package view.breadcrumb {
 			
 			crumb.x = posX;
 			
+			//array and container
 			crumbCollection.push(crumb);
 			crumbContainer.addChild(crumb);
 			
+			//Animation
 			TweenMax.from(crumb,2,{x:this.width,ease:Expo.easeOut,delay:1});
 			
-			
+			//listener
 			crumb.addEventListener(MouseEvent.CLICK, _onClick);
+			
+			crumb = null;
 		}
 		
-		protected function _onClick(event:MouseEvent):void {
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
+		protected function getCrumbByTitle(value:String):Crumb {
+			for each (var crumb:Crumb in crumbCollection) {
+				if (crumb.title == value) {
+					return crumb;
+					break;
+				}
+			}
 			
-			var crub:Crumb = event.currentTarget as Crumb;
-			
-			var data:Object = new Object();
-			data.action = false;
-			data.type = type;
-			data.param = crub.title;
-			
-			pController.highlightShapes(data);
-			
-			this.dispatchEvent(new PipelineEvents(PipelineEvents.SELECT, data));
-			
+			return null;
 		}
 		
-		protected function removeObject(crumb:Crumb, clean:Boolean = false):void {
-			
+		/**
+		 * 
+		 * @param crumb
+		 * @param clean
+		 * 
+		 */
+		protected function removeCrumb(crumb:Crumb, clear:Boolean = false):void {
 			crumbContainer.removeChild(crumb);
-			
-			if (!clean) {
+			if (!clear) {
 				reorganize();
 			}
 		}
 		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
+		protected function changeContentType(value:String):Boolean {
+			
+			if (contentType != value) {
+				contentType = value;
+				
+				value = capitalizeFirstChar(value);
+				
+				typeTF.text = value + " : : ";
+				typeTF.setTextFormat(style);
+				
+				titleBG.width = typeTF.width;
+				crumbContainer.x = titleBG.width + gap;
+				
+				return true;
+			}
+			
+			return false;
+			
+		}
+		
+		
+		/**
+		 * 
+		 * 
+		 */
+		protected function clean():void {
+			
+			//remove all crumbs
+			for each (var crumb:Crumb in crumbCollection) {
+				TweenMax.to(crumb,.5,{alpha:0, onComplete:removeCrumb, onCompleteParams:[crumb,clean]});
+			}
+			
+			//empty array
+			crumbCollection = [];
+		}
+		
+		/**
+		 * 
+		 * 
+		 */
+		protected function removeBreadCrumb():void {
+			TweenMax.to(this,.5,{y:stage.stageHeight, onComplete:killBreadCrumb});
+		}
+		
+		/**
+		 * 
+		 * 
+		 */
+		protected function killBreadCrumb():void {
+			this.dispatchEvent(new PipelineEvents(PipelineEvents.COMPLETE));
+		}
+
+		
+		//****************** PUBLIC METHODS ****************** ******************  ******************
+		
+		/**
+		 * 
+		 * @param source
+		 * @param action
+		 * @param type
+		 * 
+		 */
+		public function update(source:String, action:String, type:String):void {
+			
+			//Check Content type. If it is different, change it and clean up for new content type.
+			if (changeContentType(type)) clean();
+			
+			//action Check
+			switch (action) {
+				
+				case "remove":
+					
+					var crumb:Crumb = getCrumbByTitle(source);
+					if (crumb) {
+						TweenMax.to(crumb,.5,{alpha:0, onComplete:removeCrumb, onCompleteParams:[crumb]});
+						crumbCollection.splice(crumbCollection.indexOf(crumb),1);
+					}
+					break;
+				
+				case "add":
+					
+					//check to not add a duplicate
+					if (!getCrumbByTitle(source)) {
+						addCrumb(source);
+					}
+					break;
+				
+			}
+			
+			//remove BreadCrumb if it is empty
+			if (crumbCollection.length == 0) {
+				removeBreadCrumb();
+			}
+				
+		}
+		
+		
+		//****************** PRIVATE METHODS ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
+		private function capitalizeFirstChar(value:String):String {
+			var fisrtChar:String = value.charAt(0);
+			fisrtChar = fisrtChar.toUpperCase();
+			value = value.substr(1);
+			
+			value = fisrtChar+value;
+			
+			return value;
+		}
+		
+		
+		//****************** EVENT METHODS ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function _onClick(event:MouseEvent):void {
+			
+			var crumb:Crumb = event.currentTarget as Crumb;
+			
+			var data:Object = new Object();
+			data.action = false;
+			data.type = contentType;
+			data.param = crumb.title;
+			
+			//Send data to Model via Controller
+			pController.highlightShapes(data);
+			
+			//dispatch event to SumbMenu
+			this.dispatchEvent(new PipelineEvents(PipelineEvents.SELECT, data));
+			
+			crumb = null;
+			data = null;
+		}
+		
+		/**
+		 * 
+		 * 
+		 */
 		protected function reorganize():void {
 			
 			var prev:int = 0;
@@ -255,7 +377,7 @@ package view.breadcrumb {
 				
 				var prevPos:Number = crumbCollection[i].x;
 				
-				if (i==0) {
+				if (i == 0) {
 					posX = 0;
 				} else {
 					posX += crumbCollection[i-1].width + gap;
@@ -266,19 +388,6 @@ package view.breadcrumb {
 				TweenMax.to(crumbCollection[i],1,{x:posX,ease:Bounce.easeOut,delay:i/10});
 			}
 			
-			for (i = 0; i < crumbCollection.length; i++) {
-				
-			}
-		}
-		
-		private function capitalizeFirstChar(value:String):String {
-			var fisrtChar:String = value.charAt(0);
-			fisrtChar = fisrtChar.toUpperCase();
-			value = value.substr(1);
-			
-			value = fisrtChar+value;
-			
-			return value;
 		}
 		
 	}

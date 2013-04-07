@@ -1,20 +1,17 @@
 package view.breadcrumb {
 	
-	import flash.display.Sprite;
-	
 	import util.DeviceInfo;
 	
-	public class CrumbFactory extends Sprite {
-		
-		public function CrumbFactory() {
-		
-		}
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
+	public class CrumbFactory {
 			
 		/**
-		 * addSubMenuItem. Static function to add submenus items. It creates the appropriate submenu item according to the OS.  
-		 * @param type:String
-		 * @param hMax:Maximum Height
-		 * @return: SubMenuItem
+		 * addCrumb. Static function to add Crumbs items. It creates the appropriate crumb item according to the OS.  
+		 * Sets scale factor, Crumb heught and font size.
 		 * 
 		 */
 		static public function addCrumb(title:String):Crumb {	
