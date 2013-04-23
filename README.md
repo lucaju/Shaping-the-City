@@ -1,4 +1,4 @@
 Shaping-the-City
 ================
 
-Demo: http://labs.fluxo.art.br/pipeline/shaping/
+Demo: http://labs.fluxo.art.br/pipeline/shapingcity/
