@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Lake District North East Portion</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.467400,53.643211,0.000000
+            -113.465851,53.643265,0.000000
+            -113.465767,53.644791,0.000000
+            -113.464561,53.645451,0.000000
+            -113.452034,53.645782,0.000000
+            -113.445038,53.645733,0.000000
+            -113.444221,53.645199,0.000000
+            -113.443275,53.643288,0.000000
+            -113.442940,53.643211,0.000000
+            -113.442894,53.635986,0.000000
+            -113.455078,53.636040,0.000000
+            -113.455124,53.635147,0.000000
+            -113.467224,53.635071,0.000000
+            -113.465721,53.639194,0.000000
+            -113.466026,53.641228,0.000000
+            -113.467224,53.643036,0.000000
+            -113.465851,53.643265,0.000000
+            -113.467400,53.643211,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

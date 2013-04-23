@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Granville</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.689079,53.512157,0.000000
+            -113.677574,53.512207,0.000000
+            -113.677422,53.510357,0.000000
+            -113.676392,53.509083,0.000000
+            -113.676651,53.497646,0.000000
+            -113.689140,53.497658,0.000000
+            -113.689079,53.512157,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

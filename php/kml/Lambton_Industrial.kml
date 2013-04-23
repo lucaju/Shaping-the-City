@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Lambton Industrial</name>
+  <description><![CDATA[]]></description>
+  <Style id="style4">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style3">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style2">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style4</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.418091,53.526634,0.000000
+            -113.400818,53.526573,0.000000
+            -113.408691,53.522671,0.000000
+            -113.411438,53.520626,0.000000
+            -113.416885,53.517975,0.000000
+            -113.418152,53.517834,0.000000
+            -113.418259,53.518089,0.000000
+            -113.418236,53.519592,0.000000
+            -113.416351,53.519630,0.000000
+            -113.412209,53.521648,0.000000
+            -113.412148,53.524632,0.000000
+            -113.412399,53.524876,0.000000
+            -113.418236,53.524849,0.000000
+            -113.418343,53.526329,0.000000
+            -113.418091,53.526634,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 2</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.418236,53.524670,0.000000
+            -113.412598,53.524658,0.000000
+            -113.412529,53.522987,0.000000
+            -113.418282,53.522987,0.000000
+            -113.418236,53.524670,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 3</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style3</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.418282,53.522770,0.000000
+            -113.412491,53.522781,0.000000
+            -113.412468,53.521736,0.000000
+            -113.413429,53.521229,0.000000
+            -113.414139,53.521393,0.000000
+            -113.417404,53.521469,0.000000
+            -113.418365,53.521801,0.000000
+            -113.418282,53.522770,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 4</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style2</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.417984,53.519810,0.000000
+            -113.416389,53.519772,0.000000
+            -113.413689,53.521099,0.000000
+            -113.414055,53.521263,0.000000
+            -113.417999,53.521420,0.000000
+            -113.418365,53.521343,0.000000
+            -113.418282,53.521164,0.000000
+            -113.418068,53.520973,0.000000
+            -113.417984,53.519810,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

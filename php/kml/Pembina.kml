@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Pembina</name>
+  <description><![CDATA[]]></description>
+  <Style id="style2">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style2</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.563850,53.606705,0.000000
+            -113.563660,53.606785,0.000000
+            -113.562897,53.606785,0.000000
+            -113.562683,53.606709,0.000000
+            -113.562592,53.603149,0.000000
+            -113.563660,53.603146,0.000000
+            -113.563896,53.603188,0.000000
+            -113.563850,53.606705,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 2</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.550461,53.599648,0.000000
+            -113.550438,53.601532,0.000000
+            -113.547760,53.601547,0.000000
+            -113.545570,53.601624,0.000000
+            -113.543404,53.601967,0.000000
+            -113.541832,53.602070,0.000000
+            -113.541557,53.602070,0.000000
+            -113.541489,53.600006,0.000000
+            -113.541985,53.599663,0.000000
+            -113.550461,53.599648,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

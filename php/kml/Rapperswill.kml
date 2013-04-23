@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Rapperswill</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style2">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.528893,53.628963,0.000000
+            -113.529022,53.642246,0.000000
+            -113.538681,53.638912,0.000000
+            -113.538322,53.634613,0.000000
+            -113.536446,53.633327,0.000000
+            -113.535294,53.632603,0.000000
+            -113.535004,53.632412,0.000000
+            -113.534904,53.632221,0.000000
+            -113.534859,53.628979,0.000000
+            -113.528893,53.628963,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 2</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style2</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.538895,53.638737,0.000000
+            -113.540695,53.636803,0.000000
+            -113.540352,53.636013,0.000000
+            -113.541084,53.636040,0.000000
+            -113.541122,53.632324,0.000000
+            -113.540955,53.631077,0.000000
+            -113.541084,53.629246,0.000000
+            -113.540504,53.628941,0.000000
+            -113.535057,53.629002,0.000000
+            -113.535149,53.632271,0.000000
+            -113.535416,53.632553,0.000000
+            -113.538506,53.634563,0.000000
+            -113.538895,53.638737,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

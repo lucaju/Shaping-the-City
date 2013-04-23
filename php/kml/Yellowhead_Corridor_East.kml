@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Yellowhead Corridor East</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.491516,53.584660,0.000000
+            -113.454781,53.584965,0.000000
+            -113.454269,53.583691,0.000000
+            -113.442764,53.583488,0.000000
+            -113.442764,53.582520,0.000000
+            -113.455383,53.573399,0.000000
+            -113.456413,53.573399,0.000000
+            -113.456757,53.575081,0.000000
+            -113.459930,53.575180,0.000000
+            -113.456757,53.578953,0.000000
+            -113.453041,53.580505,0.000000
+            -113.454498,53.581795,0.000000
+            -113.456863,53.582466,0.000000
+            -113.467316,53.582237,0.000000
+            -113.467270,53.581333,0.000000
+            -113.469803,53.581409,0.000000
+            -113.470055,53.581833,0.000000
+            -113.472763,53.581387,0.000000
+            -113.492073,53.581474,0.000000
+            -113.491516,53.584660,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

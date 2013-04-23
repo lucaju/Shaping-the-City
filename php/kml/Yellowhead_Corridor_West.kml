@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Yellowhead Corridor West</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.491989,53.584763,0.000000
+            -113.535759,53.585041,0.000000
+            -113.535805,53.583897,0.000000
+            -113.541298,53.583920,0.000000
+            -113.533485,53.582825,0.000000
+            -113.531815,53.582188,0.000000
+            -113.531258,53.580963,0.000000
+            -113.519669,53.580963,0.000000
+            -113.515717,53.581600,0.000000
+            -113.492203,53.581448,0.000000
+            -113.491989,53.584763,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

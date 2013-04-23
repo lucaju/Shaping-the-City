@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>McArthur Industrial</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style2">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.573723,53.599342,0.000000
+            -113.569008,53.599339,0.000000
+            -113.568916,53.599094,0.000000
+            -113.566460,53.598923,0.000000
+            -113.566025,53.598713,0.000000
+            -113.565880,53.598522,0.000000
+            -113.565804,53.596077,0.000000
+            -113.567543,53.596107,0.000000
+            -113.567863,53.596001,0.000000
+            -113.568558,53.596546,0.000000
+            -113.568665,53.596497,0.000000
+            -113.568016,53.595974,0.000000
+            -113.570244,53.595058,0.000000
+            -113.572380,53.596970,0.000000
+            -113.574127,53.598740,0.000000
+            -113.574203,53.599056,0.000000
+            -113.574020,53.599228,0.000000
+            -113.573723,53.599342,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 2</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style2</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.570160,53.594963,0.000000
+            -113.567650,53.595993,0.000000
+            -113.565857,53.596008,0.000000
+            -113.565781,53.593964,0.000000
+            -113.566841,53.593937,0.000000
+            -113.567421,53.593586,0.000000
+            -113.567352,53.593559,0.000000
+            -113.566872,53.593838,0.000000
+            -113.566589,53.593895,0.000000
+            -113.565796,53.593918,0.000000
+            -113.565788,53.592560,0.000000
+            -113.566895,53.592159,0.000000
+            -113.570160,53.594963,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Windermere Area</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.658195,53.424828,0.000000
+            -113.583786,53.424774,0.000000
+            -113.583786,53.417667,0.000000
+            -113.590050,53.417717,0.000000
+            -113.590050,53.414341,0.000000
+            -113.593056,53.413727,0.000000
+            -113.593742,53.411938,0.000000
+            -113.596146,53.411732,0.000000
+            -113.595970,53.410297,0.000000
+            -113.602325,53.410248,0.000000
+            -113.602577,53.403084,0.000000
+            -113.608673,53.403084,0.000000
+            -113.608421,53.395767,0.000000
+            -113.646439,53.395664,0.000000
+            -113.645927,53.396893,0.000000
+            -113.649101,53.402828,0.000000
+            -113.647385,53.402931,0.000000
+            -113.648842,53.405849,0.000000
+            -113.655197,53.410812,0.000000
+            -113.657768,53.420120,0.000000
+            -113.658195,53.424828,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

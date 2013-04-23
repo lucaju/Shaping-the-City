@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Kinokamau Plains Area</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.651672,53.573551,0.000000
+            -113.630646,53.572174,0.000000
+            -113.594254,53.580429,0.000000
+            -113.624382,53.597904,0.000000
+            -113.628242,53.598465,0.000000
+            -113.639229,53.591892,0.000000
+            -113.639145,53.588837,0.000000
+            -113.640434,53.588326,0.000000
+            -113.639572,53.587818,0.000000
+            -113.639320,53.585014,0.000000
+            -113.639999,53.584965,0.000000
+            -113.642494,53.586952,0.000000
+            -113.649612,53.583080,0.000000
+            -113.651932,53.583435,0.000000
+            -113.651672,53.573551,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

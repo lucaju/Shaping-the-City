@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Morris Industrial</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style3">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Style id="style2">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.418175,53.515896,0.000000
+            -113.417809,53.516048,0.000000
+            -113.417656,53.517708,0.000000
+            -113.416809,53.517891,0.000000
+            -113.411995,53.517841,0.000000
+            -113.411919,53.515793,0.000000
+            -113.411682,53.515739,0.000000
+            -113.407745,53.516346,0.000000
+            -113.407639,53.516647,0.000000
+            -113.407623,53.519371,0.000000
+            -113.394035,53.519302,0.000000
+            -113.393929,53.517769,0.000000
+            -113.394272,53.517788,0.000000
+            -113.398315,53.517113,0.000000
+            -113.402145,53.516949,0.000000
+            -113.404762,53.516628,0.000000
+            -113.413628,53.515270,0.000000
+            -113.417458,53.514904,0.000000
+            -113.417946,53.514999,0.000000
+            -113.418236,53.515320,0.000000
+            -113.418175,53.515896,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 3</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style3</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.416618,53.518005,0.000000
+            -113.411461,53.520557,0.000000
+            -113.411339,53.520557,0.000000
+            -113.409622,53.519402,0.000000
+            -113.407791,53.519398,0.000000
+            -113.407845,53.517941,0.000000
+            -113.416618,53.518005,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+  <Placemark>
+    <name>Shape 4</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style2</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.411758,53.517841,0.000000
+            -113.407845,53.517834,0.000000
+            -113.407829,53.516518,0.000000
+            -113.407928,53.516411,0.000000
+            -113.411629,53.515862,0.000000
+            -113.411758,53.515907,0.000000
+            -113.411758,53.517841,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

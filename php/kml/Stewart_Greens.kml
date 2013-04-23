@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Stewart_Greens</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.676674,53.541138,0.000000
+            -113.676628,53.533981,0.000000
+            -113.661934,53.533943,0.000000
+            -113.661934,53.534504,0.000000
+            -113.662773,53.535728,0.000000
+            -113.663933,53.536724,0.000000
+            -113.664017,53.537949,0.000000
+            -113.664398,53.537949,0.000000
+            -113.664467,53.541225,0.000000
+            -113.669960,53.541214,0.000000
+            -113.670578,53.541122,0.000000
+            -113.676674,53.541138,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

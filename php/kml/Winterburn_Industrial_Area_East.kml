@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Winterburn Industrial Area East</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.688583,53.569115,0.000000
+            -113.671677,53.572533,0.000000
+            -113.666008,53.571510,0.000000
+            -113.662407,53.568962,0.000000
+            -113.659828,53.556931,0.000000
+            -113.660088,53.555710,0.000000
+            -113.663010,53.555096,0.000000
+            -113.662834,53.554588,0.000000
+            -113.660515,53.554485,0.000000
+            -113.660088,53.545406,0.000000
+            -113.663689,53.542908,0.000000
+            -113.664375,53.541683,0.000000
+            -113.681114,53.541634,0.000000
+            -113.684464,53.542248,0.000000
+            -113.688065,53.542858,0.000000
+            -113.688416,53.544899,0.000000
+            -113.688583,53.569115,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

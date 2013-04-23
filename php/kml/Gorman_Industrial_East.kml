@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Gorman Industrial East</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.368996,53.628506,0.000000
+            -113.368973,53.616135,0.000000
+            -113.374916,53.615982,0.000000
+            -113.374939,53.614021,0.000000
+            -113.381287,53.614048,0.000000
+            -113.381310,53.616009,0.000000
+            -113.385513,53.616035,0.000000
+            -113.385536,53.614010,0.000000
+            -113.392189,53.614075,0.000000
+            -113.381096,53.620972,0.000000
+            -113.381157,53.621315,0.000000
+            -113.380539,53.621326,0.000000
+            -113.368996,53.628506,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>

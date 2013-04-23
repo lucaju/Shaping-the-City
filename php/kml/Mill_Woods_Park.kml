@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.2">
+<Document>
+  <name>Mill Woods Park</name>
+  <description><![CDATA[]]></description>
+  <Style id="style1">
+    <LineStyle>
+      <color>40000000</color>
+      <width>3</width>
+    </LineStyle>
+    <PolyStyle>
+      <color>73FF0000</color>
+      <fill>1</fill>
+      <outline>1</outline>
+    </PolyStyle>
+  </Style>
+  <Placemark>
+    <name>Shape 1</name>
+    <description><![CDATA[]]></description>
+    <styleUrl>#style1</styleUrl>
+    <Polygon>
+      <outerBoundaryIs>
+        <LinearRing>
+          <tessellate>1</tessellate>
+          <coordinates>
+            -113.434097,53.458332,0.000000
+            -113.430847,53.458344,0.000000
+            -113.429001,53.458523,0.000000
+            -113.426582,53.459049,0.000000
+            -113.425179,53.459194,0.000000
+            -113.422058,53.459248,0.000000
+            -113.421341,53.459053,0.000000
+            -113.421112,53.458824,0.000000
+            -113.420441,53.455341,0.000000
+            -113.420799,53.454849,0.000000
+            -113.429062,53.453785,0.000000
+            -113.433762,53.453682,0.000000
+            -113.434212,53.453789,0.000000
+            -113.434395,53.454193,0.000000
+            -113.434097,53.458332,0.000000
+          </coordinates>
+        </LinearRing>
+      </outerBoundaryIs>
+    </Polygon>
+  </Placemark>
+</Document>
+</kml>
