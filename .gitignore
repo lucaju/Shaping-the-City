@@ -21,4 +21,8 @@ src/images/.DS_Store
 src/view/.DS_Store
 src/view/assets/.DS_Store
 src/view/menu/.DS_Store
+<<<<<<< HEAD
 src/view/util/.DS_Store
+=======
+src/view/util/.DS_Store
+>>>>>>> update
