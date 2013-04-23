@@ -1,45 +1,24 @@
-
-php/db_connect.php
+.actionScriptProperties
 /app
-
 *.air
-
 Shaping the City.app/Contents/Frameworks/Adobe AIR.framework/Adobe AIR
 
-bin-debug/.DS_Store
-
 .DS_Store
-
-.DS_Store
-
-bin-debug/com/.DS_Store
-
-bin-debug/images/.DS_Store
-
-bin-debug/view/util/.DS_Store
 
 php/.DS_Store
+php/db_connect.php
 
+bin-debug/.DS_Store
+bin-debug/com/.DS_Store
+bin-debug/images/.DS_Store
+bin-debug/view/util/.DS_Store
 bin-debug/view/.DS_Store
-
 bin-debug/com/greensock/.DS_Store
 
 src/.DS_Store
-
 src/events/.DS_Store
-
 src/images/.DS_Store
-
 src/view/.DS_Store
-
 src/view/assets/.DS_Store
-
-src/view/assets/.DS_Store
-
 src/view/menu/.DS_Store
-
-src/view/menu/.DS_Store
-
-src/view/util/.DS_Store
-
 src/view/util/.DS_Store
