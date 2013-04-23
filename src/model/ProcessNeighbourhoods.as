@@ -3,14 +3,28 @@ package model {
 	//imports
 	import flash.events.Event;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class ProcessNeighbourhoods extends AbstractProcessment  {
 		
-		//properties
+		//****************** Properties ****************** ****************** ****************** 
 		
 		
+		//****************** Constructor ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * 
+		 */
 		public function ProcessNeighbourhoods() {
 			name = "neighbourhoods";	
 		}
+		
+		
+		//****************** PROTECTED FUNCTIONS ****************** ****************** ****************** 
 		
 		override protected function onComplete(e:Event):void {
 			

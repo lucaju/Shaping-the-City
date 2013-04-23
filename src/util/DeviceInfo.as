@@ -1,8 +1,14 @@
 package util {
 	
+	//imports
 	import flash.system.Capabilities;
 	import flash.ui.Multitouch;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class DeviceInfo {
 		
 		public static function device():String {

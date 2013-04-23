@@ -7,10 +7,19 @@ package view.menu {
 	
 	import mvc.IController;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class TopMenu extends AbstractMenu {
 		
-		//properties
-		private var item:ButtonBar;
+		//****************** Properties ****************** ****************** ****************** 
+		
+		protected var item					:ButtonBar;
+		
+		
+		//****************** Constructor ****************** ****************** ****************** 
 		
 		/**
 		 * CONTRUCTOR 
@@ -20,10 +29,11 @@ package view.menu {
 		 */		
 		public function TopMenu (c:IController, options:Array = null) {
 			super(c, options);
-			
-			//initials
 			gap = 0;
 		}
+		
+		
+		//****************** Initialize ****************** ****************** ****************** 
 		
 		/**
 		 * Initiate: Build Menu Items 
@@ -50,9 +60,10 @@ package view.menu {
 				
 				}
 			}
-			
-			
 		}
+		
+		
+		//****************** PROTECTED METHODS ****************** ****************** ****************** 
 		
 		/**
 		 * CLICK HANDLE 
@@ -74,11 +85,15 @@ package view.menu {
 				data = {label:item.title};	
 			}
 			
-
+			//dispatch Event
 			this.dispatchEvent(new PipelineEvents(PipelineEvents.SELECT, data));
 		
 		}
 		
+		/**
+		 * 
+		 * 
+		 */
 		protected function deselectAll():void {
 			for each(var item:ButtonBar in itemCollection) {
 				item.toggle = false;

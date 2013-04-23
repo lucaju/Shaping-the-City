@@ -6,26 +6,40 @@ package model {
 	import flash.net.URLLoader;
 	import flash.net.URLRequest;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class AbstractProcessment extends EventDispatcher  {
 		
-		//properties
-		public var name:String;
-		public var data:Array;
+		//****************** Properties ****************** ****************** ****************** 
+		public var name				:String;
+		public var data				:Array;
 		
-		public function AbstractProcessment() {
-			
-		}
 		
+		//****************** PUBLIC FUNCTIONS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param file
+		 * 
+		 */
 		public function loadData(file:String):void {
-			
-			//---------get list info.
 			var url:URLRequest = new URLRequest(file);
 			var urlLoader:URLLoader = new URLLoader();
 			urlLoader.addEventListener(Event.COMPLETE, onComplete);
 			urlLoader.load(url);
-			
 		}
 		
+		
+		//****************** PROTECTED FUNCTIONS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param e
+		 * 
+		 */
 		protected function onComplete(e:Event):void {
 			
 		}

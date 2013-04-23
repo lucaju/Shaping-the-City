@@ -6,6 +6,7 @@ package view.breadcrumb {
 	import com.greensock.easing.Expo;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -15,6 +16,8 @@ package view.breadcrumb {
 	import events.PipelineEvents;
 	
 	import mvc.IController;
+	
+	import settings.Settings;
 	
 	import util.DeviceInfo;
 	
@@ -73,29 +76,6 @@ package view.breadcrumb {
 			}
 		}
 		
-		//****************** GETTERS ****************** ******************  ****************** 
-		
-		/**
-		 * 
-		 * @return 
-		 * 
-		 */
-		public function get contentType():String {
-			return _contentType;
-		}
-		
-		
-		//****************** SETTERS ****************** ******************  ****************** 
-		
-		/**
-		 * 
-		 * @param value
-		 * 
-		 */
-		public function set contentType(value:String):void {
-			_contentType = value;
-		}
-		
 		
 		//****************** INITIALIZE ****************** ******************  ****************** 
 		
@@ -148,7 +128,33 @@ package view.breadcrumb {
 			//Array
 			crumbCollection = new Array();
 			
+			//listener
+			stage.addEventListener(Event.RESIZE, resize);
 		}
+		
+		//****************** GETTERS ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get contentType():String {
+			return _contentType;
+		}
+		
+		
+		//****************** SETTERS ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set contentType(value:String):void {
+			_contentType = value;
+		}
+		
 		
 		//****************** PROTECTED METHODS ****************** ******************  ****************** 
 		
@@ -240,6 +246,33 @@ package view.breadcrumb {
 			
 		}
 		
+		/**
+		 * 
+		 * 
+		 */
+		protected function reorganize():void {
+			
+			var prev:int = 0;
+			var posX:Number = 0;
+			
+			var newPosX:Array = new Array();
+			
+			for (var i:int = 0; i < crumbCollection.length; i++) {
+				
+				var prevPos:Number = crumbCollection[i].x;
+				
+				if (i == 0) {
+					posX = 0;
+				} else {
+					posX += crumbCollection[i-1].width + gap;
+				}
+				
+				newPosX.push(posX);
+				
+				TweenMax.to(crumbCollection[i],1,{x:posX,ease:Bounce.easeOut,delay:i/10});
+			}
+			
+		}
 		
 		/**
 		 * 
@@ -362,32 +395,16 @@ package view.breadcrumb {
 			data = null;
 		}
 		
+		
+		//****************** EVENTS - INTERFACE ****************** ****************** ******************
+		
 		/**
 		 * 
+		 * @param event
 		 * 
 		 */
-		protected function reorganize():void {
-			
-			var prev:int = 0;
-			var posX:Number = 0;
-			
-			var newPosX:Array = new Array();
-			
-			for (var i:int = 0; i < crumbCollection.length; i++) {
-				
-				var prevPos:Number = crumbCollection[i].x;
-				
-				if (i == 0) {
-					posX = 0;
-				} else {
-					posX += crumbCollection[i-1].width + gap;
-				}
-				
-				newPosX.push(posX);
-				
-				TweenMax.to(crumbCollection[i],1,{x:posX,ease:Bounce.easeOut,delay:i/10});
-			}
-			
+		protected function resize(event:Event):void {
+			if (stage) bg.width = stage.stageWidth;
 		}
 		
 	}

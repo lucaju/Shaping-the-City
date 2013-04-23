@@ -8,6 +8,8 @@ package view.menu.submenu {
 	
 	import events.PipelineEvents;
 	
+	import settings.Settings;
+	
 	import view.util.scroll.Scroll;
 	
 	public class SubMenuContent extends Sprite {
@@ -30,14 +32,14 @@ package view.menu.submenu {
 		protected var _scrollLimit			:Number = 200;
 	
 		protected var item					:SubMenuItem;				//General SubMenu Item
-		protected var scroll				:Scroll;
 		
+		protected var scroll				:Scroll;
 		protected var scrolledArea			:Sprite;
 		protected var container				:Sprite;
 		protected var containerMask			:Sprite;
 		
 		
-		//****************** CONTRUCTOR ****************** ******************  ****************** 
+		//****************** CONSTRUCTOR ****************** ******************  ****************** 
 		/**
 		 * Contructor. Create the abstraction of SubMenu Content.
 		 * <p>Define the data</p>
@@ -58,6 +60,34 @@ package view.menu.submenu {
 			
 			rangeSize = range;
 		}
+		
+		
+		//****************** INITIALIZE ****************** ******************  ****************** 
+		
+		/**
+		 * Initiate.
+		 * 
+		 */
+		public function init():void {
+			
+			itemCollection = new Array;
+			
+			switch (orientation) {
+				case "horizontal":
+					buildHorizontalLayout();
+					break;
+				
+				case "vertical":
+					buildVerticalLayout();
+					break;
+			}
+			
+			//content
+			this.graphics.beginFill(0xFFFFFF,0);
+			this.graphics.drawRect(0,0,this.width,this.height);
+			this.graphics.endFill();
+		}
+		
 		
 		//****************** GETTERS ****************** ******************  ****************** 
 
@@ -117,36 +147,14 @@ package view.menu.submenu {
 			_scrollLimit = value;
 		}
 
-		//****************** INITIALIZE ****************** ******************  ****************** 
+		
+		//****************** PROTECTED METHODS - BUILD ****************** ******************  ****************** 
 		
 		/**
-		 * Initiate.
+		 * 
 		 * 
 		 */
-		public function init():void {
-			
-			itemCollection = new Array;
-			
-			switch (orientation) {
-				case "horizontal":
-					buildHorizontalLayout();
-					break;
-				
-				case "vertical":
-					buildVerticalLayout();
-					break;
-			}
-			
-			//content
-			this.graphics.beginFill(0xFFFFFF,0);
-			this.graphics.drawRect(0,0,this.width,this.height);
-			this.graphics.endFill();
-
-		}
-		
-		//****************** PROTECTED METHODS ****************** ******************  ****************** 
-		
-		private function buildVerticalLayout():void {
+		protected function buildVerticalLayout():void {
 			var containerArray:Array = new Array(numRows);
 			
 			//set initial X position to X;
@@ -221,33 +229,12 @@ package view.menu.submenu {
 				cont.addChildAt(bg,0);
 			}
 			
-		}
+		}	
 		
-		private function addSeparator(side:String, size:Number = 100):Sprite {
-			var line:Sprite = new Sprite;
-			
-			line.graphics.lineStyle(1,0x666666,.8);
-			line.graphics.beginFill(0x000000, 0);
-			
-			switch(side) {
-				case "horizontal":
-					line.graphics.moveTo(size * .1, 0);
-					line.graphics.lineTo(size * .8, 0)
-					break;
-				
-				case "vertical":
-					line.graphics.moveTo(0, size * .1);
-					line.graphics.lineTo(0, size * .8)
-					break;
-					
-			}
-			
-			line.graphics.endFill();
-				
-			return line;
-			
-		}		
-		
+		/**
+		 * 
+		 * 
+		 */
 		protected function buildHorizontalLayout():void {
 			
 			if (type == "community") {
@@ -334,6 +321,37 @@ package view.menu.submenu {
 		
 		/**
 		 * 
+		 * @param side
+		 * @param size
+		 * @return 
+		 * 
+		 */
+		protected function addSeparator(side:String, size:Number = 100):Sprite {
+			var line:Sprite = new Sprite;
+			
+			line.graphics.lineStyle(1,0x666666,.8);
+			line.graphics.beginFill(0x000000, 0);
+			
+			switch(side) {
+				case "horizontal":
+					line.graphics.moveTo(size * .1, 0);
+					line.graphics.lineTo(size * .8, 0)
+					break;
+				
+				case "vertical":
+					line.graphics.moveTo(0, size * .1);
+					line.graphics.lineTo(0, size * .8)
+					break;
+				
+			}
+			
+			line.graphics.endFill();
+			
+			return line;
+		}	
+		
+		/**
+		 * 
 		 * @param c
 		 * @param contructor
 		 * @param diff
@@ -395,7 +413,7 @@ package view.menu.submenu {
 						scroll.direction = orientation;
 						scroll.target = containerToScroll;
 						scroll.maskContainer = containerMask;
-						scroll.hasRoll = false;
+						scroll.hasRoll = true;
 						this.addChild(scroll);
 						scroll.init();
 						
@@ -407,14 +425,14 @@ package view.menu.submenu {
 		}
 		
 		
-		//****************** PRIVATE METHOD ****************** ******************  ****************** 
+		//****************** PRIVATE METHOD - GETTERS ****************** ******************  ****************** 
 		
 		/**
 		 * GetPeriodsLabels. Parse all dates in order to split in range of years according to dateGap
 		 * @return 
 		 * 
 		 */
-		private function getPeriodLabel():Array {
+		protected function getPeriodLabel():Array {
 			
 			var d:Array = new Array;
 			
@@ -438,6 +456,12 @@ package view.menu.submenu {
 			
 		}
 		
+		/**
+		 * 
+		 * @param value
+		 * @return 
+		 * 
+		 */
 		protected function getItemByName(value:String):SubMenuItem {
 			for each (var item:SubMenuItem in itemCollection) {
 				if (value == item.title) {
@@ -451,6 +475,11 @@ package view.menu.submenu {
 		
 		//****************** PUBLIC METHOD ****************** ******************  ****************** 
 		
+		/**
+		 * 
+		 * @param info
+		 * 
+		 */
 		public function update(info:Object):void {
 			
 			var item:SubMenuItem;
@@ -476,29 +505,27 @@ package view.menu.submenu {
 				}
 			} else {
 				item = getItemByName(info.source);
-				item.toggle = toggleAction;
+				trace (item, info.source);
+				if (item) item.toggle = toggleAction;
 			}
 				
 		}
 		
 		
 		//****************** EVENTS ****************** ******************  ****************** 
+		
 		/**
 		 * CLICK HANDLE. 
 		 * @param event
 		 * 
 		 */
 		protected function _itemClick(event:MouseEvent):void {
-			
-			
-			
 			item = event.currentTarget as SubMenuItem;
 			item.toggle = !item.toggle;
 			
 			var data:Object = {type:item.type, action:item.toggle, param:item.title};	
 			
 			this.dispatchEvent(new PipelineEvents(PipelineEvents.SELECT, data));
-			
 		}
 	
 	}

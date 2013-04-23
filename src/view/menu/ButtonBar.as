@@ -23,8 +23,8 @@ package view.menu {
 
 		protected var bg				:Sprite;					//Bg container
 		protected var _bgFile			:String;					//BG bitmap file
-		protected var bgW					:Number;					//BG width
-		protected var bgH					:Number;					//BG height
+		protected var bgW				:Number;					//BG width
+		protected var bgH				:Number;					//BG height
 		
 		protected var icon				:Sprite;					//Icon container
 		protected var _iconFile			:String;					//Icon bitmap file
@@ -64,6 +64,59 @@ package view.menu {
 			
 			this.buttonMode = true;
 		}
+		
+		
+		//****************** Initiate ****************** ****************** ******************
+		
+		/**
+		 * init. Render Item on the screen.
+		 * <p>Set the backgorund. Either load an image or draw a rectangle.</p>
+		 * <p>Load icon image.</p>
+		 * <p>Set Title.</p>
+		 *  
+		 * @param title: String
+		 * 
+		 */
+		public function init(title:String):void {
+			
+			//1. Add BG
+			this.addChild(bg);
+			loader = new Loader();
+			loader.load(new URLRequest(_bgFile));
+			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onBgComplete);
+			bg.addChild(loader);
+			
+			//2. Pull icon
+			if (_iconFile != "") {
+				icon = new Sprite();
+				this.addChild(icon);
+				
+				loader = new Loader();
+				loader.mouseEnabled = false;
+				
+				loader.load(new URLRequest(_iconFile));
+				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onIconComplete);
+				
+				icon.addChild(loader);
+				
+			}
+			
+			//3. title
+			titleTF.text = title;
+			titleTF.setTextFormat(style);
+			this.addChild(titleTF);
+			
+			//4. Bg (if bg is an image, this is just a place holder)
+			if (!lockWidth) bgW = titleTF.width + 10;				
+			
+			//draw bg
+			bg.graphics.clear();
+			bg.graphics.beginFill(0xFFFFFF,0);
+			bg.graphics.drawRoundRect(1,1,bgW,bgH,bgH/5);
+			bg.graphics.endFill();
+			
+		}
+		
 		
 		//****************** GETTERS ****************** ****************** ******************
 
@@ -177,57 +230,7 @@ package view.menu {
 			}
 			
 		}
-
-		//****************** Initiate ****************** ****************** ******************
 		
-		/**
-		 * init. Render Item on the screen.
-		 * <p>Set the backgorund. Either load an image or draw a rectangle.</p>
-		 * <p>Load icon image.</p>
-		 * <p>Set Title.</p>
-		 *  
-		 * @param title: String
-		 * 
-		 */
-		public function init(title:String):void {
-	
-			//1. Add BG
-			this.addChild(bg);
-			loader = new Loader();
-			loader.load(new URLRequest(_bgFile));
-			loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onBgComplete);
-			bg.addChild(loader);
-			
-			//2. Pull icon
-			if (_iconFile != "") {
-				icon = new Sprite();
-				this.addChild(icon);
-				
-				loader = new Loader();
-				loader.mouseEnabled = false;
-				
-				loader.load(new URLRequest(_iconFile));
-				loader.contentLoaderInfo.addEventListener(Event.COMPLETE, onIconComplete);
-				
-				icon.addChild(loader);
-				
-			}
-			
-			//3. title
-			titleTF.text = title;
-			titleTF.setTextFormat(style);
-			this.addChild(titleTF);
-			
-			//4. Bg (if bg is an image, this is just a place holder)
-			if (!lockWidth) bgW = titleTF.width + 10;				
-			
-			//draw bg
-			bg.graphics.clear();
-			bg.graphics.beginFill(0xFFFFFF,0);
-			bg.graphics.drawRoundRect(1,1,bgW,bgH,bgH/5);
-			bg.graphics.endFill();
-						
-		}
 		
 		//****************** EVENTS ****************** ****************** ******************
 		
@@ -251,7 +254,6 @@ package view.menu {
 		protected function onBgComplete(event:Event):void {
 			
 			//align text
-			
 			if (_iconFile == "") {
 				titleTF.y = (bg.height/2) - (titleTF.height/2);
 			} else {

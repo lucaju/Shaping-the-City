@@ -3,7 +3,6 @@ package view.tooltip {
 	//imports
 	import com.greensock.TweenMax;
 	
-	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.MouseEvent;
 	
@@ -15,7 +14,7 @@ package view.tooltip {
 		static protected var _toolTipBaseAlpha				:Number = 1;				//Balloon Alpha
 		static protected var _toolTiptextColor				:uint	= 0x000000;			//Text Color
 		
-		static protected var target					:Stage;
+		static protected var target							:Stage;
 		static protected var toolTip						:ToolTip;
 		static protected var toolTipCollection				:Array;
 		
@@ -91,7 +90,13 @@ package view.tooltip {
 			
 		}
 		
-		public function moveToolTip(speedX:Number, speedY:Number):void {
+		/**
+		 * 
+		 * @param speedX
+		 * @param speedY
+		 * 
+		 */
+		static public function moveToolTip(speedX:Number, speedY:Number):void {
 			if (toolTip) {
 				toolTip.x += speedX;
 				toolTip.y += speedY;
@@ -104,13 +109,10 @@ package view.tooltip {
 		 * 
 		 */
 		static public function removeToolTip(event:MouseEvent = null):void {
-			
 			if (hasTootlTip) {
 				target.removeChild(toolTip);
 				toolTip = null;
 			}
-			
-			//toolTipCollection.splice();
 		}
 		
 	}

@@ -26,6 +26,7 @@ package view {
 	import view.tooltip.ToolTipManager;
 	import view.util.preloader.Preloader;
 	import view.util.scroll.ScrollEvent;
+	import settings.Settings;
 	
 	/**
 	 * 
@@ -35,8 +36,6 @@ package view {
 	public class MainView extends AbstractView {
 		
 		//****************** Properties ****************** ****************** ****************** 
-		
-		//protected var mapExploded			:Boolean = false;
 		
 		protected var topBar				:TopBar;
 		protected var footer				:Footer;
@@ -48,9 +47,9 @@ package view {
 		protected var splash				:Sprite;
 		protected var preloader				:Preloader;
 		
-		//protected var treesView				:TreesView;
-		//protected var sMax					:int = 0;
-		//protected var tint					:Boolean = false;
+		//protected var treesView			:TreesView;
+		//protected var sMax				:int = 0;
+		//protected var tint				:Boolean = false;
 		
 		
 		//****************** Constructor ****************** ****************** ****************** 
@@ -84,9 +83,14 @@ package view {
 			loaderimageLoader.load(new URLRequest(img));
 			splash.alpha = .8
 			splash.addChild(loaderimageLoader);
+			loaderimageLoader.contentLoaderInfo.addEventListener(Event.COMPLETE, splashLoad);
 
 		}
 		
+		protected function splashLoad(event:Event):void {
+			splash.x = (this.stage.stageWidth/2) - (splash.width/2)
+			splash.y = (this.stage.stageHeight/2) - (splash.height/2)
+		}		
 		
 		//****************** INITIALIZE ****************** ****************** ****************** 
 		
@@ -118,12 +122,15 @@ package view {
 			mapView.setActiveArea(new Rectangle(0,topBar.height,stage.stageWidth,(stage.stageHeight-footer.height) - topBar.height + 11))
 			mapView.init();
 			
-			mapView.addEventListener(MouseEvent.CLICK, onMapClick);
-			mapView.addEventListener(ScrollEvent.SCROLL, onMapScroll);
-			mapView.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onMapGestureZoom);
 			mapView.addEventListener(Event.COMPLETE, onMapLoad);
+			mapView.addEventListener(MouseEvent.CLICK, onMapClick);
 			
-			//preloader
+			if (Settings.platformTarget != "web") {
+				mapView.addEventListener(ScrollEvent.SCROLL, onMapScroll);
+				mapView.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onMapGestureZoom);
+			}
+			
+			//4. preloader
 			if (DeviceInfo.os() != "iPhone") {
 				preloader = new Preloader(this);
 				preloader.postition(stage.stageWidth/2, 3 * (stage.stageHeight/4));
@@ -131,7 +138,48 @@ package view {
 				preloader.start();
 			}
 				
+			//listener
+			stage.addEventListener(Event.RESIZE, resize);
 		}
+		
+		//****************** EVENT INITIALIZATION ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function onMapLoad(event:Event):void {
+			//creating the interface
+			
+			//1.topbar
+			topBar.visible = true;
+			
+			//2. Footer
+			footer.visible = true;
+			
+			//3. MapView
+			mapView.y = topBar.height - 5;
+			mapView.removeEventListener(Event.COMPLETE, onMapLoad);
+			
+			//4. ToolTip Manager
+			toolTipManager = new ToolTipManager(this.stage);
+			
+			//5. Listen moodel
+			this.getModel().addEventListener(PipelineEvents.CHANGE, onModelChange);
+			
+			//6. remove splash
+			
+			//remove preloader
+			if (preloader) {
+				preloader.stop();
+				preloader = null;
+			}
+			//remove splash
+			TweenMax.to(splash,.5,{alpha:0, onComplete:removeObject, onCompleteParams:[splash]});
+			splash = null;	
+		}
+		
 		
 		//****************** PROTECTED METHODS ****************** ****************** ****************** 
 		
@@ -205,6 +253,7 @@ package view {
 			
 			//create explodeInfoView
 			if (!explodeInfoView) addExplodeInfoView();
+			explodeInfoView.isExploded = explode;
 			
 			//add explodeInfoView if Filtered
 			if (filtered) {
@@ -224,69 +273,8 @@ package view {
 		}
 		
 		
-		//****************** EVENTS ****************** ****************** ****************** 
+		//****************** EVENTS ACTION ****************** ****************** ****************** 
 		
-		/**
-		 * 
-		 * @param event
-		 * 
-		 */
-		protected function onMapLoad(event:Event):void {
-			//creating the interface
-			
-			//1.topbar
-			topBar.visible = true;
-			
-			//2. Footer
-			footer.visible = true;
-			
-			//3. MapView
-			mapView.y = topBar.height - 5;
-			mapView.removeEventListener(Event.COMPLETE, onMapLoad);
-			
-			//4. ToolTip Manager
-			toolTipManager = new ToolTipManager(this.stage);
-			
-			//5. Listen moodel
-			this.getModel().addEventListener(PipelineEvents.CHANGE, onModelChange);
-			
-			//6. remove splash
-			
-			//remove preloader
-			if (preloader) {
-				preloader.stop();
-				preloader = null;
-			}
-			//remove splash
-			TweenMax.to(splash,.5,{alpha:0, onComplete:removeObject, onCompleteParams:[splash]});
-			splash = null;	
-		}
-		
-		/**
-		 * 
-		 * @param event
-		 * 
-		 */
-		protected function topBarResizeHandle(event:PipelineEvents):void {
-			switch (event.parameters.action) {
-				
-				case "submenuOpen":
-					if (Settings.subMenuOrientation == "vertical") {
-						if (breadcrumbView) TweenMax.to(breadcrumbView,.3,{x:164});	
-					}
-					break;
-				
-				
-				case "submenuClose":
-					if (Settings.subMenuOrientation == "vertical") {
-						if (breadcrumbView) TweenMax.to(breadcrumbView,.3,{x:0});
-					}
-					break;
-				
-			}
-			
-		}		
-			
 		/**
 		 * 
 		 * @param event
@@ -312,9 +300,7 @@ package view {
 		 * 
 		 */
 		protected function onModelChange(event:PipelineEvents):void {
-			
 			manageBreadCrumb(event.parameters)
-			
 		}
 		
 		/**
@@ -376,6 +362,34 @@ package view {
 			
 		}
 		
+		
+		//****************** EVENTS INTERFACE ****************** ****************** ****************** 
+
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function topBarResizeHandle(event:PipelineEvents):void {
+			switch (event.parameters.action) {
+				
+				case "submenuOpen":
+					if (Settings.subMenuOrientation == "vertical") {
+						if (breadcrumbView) TweenMax.to(breadcrumbView,.3,{x:164});	
+					}
+					break;
+				
+				
+				case "submenuClose":
+					if (Settings.subMenuOrientation == "vertical") {
+						if (breadcrumbView) TweenMax.to(breadcrumbView,.3,{x:0});
+					}
+					break;
+				
+			}
+			
+		}		
+		
 		/**
 		 * 
 		 * @param event
@@ -394,6 +408,11 @@ package view {
 			if (event.phase == "begin") {
 				ToolTipManager.removeToolTip();
 			}
+		}
+		
+		protected function resize(event:Event):void {
+			mapView.setActiveArea(new Rectangle(0,topBar.height,stage.stageWidth,(stage.stageHeight-footer.height) - topBar.height + 11))
+			
 		}
 		
 		

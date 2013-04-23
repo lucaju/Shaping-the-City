@@ -4,7 +4,12 @@
 	require_once("db_connect.php");
 	
 	//query
-	$query = "SELECT * FROM neighbourhoods";
+	if ($_GET['phase']) {
+		$phase = $_GET['phase'];
+		$query = "SELECT * FROM neighbourhoods WHERE phase='$phase'";
+	} else {
+		$query = "SELECT * FROM neighbourhoods";
+	}
 		
 	//results
 	$result = mysql_query($query);

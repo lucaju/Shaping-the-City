@@ -16,21 +16,28 @@ package view.menu.submenu {
 	
 	import view.assets.ShadowLine;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class SubMenu extends AbstractView {
 		
 		//****************** Properties ****************** ******************  ****************** 
-		protected const HORIZONAL:String = "horizontal";
-		protected const VERTICAL:String = "vertical";
+		protected const HORIZONAL				:String = "horizontal";
+		protected const VERTICAL				:String = "vertical";
 		
-		protected var _orientation		:String = this.VERTICAL;		//Menu Orientation
-		protected var _rangeSize		:Number = 0;						//Maximum rangeSize. Height for Horizontal and Width for vertical
-		protected var _contentType		:String;						//Content Type
-		protected var data				:Array;							//Content Data
+		protected var _orientation				:String = this.VERTICAL;			//Menu Orientation
+		protected var _rangeSize				:Number = 0;						//Maximum rangeSize. Height for Horizontal and Width for vertical
+		protected var _contentType				:String;							//Content Type
+		protected var data						:Array;								//Content Data
 		
-		protected var bg				:Sprite;						//Background
-		protected var shadowLine		:ShadowLine;					//Shadow Line
-		protected var contentContainer	:SubMenuContent;				//Content Container
+		protected var bg						:Sprite;							//Background
+		protected var shadowLine				:ShadowLine;						//Shadow Line
+		protected var contentContainer			:SubMenuContent;					//Content Container
 		
+		
+		//****************** Constructor ****************** ****************** ****************** 
 		
 		/**
 		 * Constructor. 
@@ -48,6 +55,53 @@ package view.menu.submenu {
 			_orientation = orient;
 			contentType = type_;
 		}
+		
+		
+		//****************** INIT ****************** ****************** ****************** 
+		
+		/**
+		 * INIT: Prepare the layout out and call getData to load the data according to the current Content Type
+		 * 
+		 */
+		public function init():void {
+			
+			bg = new Sprite();
+			bg.graphics.beginFill(0x333333);
+			
+			
+			//orientation
+			switch (orientation) {
+				
+				case this.HORIZONAL:
+					
+					bg.graphics.drawRect(0,0,stage.stageWidth,rangeSize);
+					bg.graphics.endFill();
+					
+					shadowLine = new ShadowLine(stage.stageWidth, orientation, 90);
+					shadowLine.y = bg.height - shadowLine.height;
+					
+					break;
+				
+				case this.VERTICAL:
+					
+					bg.graphics.drawRect(0,0,rangeSize,stage.stageHeight - 80);
+					bg.graphics.endFill();
+					
+					shadowLine = new ShadowLine(bg.height, orientation, 0);
+					shadowLine.x = bg.width - shadowLine.width;
+					
+					break;
+				
+			}
+			
+			this.addChild(bg);
+			this.addChild(shadowLine);
+			
+			getData();
+			
+			this.getModel().addEventListener(PipelineEvents.CHANGE, onModelChange);
+		}	
+		
 		
 		//****************** GETTERS ****************** ****************** ****************** 
 		
@@ -111,85 +165,6 @@ package view.menu.submenu {
 			_contentType = value;
 		}
 		
-		//****************** INIT ****************** ****************** ****************** 
-		
-		/**
-		 * INIT: Prepare the layout out and call getData to load the data according to the current Content Type
-		 * 
-		 */
-		public function init():void {
-			
-			bg = new Sprite();
-			bg.graphics.beginFill(0x333333);
-			
-			
-			//orientation
-			switch (orientation) {
-				
-				case this.HORIZONAL:
-					
-					bg.graphics.drawRect(0,0,stage.stageWidth,rangeSize);
-					bg.graphics.endFill();
-					
-					shadowLine = new ShadowLine(stage.stageWidth, orientation, 90);
-					shadowLine.y = bg.height - shadowLine.height;
-					
-					break;
-				
-				case this.VERTICAL:
-
-					bg.graphics.drawRect(0,0,rangeSize,stage.stageHeight - 80);
-					bg.graphics.endFill();
-					
-					shadowLine = new ShadowLine(bg.height, orientation, 0);
-					shadowLine.x = bg.width - shadowLine.width;
-					
-					break;
-				
-			}
-			
-			this.addChild(bg);
-			this.addChild(shadowLine);
-			
-			getData();
-			
-			this.getModel().addEventListener(PipelineEvents.CHANGE, onModelChange);
-		}	
-		
-		//****************** PRIVATE METHODS ****************** ****************** ****************** 
-		
-		
-		/**
-		 * RESIZE. It resizes the base layout.
-		 * 
-		 */
-		private function resize():void {
-			
-			switch (orientation) {
-				
-				case this.HORIZONAL:
-					TweenMax.to(bg,.5,{height:contentContainer.height});
-					TweenMax.to(shadowLine,.5,{y:contentContainer.height - shadowLine.height});
-					break;
-				
-				case this.VERTICAL:
-					TweenMax.to(bg,.5,{width:contentContainer.width});
-					TweenMax.to(shadowLine,.5,{x:contentContainer.width - shadowLine.width});
-					break;
-				
-			}
-			
-		}
-		
-		/**
-		 * KillDisplayObject. It just remove whatever Sprite pass as parameter.
-		 * 
-		 * @param object:Sprite
-		 * 
-		 */
-		private function killDisplayObject(object:Sprite):void {
-			this.removeChild(object);
-		}
 		
 		//****************** PROTECTED METHODS ****************** ****************** ****************** 
 		
@@ -248,12 +223,45 @@ package view.menu.submenu {
 			}
 		}
 		
-		protected function onModelChange(event:PipelineEvents):void {
-			contentContainer.update(event.parameters);
-		}	
+		
+		/**
+		 * RESIZE. It resizes the base layout.
+		 * 
+		 */
+		protected function resize():void {
+			
+			switch (orientation) {
+				
+				case this.HORIZONAL:
+					TweenMax.to(bg,.5,{height:contentContainer.height});
+					TweenMax.to(shadowLine,.5,{y:contentContainer.height - shadowLine.height});
+					break;
+				
+				case this.VERTICAL:
+					TweenMax.to(bg,.5,{width:contentContainer.width});
+					TweenMax.to(shadowLine,.5,{x:contentContainer.width - shadowLine.width});
+					break;
+				
+			}
+			
+		}
+		
+		
+		//****************** PRIVATE METHODS  ****************** ****************** ****************** 
+		
+		/**
+		 * KillDisplayObject. It just remove whatever Sprite pass as parameter.
+		 * 
+		 * @param object:Sprite
+		 * 
+		 */
+		private function killDisplayObject(object:Sprite):void {
+			this.removeChild(object);
+		}
 		
 		
 		//****************** PUBLIC METHODS  ****************** ****************** ****************** 
+		
 		/**
 		 * ChangeContent. The submemnu content can be changed from outside.
 		 * <p>This methods clean submenu conten and calls for the new data</p>
@@ -306,6 +314,15 @@ package view.menu.submenu {
 			pController.highlightShapes(data);
 			
 		}
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function onModelChange(event:PipelineEvents):void {
+			contentContainer.update(event.parameters);
+		}	
 
 	}
 }

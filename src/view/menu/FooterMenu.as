@@ -8,14 +8,25 @@ package view.menu {
 	
 	import mvc.IController;
 	
+	import settings.Settings;
+	
 	import util.DeviceInfo;
 	
 	import view.assets.Switcher;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class FooterMenu extends AbstractMenu {
 		
-		//properties
-		private var item:*;
+		//****************** Properties ****************** ****************** ****************** 
+		
+		private var item					:*;
+		
+		
+		//****************** Constructor ****************** ****************** ****************** 
 		
 		/**
 		 * CONTRUCTOR 
@@ -25,10 +36,10 @@ package view.menu {
 		 */		
 		public function FooterMenu(c:IController, options:Array = null) {
 			super(c, options);
-			
-			//initials
-			
 		}
+		
+		
+		//****************** Initialize ****************** ****************** ****************** 
 		
 		/**
 		 * Initiate: Build Menu Items 
@@ -82,10 +93,16 @@ package view.menu {
 				
 				}
 			}
-			
-			
 		}
 		
+		
+		//****************** PROTECTED METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
 		protected function _itemClick(event:MouseEvent):void {
 			var target:ButtonBar = event.currentTarget as ButtonBar;
 			
@@ -93,8 +110,7 @@ package view.menu {
 			
 			var obj:Object = {source:target.title, state:target.toggle};
 			
-			this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE,obj));
-			
+			this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE,obj));	
 		}
 		
 		/**
@@ -108,7 +124,6 @@ package view.menu {
 			var obj:Object = {source:target.label, state:target.state};
 			
 			this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE,obj));
-			
 		}
 	}
 }

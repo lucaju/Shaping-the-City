@@ -1,7 +1,7 @@
 package view {
 	
 	//imports
-	import flash.display.Shape;
+	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -16,21 +16,32 @@ package view {
 	import view.assets.ShadowLine;
 	import view.assets.Switcher;
 	import view.menu.FooterMenu;
+	import settings.Settings;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class Footer extends AbstractView {
 		
-		//properties
-
-		protected var sortBT:Switcher;
-		protected var animationBT:Switcher;
-		protected var style:TextFormat;
-		protected var menu:FooterMenu;
+		//****************** Properties ****************** ****************** ****************** 
+		protected var bg							:Sprite;
+		protected var h								:Number;			//Max height
 		
-		private var h:Number;
+		protected var style							:TextFormat;
+		protected var menu							:FooterMenu;
 		
+		
+		//****************** Properties ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param c
+		 * 
+		 */
 		public function Footer(c:IController) {
 			super(c);
-			
 			
 			style = new TextFormat();
 			style.font = "Myriad Pro";
@@ -45,10 +56,17 @@ package view {
 			}
 		}
 		
+		
+		//****************** Initialize ****************** ****************** ******************
+		
+		/**
+		 * 
+		 * 
+		 */
 		public function init():void {
 			
 			//1.background
-			var bg:Shape = new Shape();
+			bg = new Sprite();
 			bg.graphics.beginFill(0x333333);
 			bg.graphics.drawRect(0,0,stage.stageWidth,h);
 			bg.graphics.endFill();
@@ -58,7 +76,7 @@ package view {
 			//1.2 Shadow
 			var shadowLine:ShadowLine = new ShadowLine(stage.stageWidth, "horizontal", 90);
 			shadowLine.y = -shadowLine.height;
-			this.addChild(shadowLine)
+			bg.addChild(shadowLine)
 			
 			//2.credits
 			var credits:TextField = new TextField();
@@ -80,18 +98,29 @@ package view {
 			menu.init();
 			
 			if (Settings.footerMenuButton == "switcher") {
-				menu.x = this.width - menu.width - 10;
-				menu.y = (this.height/2) - (menu.height/2); 
+				menu.x = bg.width - menu.width - 10;
+				menu.y = (h/2) - (menu.height/2); 
 			} else {
-				menu.x = this.width - menu.width;
+				menu.x = bg.width - menu.width;
 			}
 			
 			this.addChild(menu);
 			
-			this.y = stage.stageHeight - this.height + shadowLine.height + 1;
+			//positioning
+			this.y = stage.stageHeight - h;
+			
+			//listeners
+			stage.addEventListener(Event.RESIZE, resize);
 			
 		}
 		
+		//****************** EVENTS - ACTION ****************** ****************** ******************
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
 		protected function onSort(event:Event):void {
 			var target:Switcher = event.target as Switcher;
 			
@@ -99,6 +128,20 @@ package view {
 			
 			this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE,obj));
 			
+		}
+		
+		
+		//****************** EVENTS - INTERFACE ****************** ****************** ******************
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function resize(event:Event):void {
+			bg.width = stage.stageWidth;
+			menu.x = bg.width - menu.width;
+			this.y = stage.stageHeight - h;
 		}
 	}
 }

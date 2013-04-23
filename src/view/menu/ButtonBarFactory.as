@@ -75,12 +75,12 @@ package view.menu {
 		 */
 		private static function buildTopBarButton(item:ButtonBar, titleLower:String):void {
 			if (DeviceInfo.os() == "iPhone") {
-				item.bgFile = "/images/top_bar_bg@2x.png";
+				item.bgFile = "images/top_bar_bg@2x.png";
 				item.iconFile = getIconFileForIphone(titleLower);
 				item.titleSize = 22;
 				item.setSize(80,160)
 			} else {
-				item.bgFile = "/images/top_bar_bg.png";
+				item.bgFile = "images/top_bar_bg.png";
 				item.iconFile = getIconFileForMac(titleLower);
 				item.titleSize = 11;
 				item.setSize(40,80)
@@ -97,12 +97,12 @@ package view.menu {
 		 */
 		private static function buildFooterBarButton(item:ButtonBar, titleLower:String):void {
 			if (DeviceInfo.os() == "iPhone") {
-				item.bgFile = "/images/top_bar_bg@2x.png";
+				item.bgFile = "images/top_bar_bg@2x.png";
 				item.iconFile = getIconFileForIphone(titleLower);
 				item.titleSize = 28;
 				item.setSize(80,160)
 			} else {
-				item.bgFile = "/images/top_bar_bg.png";
+				item.bgFile = "images/top_bar_bg.png";
 				item.iconFile = getIconFileForMac(titleLower);
 				item.titleSize = 14;
 				item.setSize(40,80)
@@ -123,11 +123,11 @@ package view.menu {
 			switch(titleLower) {
 				
 				case "community":
-					file = "/images/icons/" + titleLower + "_20.png";
+					file = "images/icons/" + titleLower + "_20.png";
 					break;
 				
 				case "period":
-					file = "/images/icons/" + titleLower + "_20.png";
+					file = "images/icons/" + titleLower + "_20.png";
 					break;
 				
 				case "explode":

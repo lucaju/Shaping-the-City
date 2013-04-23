@@ -134,7 +134,6 @@ package view.assets {
 			labelTF.y = (buttonArea.height/2) - (labelTF.height/2) + 1;
 			
 			areaOff.addChild(labelTF);
-
 			
 			//2.3.Hit
 			button = drawButtonHit();
@@ -200,6 +199,7 @@ package view.assets {
 			
 			
 		}
+		
 		
 		//****************** GETTERS ****************** ****************** ****************** 
 		
@@ -308,14 +308,14 @@ package view.assets {
 		}
 		
 		
-		//****************** PRIVATE METHODS ****************** ****************** ****************** 
+		//****************** PROTECTED METHODS ****************** ****************** ****************** 
 		
 		/**
 		 * 
 		 * @return 
 		 * 
 		 */
-		private function drawButtonHit():Sprite {
+		protected function drawButtonHit():Sprite {
 			
 			var bt:Sprite = new Sprite();
 			
@@ -365,7 +365,7 @@ package view.assets {
 		 * @return 
 		 * 
 		 */
-		private function getBitmapFilter(colorValue:uint, a:Number, innerGlow:Boolean = false):BitmapFilter {
+		protected function getBitmapFilter(colorValue:uint, a:Number, innerGlow:Boolean = false):BitmapFilter {
 			//propriedades
 			var color:Number = colorValue;
 			var alpha:Number = a;
@@ -376,8 +376,6 @@ package view.assets {
 			
 			return new GlowFilter(color,alpha,blurX,blurY,strength,quality,true);
 		}
-		
-		//****************** PROTECTED METHODS ****************** ****************** ****************** 
 		
 		/**
 		 * 
@@ -414,7 +412,6 @@ package view.assets {
 			
 			stage.addEventListener(MouseEvent.MOUSE_UP, _onMouseUp);
 			button.addEventListener(MouseEvent.MOUSE_MOVE, onMouseMove);
-			
 		}
 		
 		/**

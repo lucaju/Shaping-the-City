@@ -325,6 +325,9 @@ package controller {
 			
 		}
 		
+		
+		//****************** TREES METHODS ****************** ****************** ******************
+		
 		/*
 		public function getTreePropportions():Object {
 			var collection:Array = getTrees();

@@ -6,6 +6,7 @@ package model {
 	import events.PipelineEvents;
 	
 	import mvc.Observable;
+	import settings.Settings;
 	
 	/**
 	 * This Class manage all data related to the map.
@@ -17,9 +18,10 @@ package model {
 		
 		//****************** Properties ****************** ****************** ****************** 
 		
-		private var shapeCollection				:Array;						//Holds Shape Collection
-		private var neighbourhoodCollection		:Array;						//Holds Neighbourhood Collection
-		private var highlightedShapes			:HighlightedShapes;			//Holds Highlight Information: Type, and Periods, Neighbourhoods and Shapes affected.
+		protected var shapeCollection				:Array;						//Holds Shape Collection
+		protected var neighbourhoodCollection		:Array;						//Holds Neighbourhood Collection
+		protected var highlightedShapes			:HighlightedShapes;			//Holds Highlight Information: Type, and Periods, Neighbourhoods and Shapes affected.
+		protected var serverPath					:String;
 		
 		
 		//****************** Constructor ****************** ****************** ****************** 
@@ -34,6 +36,12 @@ package model {
 			//define name
 			this.name = "DataModel";
 			
+			if (Settings.server == "local") {
+				serverPath = "http://localhost:8888/pipeline/shapingcity/php/";
+			} else {
+				serverPath = "http://labs.fluxo.art.br/pipeline/shapingcity/php/"
+			}
+			
 		}
 		
 		//****************** LOADS ****************** ****************** ****************** 
@@ -43,18 +51,14 @@ package model {
 		 * 
 		 */
 		public function loadShapesData():void {
-			
 			if (!hasShapesData) {
-				
 				var processShapes:ProcessShapes = new ProcessShapes();
 				processShapes.addEventListener(Event.COMPLETE, processComplete);
-				processShapes.loadData("http://labs.fluxo.art.br/pipeline/pipeline/php/getShapes.php");
+				processShapes.loadData(serverPath+"getShapes.php?phase="+Settings.projectPhase);
 				processShapes = null;
 			}
-			
 			//load Neighbourhoods
 			loadNeigbourhoods();
-			
 		}
 		
 		/**
@@ -65,7 +69,7 @@ package model {
 			if (!hasNeighbourhoodData) {
 				var processNeighbourhoods:ProcessNeighbourhoods = new ProcessNeighbourhoods();
 				processNeighbourhoods.addEventListener(Event.COMPLETE, processComplete);
-				processNeighbourhoods.loadData("http://labs.fluxo.art.br/pipeline/pipeline/php/getNeighbourhoods.php");
+				processNeighbourhoods.loadData(serverPath+"getNeighbourhoods.php?phase="+Settings.projectPhase);
 				processNeighbourhoods = null;
 			}
 		}
@@ -499,15 +503,17 @@ package model {
 			var nArray:Array = highlightedShapes.neighbourhoods;
 			var sArray:Array = sArray = highlightedShapes.shapes;
 			
-			/*
-			trace ("Action: "+ eventData.action);
-			trace ("Type: " + eventData.type);
-			trace ("Method: " + eventData.method);
-			trace ("Reset: " + eventData.reset);
-			trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods);
-			trace ("Current Total Neighbourhoods Highlight: " + nArray.length);
-			trace ("Current Total Shapes Highlight: " + sArray.length);
-			*/
+			
+			//output
+			if (Settings.debug) {
+				/*trace ("Action: "+ eventData.action);
+				trace ("Type: " + eventData.type);
+				trace ("Method: " + eventData.method);
+				trace ("Reset: " + eventData.reset);
+				trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods);
+				trace ("Current Total Neighbourhoods Highlight: " + nArray.length);
+				trace ("Current Total Shapes Highlight: " + sArray.length);*/
+			}
 			
 			//test if the neighbourhoods are already on the list
 			var ignoreNeighbourhoods:Array = new Array();
@@ -554,14 +560,15 @@ package model {
 			eventData.shapes = affectetedShapes;
 			this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE, eventData));
 			
-			/*
-			trace ("Neighbourhoods Affected: " + affectetedNeighbourhoods.length)
-			trace ("Shapes Affected: " + affectetedShapes.length)
-			trace ("Update Total Neighbourhoods Highlight: " + nArray.length)
-			trace ("Update Total Shapes Highlight: " + sArray.length)
-			
-			trace ("-------")
-			*/
+			//output
+			if (Settings.debug) {
+				/*trace ("Neighbourhoods Affected: " + affectetedNeighbourhoods.length)
+				trace ("Shapes Affected: " + affectetedShapes.length)
+				trace ("Update Total Neighbourhoods Highlight: " + nArray.length)
+				trace ("Update Total Shapes Highlight: " + sArray.length)
+				
+				trace ("-------")*/
+			}
 		}
 		
 		/**
@@ -594,15 +601,16 @@ package model {
 					highlightedShapes.removePeriod(source)
 				}
 				
-				/*
-				trace ("Action: "+ eventData.action);
-				trace ("Type: " + eventData.type);
-				trace ("Method: " + eventData.method);
-				trace ("Reset: " + eventData.reset);
-				trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods)
-				trace ("Current Total Neighbourhoods Highlight: " + nArray.length)
-				trace ("Current Total Shapes Highlight: " + sArray.length)
-				*/
+				//output
+				if (Settings.debug) {
+					/*trace ("Action: "+ eventData.action);
+					trace ("Type: " + eventData.type);
+					trace ("Method: " + eventData.method);
+					trace ("Reset: " + eventData.reset);
+					trace ("Request Neighbourhoods: " + affectetedNeighbourhoods.length + " - " + affectetedNeighbourhoods)
+					trace ("Current Total Neighbourhoods Highlight: " + nArray.length)
+					trace ("Current Total Shapes Highlight: " + sArray.length)*/
+				}
 				
 				//test if the neighbourhoods are already on the list
 				var confirmAffected:Array = new Array();
@@ -656,14 +664,15 @@ package model {
 				eventData.shapes = affectetedShapes;
 				this.dispatchEvent(new PipelineEvents(PipelineEvents.CHANGE, eventData));
 				
-				/*
-				trace ("Neighbourhoods Affected: " + affectetedNeighbourhoods.length)
-				trace ("Shapes Affected: " + affectetedShapes.length)
-				trace ("Update Total Neighbourhoods Highlight: " + nArray.length)
-				trace ("Update Total Shapes Highlight: " + sArray.length)
-				
-				trace ("-------")
-				*/
+				//output
+				if (Settings.debug) {
+					/*trace ("Neighbourhoods Affected: " + affectetedNeighbourhoods.length)
+					trace ("Shapes Affected: " + affectetedShapes.length)
+					trace ("Update Total Neighbourhoods Highlight: " + nArray.length)
+					trace ("Update Total Shapes Highlight: " + sArray.length)
+					
+					trace ("-------")*/
+				}
 			}
 			
 		}

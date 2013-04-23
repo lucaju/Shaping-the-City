@@ -19,17 +19,17 @@ package view.explode {
 		
 		//****************** Properties ****************** ******************  ****************** 
 		
-		protected var _maxWidth				:Number;						//Max width area.
-		protected var _separatorCaliber		:int = 2;							//Separator caliber
+		protected var _maxWidth					:Number;						//Max width area.
+		protected var _separatorCaliber			:int = 2;						//Separator caliber
 		
-		protected var titleTF				:TextField;
-		protected var infoTF				:TextField;
-		protected var titleStyle			:TextFormat;
-		protected var infoStyle				:TextFormat;
-		protected var separator				:Sprite;
-		protected var bg					:Sprite;
+		protected var titleTF					:TextField;
+		protected var infoTF					:TextField;
+		protected var titleStyle				:TextFormat;
+		protected var infoStyle					:TextFormat;
+		protected var separator					:Sprite;
+		protected var bg						:Sprite;
 		
-		protected var _metaData				:String;
+		protected var _groupMetaData			:String;
 		
 		
 		//****************** Constructor ****************** ******************  ****************** 
@@ -71,87 +71,8 @@ package view.explode {
 		}
 		
 		
-		//****************** GETTERS ****************** ******************  ****************** 
-		
-		/**
-		 * 
-		 * @return 
-		 * 
-		 */
-		public function get metaData():String {
-			return _metaData;
-		}
-
-		/**
-		 * 
-		 * @return 
-		 * 
-		 */
-		public function get maxWidth():Number {
-			return _maxWidth;
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 * 
-		 */
-		public function get title():String {
-			return titleTF.text;
-		}
-		
-		/**
-		 * 
-		 * @return 
-		 * 
-		 */
-		public function get titleRect():Rectangle {
-			var rect:Rectangle = new Rectangle();
-			
-			rect.x = bg.x;
-			rect.y = bg.y;
-			rect.width = bg.width;
-			rect.height = bg.height;
-			
-			return rect;
-		}
-		
-		//****************** SETTERS ****************** ******************  ****************** 
-
-		public function set metaData(value:String):void {
-			_metaData = value;
-		}
-		
-		/**
-		 * 
-		 * @param value
-		 * 
-		 */
-		public function set maxWidth(value:Number):void {
-			_maxWidth = value;
-		}
-		
-		/**
-		 * titleSize. Set font size. 
-		 * @param value:uint
-		 * 
-		 */
-		public function set titleSize(value:uint):void {
-			titleStyle.size = value;
-		}
-		
-		/**
-		 * Set Separator Caliber. 
-		 * @param value:uint
-		 * 
-		 */
-		public function set separatorCaliber(value:uint):void {
-			_separatorCaliber = value;
-		}
-		
-		
 		//****************** INITIALIZE ****************** ******************  ****************** 
-
+		
 		/**
 		 * 
 		 * @param titleString
@@ -200,26 +121,26 @@ package view.explode {
 					case "period":
 						
 						var neighbourhoods:String = "";
-												
+						
 						
 						for each (neighbourhood in data.meta) {
-							
-							//info
-							year = neighbourhood.period.toString();
-							if (year == "0") year = "--"
-							
-							totalShapes += neighbourhood.shapes.length;
-							
-							neighbourhoods +=  neighbourhood.name + " (" + year + "): <b>" + neighbourhood.shapes.length + "</b> shapes";
-							
-							if (data.meta.indexOf(neighbourhoods) != data.meta.length) {
-								neighbourhoods += "<br />"
-							}
-							
+						
+						//info
+						year = neighbourhood.period.toString();
+						if (year == "0") year = "--"
+						
+						totalShapes += neighbourhood.shapes.length;
+						
+						neighbourhoods +=  neighbourhood.name + " (" + year + "): <b>" + neighbourhood.shapes.length + "</b> shapes";
+						
+						if (data.meta.indexOf(neighbourhoods) != data.meta.length) {
+							neighbourhoods += "<br />"
 						}
 						
+					}
+						
 						//save info
-						metaData = "Communities:<br/>" + neighbourhoods;
+						groupMetaData = "Communities:<br/>" + neighbourhoods;
 						
 						//print info
 						if (data.meta.length == 1) {
@@ -239,8 +160,93 @@ package view.explode {
 				
 				infoTF.x = (maxWidth/2) - (infoTF.width/2)					//Text at the center
 			}
-				
+			
 		}
+		
+		
+		//****************** GETTERS ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get groupMetaData():String {
+			return _groupMetaData;
+		}
+
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get maxWidth():Number {
+			return _maxWidth;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get title():String {
+			return titleTF.text;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get titleRect():Rectangle {
+			var rect:Rectangle = new Rectangle();
+			
+			rect.x = bg.x;
+			rect.y = bg.y;
+			rect.width = bg.width;
+			rect.height = bg.height;
+			
+			return rect;
+		}
+		
+		//****************** SETTERS ****************** ******************  ****************** 
+
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set groupMetaData(value:String):void {
+			_groupMetaData = value;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set maxWidth(value:Number):void {
+			_maxWidth = value;
+		}
+		
+		/**
+		 * titleSize. Set font size. 
+		 * @param value:uint
+		 * 
+		 */
+		public function set titleSize(value:uint):void {
+			titleStyle.size = value;
+		}
+		
+		/**
+		 * Set Separator Caliber. 
+		 * @param value:uint
+		 * 
+		 */
+		public function set separatorCaliber(value:uint):void {
+			_separatorCaliber = value;
+		}
+		
 		
 		//****************** PUBLIC METHODS ****************** ******************  ****************** 
 		

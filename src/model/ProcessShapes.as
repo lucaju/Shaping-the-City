@@ -4,12 +4,34 @@ package model {
 	import flash.events.Event;
 	import flash.geom.Point;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class ProcessShapes extends AbstractProcessment  {
 		
+		//****************** Properties ****************** ****************** ****************** 
+		
+		
+		//****************** Constructor ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * 
+		 */
 		public function ProcessShapes() {
 			name = "cityShapes";
 		}
 		
+		
+		//****************** PROTECTED FUNCTIONS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param e
+		 * 
+		 */
 		override protected function onComplete(e:Event):void {
 			
 			var cityShape:CityShape;

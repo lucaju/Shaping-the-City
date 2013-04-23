@@ -4,7 +4,8 @@ package view {
 	import com.greensock.TweenMax;
 	
 	import flash.display.DisplayObject;
-	import flash.display.Shape;
+	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
@@ -13,6 +14,8 @@ package view {
 	import mvc.AbstractView;
 	import mvc.IController;
 	
+	import settings.Settings;
+	
 	import util.DeviceInfo;
 	
 	import view.assets.ShadowLine;
@@ -20,20 +23,32 @@ package view {
 	import view.menu.submenu.SubMenu;
 	import view.menu.submenu.SubMenuFactory;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class TopBar extends AbstractView {
 		
-		//properties
-		protected var cityName:String;
+		//****************** Properties ****************** ****************** ****************** 
+		protected var bg							:Sprite;
+		protected var cityName						:String;
+		protected var h								:Number;			//Max Height
 		
-		protected var cityNameTF:TextField;
-		protected var menu:TopMenu;
-		protected var style:TextFormat;
-		protected var subMenu:SubMenu;
+		protected var cityNameTF					:TextField;
+		protected var style							:TextFormat;
 		
-		private var h:Number;
-
-		private var bg:Shape;
+		protected var menu							:TopMenu;
+		protected var subMenu						:SubMenu;
 		
+				
+		//****************** Constructor ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param c
+		 * 
+		 */
 		public function TopBar(c:IController) {			
 			super(c);
 			
@@ -50,10 +65,17 @@ package view {
 			}
 		}
 		
+		
+		//****************** INITIALIZE ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * 
+		 */
 		public function init():void {
 			
 			//1.background
-			bg = new Shape();
+			bg = new Sprite();
 			bg.graphics.beginFill(0x000000,.9);
 			bg.graphics.drawRect(0,0,stage.stageWidth,h);
 			bg.graphics.endFill();
@@ -63,7 +85,7 @@ package view {
 			//1.2 Shadow
 			var shadowLine:ShadowLine = new ShadowLine(stage.stageWidth);
 			shadowLine.y = bg.height;
-			this.addChild(shadowLine);
+			bg.addChild(shadowLine);
 			
 			//2.City Name
 			cityNameTF = new TextField();
@@ -71,7 +93,7 @@ package view {
 			cityNameTF.autoSize = "left";
 			cityNameTF.text = "Shaping the City" + " | Edmonton";
 			cityNameTF.setTextFormat(style);
-			cityNameTF.x = this.width - cityNameTF.width - 10;
+			cityNameTF.x = bg.width - cityNameTF.width - 10;
 			cityNameTF.y = 8;
 			
 			this.addChild(cityNameTF);
@@ -89,11 +111,32 @@ package view {
 			menu.init();
 			this.addChild(menu);
 			
-			menu.addEventListener(PipelineEvents.SELECT, _topBarSelect);
+			//listeners
+			menu.addEventListener(PipelineEvents.SELECT, topBarSelect);
+			stage.addEventListener(Event.RESIZE, resize);
+		}
+		
+		//****************** PRIVATE METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		private function killChild(value:DisplayObject):void {
+			this.removeChild(value);
 			
 		}
 		
-		protected function _topBarSelect(event:PipelineEvents):void {
+		
+		//****************** EVENTS - ACTIONS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function topBarSelect(event:PipelineEvents):void {
 			
 			var eventData:Object = new Object();
 			var type:String = event.parameters.label;
@@ -123,7 +166,7 @@ package view {
 				subMenu = SubMenuFactory.subMenu(this.getController(), type, Settings.subMenuOrientation);
 				subMenu.setModel(this.getModel());
 				
-				subMenu.y = bg.height;
+				subMenu.y = h;
 				this.addChildAt(subMenu,0);
 				subMenu.init();
 				
@@ -148,12 +191,19 @@ package view {
 			
 			type = null;
 			
-			
 		}
 		
-		private function killChild(value:DisplayObject):void {
-			this.removeChild(value);
-			
+		
+		//****************** EVENTS - INTERFACE ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function resize(event:Event):void {
+			bg.width = stage.stageWidth;
+			cityNameTF.x = bg.width - cityNameTF.width - 10;
 		}
 	}
 }

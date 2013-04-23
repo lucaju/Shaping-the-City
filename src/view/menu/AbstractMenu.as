@@ -4,16 +4,29 @@ package view.menu {
 	import mvc.AbstractView;
 	import mvc.IController;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class AbstractMenu extends AbstractView {
 		
-		//properties
-		protected var _orientation:String = "horizontal";
-		protected var _gap:Number; 
+		//****************** Properties ****************** ****************** ****************** 
+		protected var _orientation				:String = "horizontal";
+		protected var _gap						:Number; 
 		
-		protected var optionCollection:Array;
-		protected var itemCollection:Array;
+		protected var optionCollection			:Array;
+		protected var itemCollection			:Array;
 		
 		
+		//****************** Constructor ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param c
+		 * @param options
+		 * 
+		 */
 		public function AbstractMenu(c:IController, options:Array = null) {
 			super(c);
 			
@@ -27,27 +40,66 @@ package view.menu {
 			}
 		}
 		
+		//****************** Initialize ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * 
+		 */
 		public function init():void {
-			
+			//to override
 		}
 		
+		
+		//****************** PUBLIC METHODS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
 		public function addOption(value:Object):void {
 			optionCollection.push(value);
 			
 		}
+		
+		
+		//****************** GETTERS ****************** ****************** ****************** 
 
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
 		public function get orientation():String{
 			return _orientation;
 		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get gap():Number {
+			return _gap;
+		}
+		
+		//****************** SETTERS ****************** ****************** ****************** 
 
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
 		public function set orientation(value:String):void {
 			_orientation = value;
 		}
 
-		public function get gap():Number {
-			return _gap;
-		}
-
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
 		public function set gap(value:Number):void {
 			_gap = value;
 		}

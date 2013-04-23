@@ -7,6 +7,11 @@ package view.breadcrumb {
 	
 	import view.assets.UIControlButton;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class Crumb extends Sprite {
 		
 		//****************** Properties ****************** ******************  ****************** 
@@ -30,44 +35,14 @@ package view.breadcrumb {
 		}
 		
 		
-		//****************** GETTERS ****************** ******************  ****************** 
-				
-		/**
-		 * Return Crumb Title 
-		 * @return 
-		 * 
-		 */
-		public function get title():String {
-			return titleTF.text;
-		}
-		
-		
-		//****************** SETTERS ****************** ******************  ****************** 
-		
-		/**
-		 * titleSize. Set font size. 
-		 * @param value:uint
-		 * 
-		 */
-		public function set titleSize(value:uint):void {
-			style.size = value;
-		}
-		
-		/**
-		 * Set Crumb Height. 
-		 * @param value:Number
-		 * 
-		 */
-		public function setCrumbHeight(value:Number):void {
-			crumbHeight = value;
-		}
-		
-		
 		//****************** Initialize ****************** ******************  ****************** 
 		
+		/**
+		 * 
+		 * @param title
+		 * 
+		 */
 		public function init(title:String):void {
-			
-			//
 			
 			style.font = "Myriad Pro";
 			style.color = 0x333333;
@@ -106,6 +81,39 @@ package view.breadcrumb {
 			
 			this.buttonMode = true;
 			
+		}
+		
+		
+		//****************** GETTERS ****************** ******************  ****************** 
+				
+		/**
+		 * Return Crumb Title 
+		 * @return 
+		 * 
+		 */
+		public function get title():String {
+			return titleTF.text;
+		}
+		
+		
+		//****************** SETTERS ****************** ******************  ****************** 
+		
+		/**
+		 * titleSize. Set font size. 
+		 * @param value:uint
+		 * 
+		 */
+		public function set titleSize(value:uint):void {
+			style.size = value;
+		}
+		
+		/**
+		 * Set Crumb Height. 
+		 * @param value:Number
+		 * 
+		 */
+		public function setCrumbHeight(value:Number):void {
+			crumbHeight = value;
 		}
 		
 	}

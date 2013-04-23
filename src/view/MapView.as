@@ -21,10 +21,13 @@ package view {
 	import mvc.AbstractView;
 	import mvc.IController;
 	
+	import settings.Settings;
+	
 	import util.DeviceInfo;
 	
 	import view.explode.ExplodeInfoView;
 	import view.util.scroll.Scroll;
+	import view.util.zoom.ZoomModule;
 	
 	/**
 	 * MapViw
@@ -39,20 +42,20 @@ package view {
 		protected var activeArea			:Rectangle;					//Keep the active map view windows dimensions. 
 		protected var proportion			:Object;					//Keep the propoportions between the map and the screen.
 		
-		protected var blockShape			:BlockShape;				//Generic blockShape.
-		
 		protected var shapeCollection		:Array;						//Collection of all shapes on the map.
 		protected var highlightedShapes		:Array;						//Collection of all highlighted shapes on the map.
 		protected var ignoredShapes			:Array;						//Collection of all ignored shapes on the map.
-		protected var selectedShape			:BlockShape					//hold the selected shape
+		
+		protected var selectedShape			:BlockShape;				//hold the selected shape
 		
 		protected var exploded				:Boolean = false;
 		
 		protected var scroll				:Scroll;
-		
 		protected var scrolledArea			:Sprite;
 		protected var shapeContainer		:Sprite;
 		protected var containerMask			:Sprite;
+		
+		protected var zoomControl			:ZoomModule;
 		
 		//****************** Constructor ****************** ****************** ****************** 
 		/**
@@ -70,30 +73,6 @@ package view {
 			this.addChild(shapeContainer);
 		}
 		
-		
-		//****************** GETTERS ****************** ****************** ****************** 
-
-		/**
-		 * isExploded. Returns the current exploded condition
-		 * @param value:Rectangle
-		 * 
-		 */
-		public function isExploded():Boolean {
-			return exploded;
-		}
-		
-		
-		//****************** SETTERS ****************** ****************** ****************** 
-		
-		/**
-		 * SetActiveArea. Save the active area size to a variable.
-		 * 
-		 * @param value:Rectangle
-		 * 
-		 */
-		public function setActiveArea(value:Rectangle):void {
-			activeArea = value;
-		}
 		
 		//****************** INITIALIZE ****************** ****************** ****************** 
 		
@@ -115,6 +94,159 @@ package view {
 			this.graphics.beginFill(0xFFFFFF,0);
 			this.graphics.drawRect(0,0,this.activeArea.width,this.activeArea.height);
 			this.graphics.endFill();
+			
+		}
+		
+		
+		//****************** EVENT - INITIALIZATION ****************** ****************** ******************
+		
+		/**
+		 * onLoad. Build the map.
+		 * <p>It calls for calculate proportion method in the Controller<p/>
+		 * <p>Create and position the shapes</p>
+		 * <p>Add listener to ZOOM and PAN interaction</p>
+		 * 
+		 * @param e:PipelineEvents
+		 * 
+		 */
+		private function onLoad(e:PipelineEvents):void {
+			
+			if (e.parameters.type == "cityShapes") {
+				
+				//remove listener
+				e.target.removeEventListener(PipelineEvents.COMPLETE, onLoad);
+				
+				//data
+				var data:Array = e.parameters.data;
+				
+				//get proportions
+				proportion = PipelineController(this.getController()).getMapPropportions(activeArea);
+				
+				//loop
+				var i:int = 0;
+				var blockShape:BlockShape;
+				
+				for each (var cityShape:CityShape in data) {
+					
+					var origin:Point = proportion.origin;
+					var scale:Number = proportion.rate;
+					
+					if (cityShape.location.x != 0) {
+						i++;
+						
+						blockShape = new BlockShape(cityShape.id, scale);
+						shapeContainer.addChild(blockShape);
+						
+						blockShape.x = (cityShape.location.x - origin.x) * scale;
+						blockShape.y = (cityShape.location.y - origin.y) * scale;
+						
+						blockShape.neighbourhood = cityShape.neighbourhood;
+						
+						//save geolocation
+						blockShape.location = new Point(blockShape.x, blockShape.y);
+						
+						shapeCollection.push(blockShape);
+						
+						blockShape.init(cityShape.coordinates);
+						
+						/*
+						//blockShape.cacheAsBitmapMatrix = blockShape.transform.concatenatedMatrix; 
+						//blockShape.cacheAsBitmap = true;
+						
+						//TweenMax.from(blockShape,1,{alpha:0, delay:0.005*i});
+						//TweenMax.from(blockShape,Math.random()*20,{alpha:0, delay:0.1*i*Math.random()});
+						//TweenMax.from(blockShape,1,{z:1000, rotation: 90, alpha:0,delay:0.01*i});
+						//TweenMax.from(blockShape,10 + (Math.random() * 10),{scaleX: 1 + Math.random(),scaleY: 1 + Math.random(), alpha: .1 + (Math.random() / 2), yoyo:true, repeat:-1});
+						*/
+					}
+					
+					
+				}
+				
+				//container background
+				updateContentBackground();
+				
+				if (Settings.platformTarget != "web") {
+				
+					//mask for container
+					containerMask = new Sprite();
+					containerMask.graphics.beginFill(0xFFFFFF,0);
+					containerMask.graphics.drawRect(shapeContainer.x, shapeContainer.y, activeArea.width, activeArea.height);
+					this.addChild(containerMask);
+					shapeContainer.mask = containerMask
+					
+					//add scroll system
+					scroll = new Scroll();
+					scroll.direction = "both";
+					scroll.target = shapeContainer;
+					scroll.maskContainer = containerMask;
+					scroll.friction = .9;
+					this.addChild(scroll);
+					scroll.init();
+				}
+				
+				
+				//listener - Interaction
+				this.addEventListener(MouseEvent.MOUSE_UP, onBlockClick);
+				
+				if (Settings.platformTarget != "web") {
+					this.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onMapGestureZoom);
+				} else {
+					Settings.showZoomControls = true; 
+					this.addEventListener(MouseEvent.MOUSE_DOWN, dragMap);
+				}
+				
+				//zoom controller
+				if (Settings.showZoomControls) {
+					zoomControl = new ZoomModule(this.getController(), shapeContainer);
+					zoomControl.x = activeArea.width - zoomControl.width - 10;
+					zoomControl.y = 10;
+					this.addChild(zoomControl);
+				}
+				
+				//Dispatch Event
+				this.dispatchEvent(new Event(Event.COMPLETE));
+				stage.addEventListener(Event.RESIZE, resize);
+			}
+			
+		}
+		
+		/**
+		 * 
+		 * 
+		 */
+		private function updateContentBackground():void {
+			shapeContainer.graphics.clear();
+			shapeContainer.graphics.beginFill(0xFFFFFF,0);
+			shapeContainer.graphics.drawRect(0,0,shapeContainer.width,shapeContainer.height);
+			shapeContainer.graphics.endFill();
+			
+			//if (scroll) scroll.update();
+		}
+		
+		
+		//****************** GETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * isExploded. Returns the current exploded condition
+		 * @param value:Rectangle
+		 * 
+		 */
+		public function isExploded():Boolean {
+			return exploded;
+		}
+		
+		
+		//****************** SETTERS ****************** ****************** ****************** 
+		
+		/**
+		 * SetActiveArea. Save the active area size to a variable.
+		 * 
+		 * @param value:Rectangle
+		 * 
+		 */
+		public function setActiveArea(value:Rectangle):void {
+			activeArea = value;
 		}
 		
 		//****************** PROTECTED METHODS  ****************** ****************** ****************** 
@@ -472,7 +604,7 @@ package view {
 			
 			var random:Number = Math.random();
 			
-			TweenMax.to(shapeContainer,2,{scaleX:1, scaleY:1, x:0, y:0,delay:random});
+			TweenMax.to(shapeContainer,2,{scaleX:1, scaleY:1, x:0, y:0,delay:random,onComplete:updateContentBackground});
 			
 			var affectedArray:Array = shapeCollection;
 			
@@ -485,8 +617,9 @@ package view {
 			
 			//move it back
 			for each (var object:BlockShape in affectedArray) {
-				TweenMax.to(object,2,{x:object.location.x,y:object.location.y,delay:random,onComplete:updateContentBackground});
+				TweenMax.to(object,2,{x:object.location.x,y:object.location.y,delay:random});
 			}
+			
 			
 			//dim ignore
 			for each (var bIg:BlockShape in ignoredShapes) {
@@ -498,106 +631,7 @@ package view {
 		}
 		
 		
-		//****************** EVENT HANDLES  ****************** ****************** ****************** 
-		
-		/**
-		 * onLoad. Build the map.
-		 * <p>It calls for calculate proportion method in the Controller<p/>
-		 * <p>Create and position the shapes</p>
-		 * <p>Add listener to ZOOM and PAN interaction</p>
-		 * 
-		 * @param e:PipelineEvents
-		 * 
-		 */
-		private function onLoad(e:PipelineEvents):void {
-			
-			if (e.parameters.type == "cityShapes") {
-				
-				//remove listener
-				e.target.removeEventListener(PipelineEvents.COMPLETE, onLoad);
-				
-				//data
-				var data:Array = e.parameters.data;
-				
-				//get proportions
-				proportion = PipelineController(this.getController()).getMapPropportions(activeArea);
-				
-				//loop
-				var i:int = 0;
-				
-				for each (var cityShape:CityShape in data) {
-					
-					var origin:Point = proportion.origin;
-					var scale:Number = proportion.rate;
-					
-					if (cityShape.location.x != 0) {
-						i++;
-						
-						blockShape = new BlockShape(cityShape.id, scale);
-						shapeContainer.addChild(blockShape);
-						
-						blockShape.x = (cityShape.location.x - origin.x) * scale;
-						blockShape.y = (cityShape.location.y - origin.y) * scale;
-						
-						blockShape.neighbourhood = cityShape.neighbourhood;
-						
-						//save geolocation
-						blockShape.location = new Point(blockShape.x, blockShape.y);
-						
-						shapeCollection.push(blockShape);
-						
-						blockShape.init(cityShape.coordinates);
-						
-						/*
-						//blockShape.cacheAsBitmapMatrix = blockShape.transform.concatenatedMatrix; 
-						//blockShape.cacheAsBitmap = true;
-						
-						//TweenMax.from(blockShape,1,{alpha:0, delay:0.005*i});
-						//TweenMax.from(blockShape,Math.random()*20,{alpha:0, delay:0.1*i*Math.random()});
-						//TweenMax.from(blockShape,1,{z:1000, rotation: 90, alpha:0,delay:0.01*i});
-						//TweenMax.from(blockShape,10 + (Math.random() * 10),{scaleX: 1 + Math.random(),scaleY: 1 + Math.random(), alpha: .1 + (Math.random() / 2), yoyo:true, repeat:-1});
-						*/
-					}
-					
-					
-				}
-				
-				//container background
-				updateContentBackground();
-				
-				//mask for container
-				containerMask = new Sprite();
-				containerMask.graphics.beginFill(0xFFFFFF,0);
-				containerMask.graphics.drawRect(shapeContainer.x, shapeContainer.y, activeArea.width, activeArea.height);
-				this.addChild(containerMask);
-				shapeContainer.mask = containerMask
-				
-				//add scroll system
-				scroll = new Scroll();
-				scroll.direction = "both";
-				scroll.target = shapeContainer;
-				scroll.maskContainer = containerMask;
-				scroll.friction = .9;
-				this.addChild(scroll);
-				scroll.init();
-				
-				//listener
-				this.addEventListener(MouseEvent.CLICK, onBlockClick);
-				this.addEventListener(TransformGestureEvent.GESTURE_ZOOM, onMapGestureZoom);
-				
-				this.dispatchEvent(new Event(Event.COMPLETE));
-			}
-			
-		}
-		
-		private function updateContentBackground():void {
-			shapeContainer.graphics.clear();
-			shapeContainer.graphics.beginFill(0xFFFFFF,0);
-			shapeContainer.graphics.drawRect(0,0,shapeContainer.width,shapeContainer.height);
-			shapeContainer.graphics.endFill();
-			
-			//if (scroll) scroll.update();
-		}
+		//****************** EVENT - ACTIONS  ****************** ****************** ****************** 
 		
 		/**
 		 * CHANGE. Manage the changes broadcast by the model.
@@ -671,6 +705,9 @@ package view {
 			
 		}
 		
+		
+		//****************** EVENT - INTERFACE  ****************** ****************** ****************** 
+		
 		/**
 		 * 
 		 * @param event
@@ -702,6 +739,11 @@ package view {
 			}
 		}
 		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
 		protected function onBlockClick(event:Event):void {
 			
 			if (event.target is BlockShape) {
@@ -717,8 +759,63 @@ package view {
 				if (selectedShape) selectedShape.selected = false;
 				selectedShape = null;
 			}
+			
+			this.removeEventListener(MouseEvent.MOUSE_MOVE, dragMapMove);
 		}
-	
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function dragMap(event:MouseEvent):void {
+			if (zoomControl.currentZoom > 1) this.addEventListener(MouseEvent.MOUSE_MOVE, dragMapMove);
+		}
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function dragMapMove(event:MouseEvent):void {
+			var bounds:Rectangle = new Rectangle();
+			bounds.x = -shapeContainer.width + activeArea.width;
+			bounds.y = -shapeContainer.height + activeArea.height;
+			bounds.width = shapeContainer.width - activeArea.width;
+			bounds.height = shapeContainer.height - activeArea.height;
+			
+			shapeContainer.startDrag(false,bounds);
+			
+			this.removeEventListener(MouseEvent.MOUSE_MOVE, dragMapMove);
+			this.removeEventListener(MouseEvent.MOUSE_UP, onBlockClick);
+
+			stage.addEventListener(MouseEvent.MOUSE_UP, stopDragMap);
+		}
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function stopDragMap(event:MouseEvent):void {
+			shapeContainer.stopDrag();
+			
+			stage.removeEventListener(MouseEvent.MOUSE_UP, stopDragMap);
+			
+			this.addEventListener(MouseEvent.MOUSE_UP, onBlockClick);	
+		}	
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function resize(event:Event):void {
+			if (zoomControl) zoomControl.x = activeArea.width - zoomControl.width - 10;
+			//shapeContainer.width = stage.stageWidth;
+			//trace (shapeContainer.scaleX);
+			//TweenMax.to(shapeContainer, 1, {x:0, y:0});
+		}
 		
 		//****************** PUBLIC METHODS  ****************** ****************** ****************** 
 		
@@ -781,9 +878,7 @@ package view {
 				
 				
 			} else {
-				
-				backToOrigin();
-				
+				backToOrigin();	
 			}
 		}
 		

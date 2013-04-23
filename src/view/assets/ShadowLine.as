@@ -14,6 +14,13 @@ package view.assets  {
 
 		//****************** Constructor ****************** ****************** ****************** 
 		
+		/**
+		 * 
+		 * @param range
+		 * @param orientation
+		 * @param rotation
+		 * 
+		 */
 		public function ShadowLine(range:Number, orientation:String = "horizontal", rotation:int = 270) {
 			
 			//matrix - rotation

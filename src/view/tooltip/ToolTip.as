@@ -11,17 +11,14 @@ package view.tooltip {
 		protected var _id						:int;						//Holds ToolTip Id
 		protected var _sourceId					:int;						//Holds Source Id
 		
-		protected var margin					:Number = 4;				// Margin size
-		protected var _arrowDirection			:String = "bottom";			// Arrow point direction
+		protected var margin					:Number = 4;				//Margin size
 		
+		protected var _arrowDirection			:String = "bottom";			//Arrow point direction
 		protected var _balloonColor				:uint 	= 0xFFFFFF;			//Balloon Color
 		protected var _balloonAlpha				:Number = 1;				//Balloon Alpha
 		protected var _textColor				:uint	= 0x000000;			//Text Color
 		
-		protected var shapeBox					:Balloon;
-		protected var textTF					:TextField;
-		protected var style						:TextFormat;
-		protected var _fontSize					:uint;
+		protected var _fontSize					:uint;						//Text Size
 		
 		
 		//****************** Properties ****************** ******************  ****************** 
@@ -38,7 +35,7 @@ package view.tooltip {
 			if (data.id) _sourceId = data.id;
 			
 			//style
-			style = new TextFormat();
+			var style:TextFormat = new TextFormat();
 			style.font = "Myriad Pro";
 			style.size = _fontSize;
 			style.leading = 5;
@@ -46,7 +43,7 @@ package view.tooltip {
 			style.align = "center";
 			
 			//title
-			textTF = new TextField();
+			var textTF:TextField = new TextField();
 			textTF.selectable = false;
 			textTF.multiline = true;
 			textTF.mouseWheelEnabled = false;
@@ -61,7 +58,7 @@ package view.tooltip {
 			addChild(textTF);
 			
 			//shape
-			shapeBox = new Balloon();
+			var shapeBox:Balloon = new Balloon();
 			shapeBox.color = _balloonColor;
 			shapeBox.alpha = _balloonAlpha;
 			shapeBox.arrowDirection = arrowDirection;

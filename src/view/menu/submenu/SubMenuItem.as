@@ -7,11 +7,18 @@ package view.menu.submenu {
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
+	import settings.Settings;
+	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class SubMenuItem extends Sprite {
 		
 		//****************** Properties ****************** ******************  ****************** 
 		protected var _type				:String;				//Item type
-		protected var _fixedSize			:Boolean				//Fixed item sized
+		protected var _fixedSize		:Boolean				//Fixed item sized
 		protected var _toggle			:Boolean = false;		//Toggle to turn it ON or Off. Default: false (OFF)
 		
 		protected var _marginH			:Number = 20;			//internal horizontal margin
@@ -26,6 +33,8 @@ package view.menu.submenu {
 		protected var textColor			:uint = 0xCCCCCC;		//Text Color. Default: 0xCCCCCC (Gray)
 		protected var selectedColor		:uint = 0xF15A24;		//Hightlight Color. Default: 0xF15A24 (Orange)
 
+		
+		//****************** Constructor ****************** ******************  ****************** 
 		
 		/**
 		 * Abstract Constructor. 
@@ -60,8 +69,51 @@ package view.menu.submenu {
 			this.buttonMode = true;
 		}
 		
-		//****************** GETTERS ****************** ****************** ****************** 
 		
+		//****************** INITIALIZE ****************** ****************** ****************** 
+		
+		/**
+		 *  Initialization
+		 * @param title:String
+		 */
+		public function init(title:String):void {
+			//add BG
+			this.addChild(bg);
+			
+			//title
+			if (isFixedSize) {
+				titleTF.multiline = true;
+				titleTF.wordWrap = true;
+				titleTF.width = bgW - marginH;
+			}
+			
+			titleTF.text = title;
+			titleTF.setTextFormat(style);
+			this.addChild(titleTF);
+			
+			
+			//bg
+			bgW = titleTF.width + marginH;
+			bgH = titleTF.height + marginV;
+			
+			bg.graphics.clear();
+			
+			if (Settings.useSubMenuItemSeparator) {
+				bg.graphics.beginFill(0xFFFFFF,0);
+			} else {
+				bg.graphics.beginFill(0xFFFFFF,.1);
+			}
+			
+			bg.graphics.drawRect(0,0,bgW,bgH);
+			bg.graphics.endFill();
+			
+			//align text
+			titleTF.x = (bg.width/2) - (titleTF.width/2);
+			titleTF.y = (bg.height/2) - (titleTF.height/2);
+		}	
+		
+		
+		//****************** GETTERS ****************** ****************** ****************** 
 
 		/**
 		 * type. Return item type. 
@@ -169,49 +221,7 @@ package view.menu.submenu {
 				TweenMax.to(this,.3,{tint:selectedColor})
 			}
 			
-		}
-		
-		//****************** PUBLIC METHODS ****************** ****************** ****************** 
-		
-		/**
-		 *  Initialization
-		 * @param title:String
-		 */
-		public function init(title:String):void {
-			//add BG
-			this.addChild(bg);
-			
-			//title
-			if (isFixedSize) {
-				titleTF.multiline = true;
-				titleTF.wordWrap = true;
-				titleTF.width = bgW - marginH;
-			}
-			
-			titleTF.text = title;
-			titleTF.setTextFormat(style);
-			this.addChild(titleTF);
-			
-			
-			//bg
-			bgW = titleTF.width + marginH;
-			bgH = titleTF.height + marginV;
-			
-			bg.graphics.clear();
-			
-			if (Settings.useSubMenuItemSeparator) {
-				bg.graphics.beginFill(0xFFFFFF,0);
-			} else {
-				bg.graphics.beginFill(0xFFFFFF,.1);
-			}
-			
-			bg.graphics.drawRect(0,0,bgW,bgH);
-			bg.graphics.endFill();
-			
-			//align text
-			titleTF.x = (bg.width/2) - (titleTF.width/2);
-			titleTF.y = (bg.height/2) - (titleTF.height/2);
-		}		
+		}	
 
 	}
 }

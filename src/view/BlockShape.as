@@ -27,7 +27,7 @@ package view {
 		
 		protected var _highlighted		:Boolean = false;				//higlighted Toggle. Deault = false/
 		protected var _selected			:Boolean = false;				//Selected Toggle. Deault = false/
-		protected var _dimed			:String;				//Dim Toggle. Deault = false/
+		protected var _dimed			:String;						//Dim Toggle. Deault = false/
 		
 		protected var _registrationTL	:Point							//Keep the Top Left Registration point	
 		
@@ -55,8 +55,76 @@ package view {
 		}
 		
 		
+		//****************** INIT ****************** ****************** ****************** 
+		
+		/**
+		 * INIT. Initiate the Block Shape.
+		 * <p>Required:<>
+		 * <p>Cordenates: An Array of points (x,y) of each shape's vertice.
+		 * <p>A nre vector will be build to draw the geometric shape.</p>
+		 * <p>Surface methd will be automatically called to calculate the its area.</p>
+		 *  
+		 * @param coords:Array
+		 * 
+		 */
+		public function init(coords:Array):void {
+			var origin:Point = new Point(coords[0].x, coords[0].y);
+			
+			var shape:Array = new Array();
+			
+			for each (var coord:Point in coords) {
+				//populate vector parts
+				shape.push((coord.x - origin.x) * scale);
+				shape.push((coord.y - origin.y) * scale);
+			}
+			
+			//create vector and save the vector
+			vector = Vector.<Number>(shape);
+			
+			var command:Vector.<int> = new Vector.<int>();
+			var c:int = 0;
+			
+			//vector coordinates loop
+			for (var i:int = 0; i < shape.length; i++) {
+				
+				if(i%2 == 0) {
+					if (i==0) {
+						command[c] = 1;
+					} else {
+						command[c] = 2;
+					}
+						
+					c++;
+				}
+				
+			}
+			
+			//draw object
+			this.graphics.beginFill(0x333333);
+			this.graphics.drawPath(command,vector);
+			this.graphics.endFill();
+			
+			this.alpha = .6;
+			
+			//surface
+			surface = calculateSurface();
+			
+			//TOP LEFT REGISRATION
+			var bounds:Rectangle = this.getBounds(this);
+			
+			_registrationTL = new Point();
+			_registrationTL.x = bounds.x;
+			_registrationTL.y = bounds.y;
+			
+			//listeners
+			//this.addEventListener(MouseEvent.MOUSE_DOWN, _mouseDown);
+			//this.addEventListener(MouseEvent.MOUSE_UP, _mouseUp);
+			
+		}
+		
+		
 		//****************** GETTERS ****************** ****************** ****************** 
-
+		
 		/**
 		 * 
 		 * @return 
@@ -65,7 +133,7 @@ package view {
 		public function get registrationTL():Point {
 			return _registrationTL;
 		}
-
+		
 		/**
 		 * ID. Returns Block ID.
 		 *  
@@ -85,7 +153,7 @@ package view {
 		public function get neighbourhood():int {
 			return _neighbourhood;
 		}
-
+		
 		/**
 		 * Location. Returns block's relative geolocation on the screen 
 		 *  
@@ -146,7 +214,7 @@ package view {
 		
 		/*
 		public function get numTrees():int {
-			return _numTrees;
+		return _numTrees;
 		}
 		*/
 		
@@ -242,80 +310,9 @@ package view {
 		
 		/*
 		public function set numTrees(value:int):void {
-			_numTrees = value;
+		_numTrees = value;
 		}
 		*/
-		
-		
-		//****************** INIT ****************** ****************** ****************** 
-		
-		/**
-		 * INIT. Initiate the Block Shape.
-		 * <p>Required:<>
-		 * <p>Cordenates: An Array of points (x,y) of each shape's vertice.
-		 * <p>A nre vector will be build to draw the geometric shape.</p>
-		 * <p>Surface methd will be automatically called to calculate the its area.</p>
-		 *  
-		 * @param coords:Array
-		 * 
-		 */
-		public function init(coords:Array):void {
-			var origin:Point = new Point(coords[0].x, coords[0].y);
-			
-			var shape:Array = new Array();
-			
-			for each (var coord:Point in coords) {
-				
-				//populate vector parts
-				shape.push((coord.x - origin.x) * scale);
-				shape.push((coord.y - origin.y) * scale);
-				
-			}
-			
-			//create vector and save the vector
-			vector = Vector.<Number>(shape);
-			
-			var command:Vector.<int> = new Vector.<int>();
-			var c:int = 0;
-			
-			//vector coordinates loop
-			for (var i:int = 0; i < shape.length; i++) {
-				
-				if(i%2 == 0) {
-					if (i==0) {
-						command[c] = 1;
-					} else {
-						command[c] = 2;
-					}
-					
-					
-					c++;
-				}
-				
-			}
-			
-			//draw object
-			this.graphics.beginFill(0x333333);
-			this.graphics.drawPath(command,vector);
-			this.graphics.endFill();
-			
-			this.alpha = .6;
-			
-			//surface
-			surface = calculateSurface();
-			
-			//TOP LEFT REGISRATION
-			var bounds:Rectangle = this.getBounds(this);
-			
-			_registrationTL = new Point();
-			_registrationTL.x = bounds.x;
-			_registrationTL.y = bounds.y;
-			
-			
-			//this.addEventListener(MouseEvent.MOUSE_DOWN, _mouseDown);
-			//this.addEventListener(MouseEvent.MOUSE_UP, _mouseUp);
-			
-		}
 		
 		
 		//****************** PROTECTED METHODS ****************** ****************** ******************
@@ -356,6 +353,9 @@ package view {
 			
 			return surf;
 		}
+		
+		
+		//****************** PUBLIC METHODS ****************** ****************** ******************
 		
 		/**
 		 * 

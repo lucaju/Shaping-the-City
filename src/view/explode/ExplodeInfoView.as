@@ -28,7 +28,7 @@ package view.explode {
 		static public var groupWidth		:Number;				//Holds the maximum width of each group
 		
 		protected var _contentType			:String;				//Holds explosion content type
-		
+		protected var _isExploded			:Boolean;
 		protected var groups				:Array;					//Holds groups
 		protected var explodeGroup			:ExplodeGroup;			//Group
 		
@@ -49,39 +49,8 @@ package view.explode {
 			//listener
 			this.getController().getModel("DataModel").addEventListener(PipelineEvents.CHANGE, modelChange);
 			
-		}	
-		
-		//****************** GETTERS ****************** ******************  ****************** 
-		
-		/**
-		 * 
-		 * @return 
-		 * 
-		 */
-		public function get contentType():String {
-			return _contentType;
 		}
 		
-		/**
-		 * 
-		 * @return 
-		 * 
-		 */
-		public function get numGroups():int {
-			return groups.length;
-		}
-		
-		//****************** SETTERS ****************** ******************  ****************** 
-
-		/**
-		 * 
-		 * @param value
-		 * 
-		 */
-		public function set contentType(value:String):void {
-			_contentType = value;
-		}
-
 		
 		//****************** INITIALIZE ****************** ******************  ****************** 
 		
@@ -90,7 +59,6 @@ package view.explode {
 		 * 
 		 */
 		public function init():void {
-			
 			this.addEventListener(MouseEvent.CLICK, groupClick);
 		}
 		
@@ -103,9 +71,9 @@ package view.explode {
 			
 			//get info
 			var highlightedContentType:String = PipelineController(this.getController()).getHighlightedContentType();
-				
+			
 			contentType = highlightedContentType;
-				
+			
 			var content:Array = PipelineController(this.getController()).getHighlightedContent(contentType);
 			
 			
@@ -163,6 +131,50 @@ package view.explode {
 			data.action = "addBulk";
 			
 			this.dispatchEvent(new PipelineEvents(PipelineEvents.SELECT, data));
+		}
+		
+		//****************** GETTERS ****************** ******************  ****************** 
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get isExploded():Boolean {
+			return _isExploded;
+		}
+
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get contentType():String {
+			return _contentType;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get numGroups():int {
+			return groups.length;
+		}
+		
+		//****************** SETTERS ****************** ******************  ****************** 
+
+		public function set isExploded(value:Boolean):void {
+			_isExploded = value;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set contentType(value:String):void {
+			_contentType = value;
 		}
 		
 		
@@ -309,17 +321,16 @@ package view.explode {
 			}
 		}
 		
-		//****************** EVENTS ****************** ******************  ******************
+		//****************** EVENTS - ACTION ****************** ******************  ******************
 		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
 		protected function modelChange(event:PipelineEvents):void {
 			
-		//	if (numGroups == 0) {
-				
-			//	trace ("oi")
-				//init();
-								
-			//} else {
-				
+			if (isExploded) {
 				switch(event.parameters.action) {
 					case "add":
 						
@@ -336,8 +347,11 @@ package view.explode {
 						removeGroup(event.parameters.source);
 						break;
 				}
-			//}
+			}
 		}
+		
+		
+		//****************** EVENTS - INTERFACE ****************** ******************  ******************
 		
 		/**
 		 * 
@@ -351,14 +365,14 @@ package view.explode {
 				
 				var group:ExplodeGroup = event.target.parent as ExplodeGroup;
 				
-				if (group.metaData) {
+				if (group.groupMetaData) {
 				
 					var targetLocation:Point = group.parent.localToGlobal(new Point(group.x + group.titleRect.x, group.titleRect.y));
 					
 					var groupInfo:Object = new Object();
 					groupInfo.position = new Point(targetLocation.x, targetLocation.y)
 					groupInfo.dimension = new Point(group.titleRect.width,group.titleRect.height);
-					groupInfo.info = group.metaData;
+					groupInfo.info = group.groupMetaData;
 					
 					//add tooltip	
 					ToolTipManager.addToolTip(groupInfo,"top");

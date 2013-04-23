@@ -12,34 +12,43 @@ package {
 	
 	import model.DataModel;
 	
+	import settings.Settings;
+	
 	import util.DeviceInfo;
 	
 	import view.MainView;
+
 	
 	/**
 	 * 
 	 * @author lucaju
 	 * 
 	 */
-	[SWF(width="1280", height="752", backgroundColor="#ffffff", frameRate="30")]
+	[SWF(width="1280", height="752", backgroundColor="#ffffff", frameRate="60")]
+	//[SWF(width="1024", height="752", backgroundColor="#ffffff", frameRate="30")]
 	public class Main extends Sprite {	
 		
 		//****************** Properties ****************** ****************** ****************** 
 		private var dataModel						:DataModel;
 		private var pipelineController				:PipelineController
 		private var mainView						:MainView;
+		private var background						:Sprite
 		
-		private var settings						:Settings;
+		private var airSettings						:Settings
 		
 		//private var dataTreesModel:DataTreesModel;
 		
 		
 		//****************** Constructor ****************** ****************** ****************** 
 		
+		/**
+		 * 
+		 * 
+		 */
 		public function Main() {
 			
 			//settings
-			settings = new Settings();
+			setting();
 			
 			//align
 			stage.align = StageAlign.TOP_LEFT;
@@ -58,7 +67,7 @@ package {
 			mainView.init();
 			
 			//background
-			var background:Sprite = new Sprite();
+			background = new Sprite();
 			this.addChildAt(background,0);
 			
 			var loaderimageLoader:Loader = new Loader();
@@ -67,8 +76,13 @@ package {
 			loaderimageLoader.load(new URLRequest("images/background2.png"));
 			background.addChild(loaderimageLoader);
 			
+			//listener
+			stage.addEventListener(Event.RESIZE, resize);
+			
 			//trace
-			trace (DeviceInfo.metrics());
+			if (Settings.debug) {
+				output();
+			}
 		}
 		
 		
@@ -76,12 +90,49 @@ package {
 		
 		/**
 		 * 
+		 * 
+		 */
+		private function setting():void {
+			airSettings = new Settings();
+			//default values
+			Settings.server = "local";
+			Settings.platformTarget = "air";
+			Settings.debug = false;
+			Settings.projectPhase = "1";
+		}		
+		
+		/**
+		 * 
 		 * @param e
 		 * 
 		 */		
 		private function loadImage(event:Event):void {
-			event.target.content.width = stage.stageWidth;
-			event.target.content.height = stage.stageHeight;	
+			background.width = stage.stageWidth;
+			background.height = stage.stageHeight;	
+		}
+		
+		//****************** EVENTS ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * @param event
+		 * 
+		 */
+		protected function resize(event:Event):void {
+			background.width = stage.stageWidth;
+			background.height = stage.stageHeight;	
+			
+		}
+		
+		//****************** DEBUG ****************** ****************** ****************** 
+		
+		/**
+		 * 
+		 * 
+		 */
+		protected function output():void {
+			trace ('{"server:""'+ Settings.server+'","platform:""'+Settings.platformTarget+'","phase":"'+Settings.projectPhase+'"}');
+			trace (DeviceInfo.metrics());
 		}
 	}
 }

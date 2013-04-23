@@ -3,11 +3,11 @@
 <head>
 	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'>
 	<link rel="stylesheet" conten="text/css" href="style.css">
-	<title>Shaping the city: KML Parser.</title>
+	<title>Shaping the city: Add Shapes.</title>
 </head>
 
 <body>
-	<h1>Shaping the city: KML Parser</h1>
+	<h1>Shaping the city: Add Shapes</h1>
 	
 	<?php
 		
@@ -22,7 +22,7 @@
 			//requires
 			
 			require_once("functions.php");
-			
+			$totalShapesAdded = 0;
 			
 			//-----------path------------------
 			$path = "kml/";
@@ -149,6 +149,8 @@
 									$numErrors++;
 									$warning = 3;
 								}
+								
+								
 							   
 						    }
 						}
@@ -173,6 +175,8 @@
 								break;
 							
 						}
+						
+						$totalShapesAdded += $numShapesAdded;
 					    
 					    //close list item
 			        	echo "</div></li>";
@@ -182,6 +186,8 @@
 		
 			
 			    closedir($handle);
+			    
+			    echo "<h2>$totalShapesAdded was added</h2>";
 			}
 		   
 		?>

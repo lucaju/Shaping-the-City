@@ -4,6 +4,11 @@ package view.assets {
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	
+	/**
+	 * 
+	 * @author lucaju
+	 * 
+	 */
 	public class UIControlButton extends Sprite {
 		
 		//****************** Properties ****************** ******************  ****************** 
@@ -14,109 +19,44 @@ package view.assets {
 		public static const CROSS				:String = "cross";
 		public static const PLUS				:String = "plus";
 		
-		protected const baseForms		:Array = new Array(CIRCLE,
-														   SQUARE,
-														   ROUNDSQUARE);			//Shapeforms
+		protected const baseForms				:Array = new Array(CIRCLE,
+																   SQUARE,
+																   ROUNDSQUARE);		//Shapeforms
 		
-		protected const shapeForms		:Array = new Array(CIRCLE,
-														   SQUARE,
-														   ROUNDSQUARE,
-														   MINUS,
-														   CROSS,
-														   PLUS);					//Shapeforms
+		protected const shapeForms				:Array = new Array(CIRCLE,
+														  		 SQUARE,
+														 		  ROUNDSQUARE,
+																   MINUS,
+																   CROSS,
+														 		  PLUS);				//Shapeforms
 		
-		protected var _baseColor		:uint = 0x000000;							//Base color. Default: 0x000000 (Black)
-		protected var _baseAlpha		:Number = 1;								//Base alpha. Default: 1 (visible)
-		protected var _shapeColor		:uint = 0XFFFFFF;							//Shape Color. Default: 0xFFFFFF (White)
+		protected var _baseColor				:uint = 0x000000;						//Base color. Default: 0x000000 (Black)
+		protected var _baseAlpha				:Number = 1;							//Base alpha. Default: 1 (visible)
+		protected var _shapeColor				:uint = 0XFFFFFF;						//Shape Color. Default: 0xFFFFFF (White)
 		
-		protected var _baseGeometry		:String = SQUARE;							//Geometry. Default: Square
-		protected var _shapeGeometry	:String										//Geometry
+		protected var _baseGeometry				:String = SQUARE;						//Geometry. Default: Square
+		protected var _shapeGeometry			:String									//Geometry
 		
-		protected var base				:Shape;										//Base
-		protected var shape				:Shape;										//Shape
+		protected var base						:Shape;									//Base
+		protected var shape						:Shape;									//Shape
 		
 		
 		//****************** CONSTRUCTOR ****************** ******************  ******************
 		
+		/**
+		 * 
+		 * 
+		 */
 		public function UIControlButton() {
 			this.buttonMode = true;
 		}
 		
-		//****************** GETTERS ****************** ******************  ******************
-
-		public function get baseGeometry():String {
-			return _baseGeometry;
-		}
+		//****************** Initialize ****************** ******************  ******************
 		
-		public function get shapeGeometry():String {
-			return _shapeGeometry;
-		}
-		
-		public function get baseColor():uint {
-			return _baseColor;
-		}
-		
-		public function get shapeColor():uint {
-			return _shapeColor;
-		}
-		
-		public function get baseAlpha():Number {
-			return _baseAlpha;
-		}
-
-		
-		//****************** SETTERS ****************** ******************  ******************
-		
-		public function set baseGeometry(value:String):void {
-			
-			var validForm:Boolean = true;
-			
-			for each (var form:String in baseForms) {
-				if (value == form) {
-					break;
-				}
-			}
-			
-			if (!validForm) {
-				throw new Error("Invalid geometry form");
-			} else {
-				_baseGeometry = value;
-			}
-		}
-		
-		public function set shapeGeometry(value:String):void {
-			_shapeGeometry = value;
-			
-			var validForm:Boolean = true;
-			
-			for each (var form:String in shapeForms) {
-				if (value == form) {
-					break;
-				}
-			}
-			
-			if (!validForm) {
-				throw new Error("Invalid geometry form");
-			} else {
-				_shapeGeometry = value;
-			}
-		}
-		
-		public function set baseColor(value:uint):void {
-			_baseColor = value;
-		}
-		
-		public function set shapeColor(value:uint):void {
-			_shapeColor = value;
-		}
-		
-		public function set baseAlpha(value:Number):void {
-			_baseAlpha = value;
-		}
-		
-		
-		//****************** PUBLIC METHODS ****************** ******************  ******************
-
+		/**
+		 * 
+		 * 
+		 */
 		public function draw():void {
 			if (!shapeGeometry) {
 				throw new Error("You must define shape geometry");
@@ -187,6 +127,128 @@ package view.assets {
 			shape.graphics.endFill();
 			this.addChild(shape);
 			
+		}
+		
+		//****************** GETTERS ****************** ******************  ******************
+
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get baseGeometry():String {
+			return _baseGeometry;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get shapeGeometry():String {
+			return _shapeGeometry;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get baseColor():uint {
+			return _baseColor;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get shapeColor():uint {
+			return _shapeColor;
+		}
+		
+		/**
+		 * 
+		 * @return 
+		 * 
+		 */
+		public function get baseAlpha():Number {
+			return _baseAlpha;
+		}
+
+		
+		//****************** SETTERS ****************** ******************  ******************
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set baseGeometry(value:String):void {
+			
+			var validForm:Boolean = true;
+			
+			for each (var form:String in baseForms) {
+				if (value == form) {
+					break;
+				}
+			}
+			
+			if (!validForm) {
+				throw new Error("Invalid geometry form");
+			} else {
+				_baseGeometry = value;
+			}
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set shapeGeometry(value:String):void {
+			_shapeGeometry = value;
+			
+			var validForm:Boolean = true;
+			
+			for each (var form:String in shapeForms) {
+				if (value == form) {
+					break;
+				}
+			}
+			
+			if (!validForm) {
+				throw new Error("Invalid geometry form");
+			} else {
+				_shapeGeometry = value;
+			}
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set baseColor(value:uint):void {
+			_baseColor = value;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set shapeColor(value:uint):void {
+			_shapeColor = value;
+		}
+		
+		/**
+		 * 
+		 * @param value
+		 * 
+		 */
+		public function set baseAlpha(value:Number):void {
+			_baseAlpha = value;
 		}
 
 	}
