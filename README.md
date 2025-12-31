@@ -1,7 +1,7 @@
 <h1>Shaping the City</h1>
 
 <p>This project was developed by Edmonton Pipelines Research Group at the University of Alberta and presented in a poster session at Hastac 2013.</p>
-<p>Demo: http://labs.fluxo.art.br/pipeline/shapingcity/
+<p>Lear more: [https://lucianofrizzera.com/projects#shaping-the-city](https://lucianofrizzera.com/projects#shaping-the-city)
 <br />Project website: http://shapingthecity.edmontonpipelines.org/
 <br />Research group website: http://edmontonpipelines.org/</p>
 
